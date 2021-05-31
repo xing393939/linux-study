@@ -201,6 +201,81 @@ prep. &#x5C3D;&#x7BA1;
 portion
 &#x7F8E;[&#x2C8;p&#x254;&#x2D0;r&#x283;n]
 n. &#x4E00;&#x90E8;&#x5206;
+</code></pre><pre><code>3.1 Process Management
+
+A different approach is to allow user programs to create and manage their own processes.
+This has fostered a blizzard of innovation. Today, programs that create and manage
+processes include window managers, web servers, web browsers, shell command line
+interpreters, source code control systems, databases, compilers, and document
+preparation systems. We could go on, but you get the idea. If creating a process is
+something a process can do, then anyone can build a new version of any of these
+applications, without recompiling the kernel or forcing anyone else to use it.
+
+approach
+&#x7F8E;[&#x259;&#x2C8;pro&#x28A;t&#x283;]
+v. &#x5BF9;&#x4ED8;&#xFF0C;&#x5904;&#x7406;
+
+foster
+&#x7F8E;[&#x2C8;f&#x251;&#x2D0;st&#x259;r]
+v. &#x4FC3;&#x8FDB;&#xFF0C;&#x9F13;&#x52B1;
+
+innovation
+&#x7F8E;[&#x2CC;&#x26A;n&#x259;&#x2C8;ve&#x26A;&#x283;n]
+n. &#x6539;&#x9769;&#xFF0C;&#x521B;&#x65B0;
+
+interpreter
+&#x7F8E;[&#x26A;n&#x2C8;t&#x25C;&#x2D0;rpr&#x259;t&#x259;r]
+n. &#x89E3;&#x91CA;&#x8005;
+</code></pre><pre><code>3.1.1 Windows Process Management
+
+Unfortunately, there are quite a few aspects of the process that the parent might like to
+control, such as: its privileges, where it sends its input and output, what it should store its
+files, what to use as a scheduling priority, and so forth. We cannot trust the child process
+itself to set its own privileges and priority, and it would be inconvenient to expect every
+application to include code for figuring out its context. So the real interface to
+CreateProcess is quite a bit more complicated in practice.
+
+privilege
+&#x7F8E;[&#x2C8;pr&#x26A;v&#x259;l&#x26A;d&#x292;]
+n. &#x7279;&#x6743;
+
+inconvenient
+&#x7F8E;[&#x2CC;&#x26A;nk&#x259;n&#x2C8;vinj&#x259;nt]
+adj. &#x4E0D;&#x65B9;&#x4FBF;&#x7684;&#xFF1B;&#x6253;&#x6270;&#x4EBA;&#x7684;
+
+complicated
+&#x7F8E;[&#x2C8;k&#x251;&#x2D0;mpl&#x26A;ke&#x26A;t&#x26A;d]
+adj. &#x590D;&#x6742;&#x7684;
+</code></pre><pre><code>3.1.2 UNIX Process Management
+
+Further, in both Windows and UNIX, handles are reference counted. Whenever the kernel returns a handle, it bumps a reference counter, and whenever the process releases a handle (or exits), the reference counter is decremented. UNIX fork sets the process ID reference count to two, one for the parent and one for the child. The underlying data structure, the PCB, is reclaimed only when the reference count goes to zero, that is, when both the parent and child terminate.
+
+bump
+&#x7F8E;[b&#x28C;mp]
+v. &#x78B0;&#x649E;&#xFF1B;&#x5F15;&#x8D77;
+
+reclaim
+&#x7F8E;[r&#x26A;&#x2C8;kle&#x26A;m]
+vt. &#x56DE;&#x6536;&#x518D;&#x5229;&#x7528;
+</code></pre><pre><code>3.2 Input/Output
+
+The Internet has a similar facility to UNIX pipes called TCP (Transmission Control
+Protocol). Where UNIX pipes connect processes on the same machine, TCP provides
+a bi-directional pipe between two processes running on different machines. In TCP,
+data is written as a sequence of bytes on one machine and read out as the same
+sequence on the other machine.
+
+facility
+&#x7F8E;[f&#x259;&#x2C8;s&#x26A;l&#x259;ti]
+n. &#x8BBE;&#x65BD;
+
+bi-directional
+&#x7F8E;[&apos;b&#x26A;d&#x26A;r&apos;ek&#x283;&#x259;nl]
+adj. &#x53CC;&#x6D41;&#x5411;&#x7684;
+
+sequence
+&#x7F8E;[&#x2C8;si&#x2D0;kw&#x259;ns]
+n. [&#x6570;]&#x6570;&#x5217;&#xFF0C;&#x5E8F;&#x5217;
 </code></pre>
                                 
                                 </section>
@@ -240,7 +315,7 @@ n. &#x4E00;&#x90E8;&#x5206;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-05-30T08:56:09.926Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-30T08:56:41.822Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-05-31T02:46:57.462Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-31T02:47:29.769Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
