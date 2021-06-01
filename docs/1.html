@@ -276,6 +276,34 @@ adj. &#x53CC;&#x6D41;&#x5411;&#x7684;
 sequence
 &#x7F8E;[&#x2C8;si&#x2D0;kw&#x259;ns]
 n. [&#x6570;]&#x6570;&#x5217;&#xFF0C;&#x5E8F;&#x5217;
+</code></pre><pre><code>3.3 Case Study: Implementing a Shell
+
+use a pipe to connect two programs together, so that the output of one is the input of
+another. This is called a producer-consumer relationship. For example, in the C-compiler, 
+the output of the preprocessor is sent to the parser, and the output of the
+parser is sent to the code-generator and then to the assembler. In the standard UNIX
+shell, a pipe connecting two programs is signified by a &#x201C;|&#x201D; symbol, as in: &#x201C;cpp file.c |
+cparse | cgen | as &gt; file.o&#x201D;. In this case the shell creates four separate child processes,
+each connected by pipes to its predecessor and successor. Each of the phases can
+run in parallel, with the parent waiting for all of them to finish.
+
+signified
+&#x7F8E;[&#x2C8;s&#x26A;&#x261;n&#x259;&#x2CC;fa&#x26A;d]
+v. &#x8868;&#x793A;&#x2026;&#x7684;&#x610F;&#x601D;
+
+phase
+&#x7F8E;[fe&#x26A;z]
+n. &#x9636;&#x6BB5;
+
+parallel
+&#x7F8E;[&#x2C8;p&#xE6;r&#x259;lel]
+adj. &#x5E76;&#x884C;&#x7684;
+</code></pre><pre><code>3.4 Case Study: Interprocess Communication
+
+Three widely used forms of interprocess communication are:
+1. Producer-consumer.
+2. Client-server.
+3. File system.
 </code></pre>
                                 
                                 </section>
@@ -315,7 +343,7 @@ n. [&#x6570;]&#x6570;&#x5217;&#xFF0C;&#x5E8F;&#x5217;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-05-31T02:46:57.462Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-31T02:47:29.769Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-01T01:20:26.932Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-01T01:20:49.704Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
