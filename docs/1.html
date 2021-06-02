@@ -383,6 +383,59 @@ n. &#x53D8;&#x5316;
 emerge
 &#x7F8E;[i&#x2C8;m&#x25C;&#x2D0;rd&#x292;]
 v. &#x51FA;&#x73B0;&#xFF0C;&#x5174;&#x8D77;
+</code></pre><pre><code>3.5.2 Microkernel
+
+A microkernel design offers considerable benefit to the operating system developer, as it
+easier to modularize and debug user-level services than kernel code. Aside from a
+potential reliability improvement, however, microkernels offer little in the way of visible
+benefit to end users and can slow down overall performance by inserting extra steps
+between the application and the services it needs. Thus, in practice, most systems adopt a
+hybrid model where some operating system services are run at user-level and some are in
+the kernel, depending on the specific tradeoff between code complexity and performance.
+
+considerable
+&#x7F8E;[k&#x259;n&#x2C8;s&#x26A;d&#x259;r&#x259;bl]
+adj. &#x76F8;&#x5F53;&#x591A;&#x7684;
+
+modularize
+&#x7F8E;[&apos;m&#x252;d&#x292;&#x259;l&#x259;&#x2CC;ra&#x26A;z]
+v. &#x6A21;&#x5757;&#x5316;
+
+potential
+&#x7F8E;[p&#x259;&#x2C8;ten&#x283;l]
+adj. &#x6F5C;&#x5728;&#x7684;
+
+adopt
+&#x7F8E;[ &#x259;&#x2C8;d&#x251;&#x2D0;pt]
+v. &#x91C7;&#x7528;
+
+complexity
+&#x7F8E;[k&#x259;m&#x2C8;pleks&#x259;ti]
+n. &#x590D;&#x6742;&#x6027;
+</code></pre><pre><code>3.6 Summary and Future Directions
+
+Of course, the reality is often quite different. An alternate model is for operating systems to
+divide resources among applications and then allow each application to decide for itself
+how best to use those resources. One can think of this as a type of federalism. If both the
+operating system and applications are governments doing their own resource allocation,
+they are likely to get in each other&#x2019;s way if they are not careful. As a simple example,
+consider how a garbage collector works; it assumes it has a fixed amount of memory to
+manage. However, as other applications start or stop, it can gain or lose memory, and if the
+operating system does this reallocation transparently, the garbage collector has no hope of
+adapting. We will see examples of this same design pattern in many different areas of
+operating system design.
+
+reality
+&#x7F8E;[ri&#x2C8;&#xE6;l&#x259;ti]
+n. &#x73B0;&#x5B9E;
+
+divide
+&#x7F8E;[d&#x26A;&#x2C8;va&#x26A;d]
+v. &#x5206;&#x5F00;&#xFF1B;&#x5206;&#x914D;
+
+federalism
+&#x82F1;[&apos;fed&#x259;r&#x259;l&#x26A;z&#x259;m]
+n. &#x8054;&#x90A6;&#x653F;&#x6CBB;
 </code></pre>
                                 
                                 </section>
@@ -422,7 +475,7 @@ v. &#x51FA;&#x73B0;&#xFF0C;&#x5174;&#x8D77;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-01T02:30:15.038Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-01T02:30:46.313Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-02T02:05:02.965Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-02T02:05:34.425Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
