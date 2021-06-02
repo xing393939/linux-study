@@ -436,6 +436,103 @@ v. &#x5206;&#x5F00;&#xFF1B;&#x5206;&#x914D;
 federalism
 &#x82F1;[&apos;fed&#x259;r&#x259;l&#x26A;z&#x259;m]
 n. &#x8054;&#x90A6;&#x653F;&#x6CBB;
+</code></pre><pre><code>8. Address Translation
+
+Chapter roadmap:
+1. Address Translation Concept. We start by providing a conceptual framework for
+understanding both hardware and software address translation. (Section 8.1)
+2. Flexible Address Translation. We focus first on hardware address translation; we
+ask how can we design the hardware to provide maximum flexibility to the operating
+system kernel? (Section 8.2)
+3. Efficient Address Translation. The solutions we present will seem flexible but terribly
+slow. We next discuss mechanisms that make address translation much more efficient,
+without sacrificing flexibility. (Section 8.3)
+4. Software Protection. Increasingly, software compilers and runtime interpreters are
+using address translation techniques to implement operating system functionality. 
+What changes when the translation is in software rather than in hardware?
+
+flexible
+&#x7F8E;[&#x2C8;fleks&#x259;bl]
+adj. &#x7075;&#x6D3B;&#x7684;
+
+present
+&#x7F8E;[&#x2C8;preznt]
+v. &#x5C55;&#x793A;&#xFF0C;&#x5448;&#x73B0;
+
+mechanism
+&#x7F8E;[&#x2C8;mek&#x259;n&#x26A;z&#x259;m]
+n. &#x673A;&#x5236;
+
+sacrifice
+&#x7F8E;[&#x2C8;s&#xE6;kr&#x26A;fa&#x26A;s]
+v. &#x727A;&#x7272;
+</code></pre><pre><code>8.1 Address Translation Concept
+
+Today, we still have something similar. Complex programs often have multiple files, each of which can be compiled independently and then linked together to form the executable image. When the compiler generates the machine instructions for a single file, it cannot know where in the executable this particular file will go. Instead, the compiler generates a symbol table at the beginning of each compiled file, indicating which values will need to be modified when the individual files are assembled together.
+
+assemble
+&#x7F8E;[&#x259;&#x2C8;sembl]
+v. &#x805A;&#x96C6;
+</code></pre><pre><code>8.2 Towards Flexible Address Translation
+
+Base and bounds translation is both simple and fast, but it lacks many of the features
+needed to support modern programs. Base and bounds translation supports only coarse-grained 
+protection at the level of the entire process; it is not possible to prevent a program
+from overwriting its own code, for example. It is also difficult to share regions of memory
+between two processes. Since the memory for a process needs to be contiguous,
+supporting dynamic memory regions, such as for heaps, thread stacks, or memory mapped
+files, becomes difficult to impossible.
+
+bound
+&#x7F8E;[ba&#x28A;nd]
+n. &#x754C;&#x9650;&#xFF0C;&#x9650;&#x5236;
+
+coarse
+&#x7F8E;[k&#x254;&#x2D0;rs]
+adj. &#x7C97;&#x7CD9;&#x7684;
+</code></pre><pre><code>8.2.1 Segmented Memory
+
+However we choose to place new segments, as more memory becomes allocated, the
+operating system may reach a point where there is enough free space for a new segment,
+but the free space is not contiguous. This is called external fragmentation. The operating
+system is free to compact memory to make room without affecting applications, because
+virtual addresses are unchanged when we relocate a segment in physical memory. Even
+so, compaction can be costly in terms of processor overhead: a typical server configuration
+would take roughly a second to compact its memory.
+
+contiguous
+&#x7F8E;[k&#x259;n&#x2C8;t&#x26A;&#x261;ju&#x259;s]
+adj. &#x90BB;&#x8FD1;&#x7684;
+
+external
+&#x7F8E;[&#x26A;k&#x2C8;st&#x25C;&#x2D0;rnl]
+n. &#x5916;&#x90E8;
+
+fragmentation
+&#x82F1;[&#x2CC;fr&#xE6;&#x261;men&apos;te&#x26A;&#x283;n]
+n. &#x788E;&#x7247;
+
+compact
+&#x7F8E;[&#x2C8;k&#x251;&#x2D0;mp&#xE6;kt]
+v. &#x628A;&#x2026;&#x538B;&#x5B9E;
+</code></pre><pre><code>8.2.2 Paged Memory
+
+A downside of paging is that while the management of physical memory becomes simpler,
+the management of the virtual address space becomes more challenging. Compilers
+typically expect the execution stack to be contiguous (in virtual addresses) and of arbitrary
+size; each new procedure call assumes the memory for the stack is available. Likewise, the
+runtime library for dynamic memory allocation typically expects a contiguous heap. In a
+single-threaded process, we can place the stack and heap at opposite ends of the virtual
+address space, and have them grow towards each other, as shown in Figure 8.5. However,
+with multiple threads per process, we need multiple thread stacks, each with room to grow.
+
+downside
+&#x7F8E;[&#x2C8;da&#x28A;nsa&#x26A;d]
+n. &#x8D1F;&#x9762;
+
+arbitrary
+&#x7F8E;[&#x2C8;&#x251;&#x2D0;rb&#x26A;treri]
+adj. &#x4EFB;&#x610F;&#x7684;
 </code></pre>
                                 
                                 </section>
@@ -475,7 +572,7 @@ n. &#x8054;&#x90A6;&#x653F;&#x6CBB;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-02T02:05:02.965Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-02T02:05:34.425Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-02T08:19:39.809Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-02T08:20:02.435Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
