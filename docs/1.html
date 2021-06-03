@@ -533,6 +533,19 @@ n. &#x8D1F;&#x9762;
 arbitrary
 &#x7F8E;[&#x2C8;&#x251;&#x2D0;rb&#x26A;treri]
 adj. &#x4EFB;&#x610F;&#x7684;
+</code></pre><pre><code>8.2.3 Multi-Level Translation
+
+For encoding efficiency, the segment register is often implicit as part of the instruction. For
+example, the x86 stack instructions such as push and pop assume the stack segment (the
+index stored in the stack segment register), branch instructions assume the code segment
+(the index stored in the code segment register), and so forth. As an optimization, whenever
+the x86 initializes a code, stack, or data segment register it also reads the GDT entry (that
+is, the top-level page table pointer and access permissions) into the processor, so the
+processor can go directly to the page table on each reference.
+
+implicit
+&#x7F8E;[&#x26A;m&#x2C8;pl&#x26A;s&#x26A;t]
+adj. &#x4E0D;&#x8A00;&#x660E;&#x7684;
 </code></pre>
                                 
                                 </section>
@@ -572,7 +585,7 @@ adj. &#x4EFB;&#x610F;&#x7684;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-02T08:19:39.809Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-02T08:20:02.435Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-03T03:55:17.435Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-03T03:55:43.733Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
