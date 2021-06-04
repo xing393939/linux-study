@@ -546,6 +546,44 @@ processor can go directly to the page table on each reference.
 implicit
 &#x7F8E;[&#x26A;m&#x2C8;pl&#x26A;s&#x26A;t]
 adj. &#x4E0D;&#x8A00;&#x660E;&#x7684;
+</code></pre><pre><code>8.2.4 Portability
+
+In software view, linux models the operating system&#x2019;s internal address translation data structures after the
+x86 architecture of segments plus multi-level page tables. This has made porting Linux to
+new x86 architectures relatively easy, but porting Linux to other architectures somewhat
+more difficult e.g. Mac OS.
+In hardware view, consisting of three parts:
+1. List of memory objects.
+2. Virtual to physical translation.
+3. Physical to virtual translation.
+
+relatively
+&#x7F8E;[&#x2C8;rel&#x259;t&#x26A;vli]
+adv. &#x76F8;&#x5BF9;&#x5730;
+</code></pre><pre><code>8.3 Towards Efficient Address Translation
+
+For this, we will use a cache, a copy of some data that can be accessed more quickly than
+the original. This section concerns how we might use caches to improve translation
+performance. Caches are widely used in computer architecture, operating systems,
+distributed systems, and many other systems; in the next chapter, we discuss more
+generally when caches work and when they do not. For now, however, our focus is just on
+the use of caches for reducing the overhead of address translation. There is a reason for
+this: the very first hardware caches were used to improve translation performance.
+</code></pre><pre><code>8.3.1 Translation Lookaside Buffers
+
+Software-loaded TLB. If the TLB is effective at amortizing the cost of doing a full address translation across many memory references, we can ask a radical question: do we need hardware multi-level page table lookup on a TLB miss? This is the concept behind a software-loaded TLB. A TLB hit works as before, as a fast path. On a TLB miss, instead of doing hardware address translation, the processor traps to the operating system kernel. In the trap handler, the kernel is responsible for doing the address lookup, loading the TLB with the new translation, and restarting the application.
+
+amortize
+&#x7F8E;[&#x2C8;&#xE6;m&#x259;rta&#x26A;z]
+vt. &#x5206;&#x671F;&#x507F;&#x8FD8;
+
+radical
+&#x7F8E;[&#x2C8;r&#xE6;d&#x26A;kl]
+adj. &#x6839;&#x672C;&#x7684;&#xFF0C;&#x57FA;&#x672C;&#x7684;
+
+consult
+&#x7F8E;[k&#x259;n&#x2C8;s&#x28C;lt]
+v. &#x54A8;&#x8BE2;&#xFF1B;&#x5546;&#x91CF;
 </code></pre>
                                 
                                 </section>
@@ -585,7 +623,7 @@ adj. &#x4E0D;&#x8A00;&#x660E;&#x7684;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-03T03:55:17.435Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-03T03:55:43.733Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-04T03:10:00.163Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-04T03:10:23.502Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
