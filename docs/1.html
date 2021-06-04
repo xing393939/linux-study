@@ -584,6 +584,27 @@ adj. &#x6839;&#x672C;&#x7684;&#xFF0C;&#x57FA;&#x672C;&#x7684;
 consult
 &#x7F8E;[k&#x259;n&#x2C8;s&#x28C;lt]
 v. &#x54A8;&#x8BE2;&#xFF1B;&#x5546;&#x91CF;
+</code></pre><pre><code>8.3.2 Superpages
+
+A common use of superpages is to map the frame buffer for the computer display. When
+redrawing the screen, the processor may touch every pixel; with a high-resolution display,
+this can involve stepping through many megabytes of memory. If each TLB entry maps a 4
+KB page, even a large on-chip TLB with 256 entries would only be able to contain
+mappings for 1 MB of the frame buffer at the same time. Thus, the TLB would need to
+repeatedly do page table lookups to pull in new TLB entries as it steps through memory. An
+even worse case occurs when drawing a vertical line. The frame buffer is a two-dimensional 
+array in row-major order, so that each horizontal line of pixels is on a separate
+page. Thus, modifying each separate pixel in a vertical line would require loading a
+separate TLB entry! With superpages, the entire frame buffer can be mapped with a single
+TLB entry, leaving more room for the other pages needed by the application.
+
+vertical
+&#x7F8E;[&#x2C8;v&#x25C;&#x2D0;rt&#x26A;kl]
+adj. &#x5782;&#x76F4;&#x7684;
+
+horizontal
+&#x7F8E;[&#x2CC;h&#x254;&#x2D0;r&#x26A;&#x2C8;z&#x251;&#x2D0;ntl]
+adj. &#x6C34;&#x5E73;&#x7684;
 </code></pre>
                                 
                                 </section>
@@ -623,7 +644,7 @@ v. &#x54A8;&#x8BE2;&#xFF1B;&#x5546;&#x91CF;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-04T03:10:55.441Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-04T03:11:29.940Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-04T10:24:06.218Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-04T10:24:37.718Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
