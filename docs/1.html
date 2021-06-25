@@ -956,6 +956,85 @@ partitioned
 separate
 &#x7F8E;[&#x2C8;sep&#x259;re&#x26A;t]
 adj. &#x72EC;&#x7ACB;&#x7684;
+</code></pre><pre><code>9.5 Replacement Policies
+
+Policies also vary depending on the setting: hardware caches use a different replacement
+policy than the operating system does in managing main memory as a cache for disk. A
+hardware cache will often have a limited number of replacement choices, constrained by
+the set associativity of the cache, and it must make its decisions very rapidly. In the
+operating system, there is often both more time to make a choice and a much larger
+number cached items to consider; e.g., with 4 GB of memory, a system will have a million
+separate 4 KB pages to choose from when deciding which to replace. Even within the
+operating system, the replacement policy for the file buffer cache is often different than the
+one used for demand paged virtual memory, depending on what information is easily
+available about the access pattern.
+
+constrain
+&#x7F8E;[k&#x259;n&#x2C8;stre&#x26A;n]
+v. &#x7EA6;&#x675F;
+
+decision
+ &#x7F8E;[d&#x26A;&#x2C8;s&#x26A;&#x292;n]
+n. &#x51B3;&#x5B9A;
+
+pattern
+&#x7F8E;[&#x2C8;p&#xE6;t&#x259;rn]
+n. &#x6A21;&#x5F0F;
+</code></pre><pre><code>9.5.1 Random
+9.5.2 First-In-First-Out (FIFO)
+
+Unfortunately, FIFO can be the worst possible replacement policy for workloads that
+happen quite often in practice. Consider a program that cycles through a memory array
+repeatedly, but where the array is too large to fit in the cache. Many scientific applications
+do an operation on every element in an array, and then repeat that operation until the data
+reaches a fixed point. Google&#x2019;s PageRank algorithm for determining which search results
+to display uses a similar approach. PageRank iterates repeatedly through all pages,
+estimating the popularity of a page based on the popularity of the pages that refer to it as
+computed in the previous iteration.
+
+
+determining
+&#x7F8E;[d&#x26A;&apos;t&#x25C;m&#x26A;n&#x26A;&#x14B;]
+v. &#xFF08;&#x4F7F;&#xFF09;&#x505A;&#x51FA;&#x51B3;&#x5B9A;
+
+iterate
+&#x7F8E;[&#x2C8;&#x26A;t&#x259;&#x2CC;ret]
+vt. &#x91CD;&#x590D;
+
+estimating
+&#x7F8E;[&apos;est&#x26A;me&#x26A;t&#x26A;&#x14B;]
+v. &#x4F30;&#x8BA1;
+</code></pre><pre><code>9.5.3 Optimal Cache Replacement (MIN)
+
+As with Shortest Job First, MIN requires knowledge of the future, and so we cannot
+implement it directly. Rather, we can use it as a goal: we want to come up with
+mechanisms which are effective at predicting which blocks will be used in the near future,
+so that we can keep those in the cache.
+
+mechanism
+&#x7F8E;[&#x2C8;mek&#x259;n&#x26A;z&#x259;m]
+n. &#x673A;&#x5236;
+</code></pre><pre><code>9.5.4 Least Recently Used (LRU)
+9.5.5 Least Frequently Used (LFU)
+
+LRU and LFU both attempt to predict future behavior, and they have complementary
+strengths. Many systems meld the two approaches to gain the benefits of each. LRU is
+better at keeping the current working set in memory; once the working set is taken care of,
+however, LRU will yield diminishing returns. Instead, LFU may be better at predicting what
+files or memory blocks will be needed in the more distant future, e.g., after the next working
+set phase change.
+
+strength
+&#x7F8E;[stre&#x14B;&#x3B8;]
+n. &#x4F18;&#x70B9;
+
+distant
+&#x7F8E;[&#x2C8;d&#x26A;st&#x259;nt]
+adj. &#x9065;&#x8FDC;&#x7684;&#xFF0C;&#x4E45;&#x8FDC;&#x7684;
+
+phase
+&#x7F8E;[fe&#x26A;z]
+n. &#x9636;&#x6BB5;
 </code></pre>
                                 
                                 </section>
@@ -995,7 +1074,7 @@ adj. &#x72EC;&#x7ACB;&#x7684;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-23T10:20:44.866Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-23T10:21:15.799Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"英语学习","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/1.md","mtime":"2021-06-25T08:17:46.322Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-06-25T08:18:16.399Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
