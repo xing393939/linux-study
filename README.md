@@ -1,4 +1,4 @@
-### Operating Systems Principles and Practice
+### Linux 学习
 
 #### 参考资料
 1. [深入理解Linux网络](https://book.douban.com/subject/35922722/)
