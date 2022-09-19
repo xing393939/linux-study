@@ -20,6 +20,51 @@ make -j8        // 以8核的能力编译内核，output最后一行是Kernel: a
 ```
 参考文章：https://wenfh2020.com/2021/12/03/ubuntu-qemu-linux/
 最终目标：wsl中用qemu跑内核并打开调试端口1234，在windows的vscode打开wsl的源码目录，配置gdb远程调试
+
+// 运行qemu，若开调试端口再加上“-s -S”
+qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -initrd initramfs-busybox-x64.cpio.gz --append "console=ttyS0 nokaslr root=/dev/ram init=/init" -nographic
+
+// vscode的launch.json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "kernel-debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "program": "${workspaceFolder}/vmlinux",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "logging": {
+                "engineLogging": false
+            },
+            "MIMode": "gdb",
+        }
+    ]
+}
+
+// vscode的c_cpp_properties.json
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compileCommands": "${workspaceFolder}/compile_commands.json"
+        }
+    ],
+    "version": 4
+}
 ```
 
 
