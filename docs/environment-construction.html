@@ -177,6 +177,51 @@ make -j8        // &#x4EE5;8&#x6838;&#x7684;&#x80FD;&#x529B;&#x7F16;&#x8BD1;&#x5
 </code></pre><h4 id="debug&#x73AF;&#x5883;&#x914D;&#x7F6E;">debug&#x73AF;&#x5883;&#x914D;&#x7F6E;</h4>
 <pre><code>&#x53C2;&#x8003;&#x6587;&#x7AE0;&#xFF1A;https://wenfh2020.com/2021/12/03/ubuntu-qemu-linux/
 &#x6700;&#x7EC8;&#x76EE;&#x6807;&#xFF1A;wsl&#x4E2D;&#x7528;qemu&#x8DD1;&#x5185;&#x6838;&#x5E76;&#x6253;&#x5F00;&#x8C03;&#x8BD5;&#x7AEF;&#x53E3;1234&#xFF0C;&#x5728;windows&#x7684;vscode&#x6253;&#x5F00;wsl&#x7684;&#x6E90;&#x7801;&#x76EE;&#x5F55;&#xFF0C;&#x914D;&#x7F6E;gdb&#x8FDC;&#x7A0B;&#x8C03;&#x8BD5;
+
+// &#x8FD0;&#x884C;qemu&#xFF0C;&#x82E5;&#x5F00;&#x8C03;&#x8BD5;&#x7AEF;&#x53E3;&#x518D;&#x52A0;&#x4E0A;&#x201C;-s -S&#x201D;
+qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -initrd initramfs-busybox-x64.cpio.gz --append &quot;console=ttyS0 nokaslr root=/dev/ram init=/init&quot; -nographic
+
+// vscode&#x7684;launch.json
+{
+    &quot;version&quot;: &quot;0.2.0&quot;,
+    &quot;configurations&quot;: [
+        {
+            &quot;name&quot;: &quot;kernel-debug&quot;,
+            &quot;type&quot;: &quot;cppdbg&quot;,
+            &quot;request&quot;: &quot;launch&quot;,
+            &quot;miDebuggerServerAddress&quot;: &quot;127.0.0.1:1234&quot;,
+            &quot;program&quot;: &quot;${workspaceFolder}/vmlinux&quot;,
+            &quot;args&quot;: [],
+            &quot;stopAtEntry&quot;: false,
+            &quot;cwd&quot;: &quot;${workspaceFolder}&quot;,
+            &quot;environment&quot;: [],
+            &quot;externalConsole&quot;: false,
+            &quot;logging&quot;: {
+                &quot;engineLogging&quot;: false
+            },
+            &quot;MIMode&quot;: &quot;gdb&quot;,
+        }
+    ]
+}
+
+// vscode&#x7684;c_cpp_properties.json
+{
+    &quot;configurations&quot;: [
+        {
+            &quot;name&quot;: &quot;Linux&quot;,
+            &quot;includePath&quot;: [
+                &quot;${workspaceFolder}/**&quot;
+            ],
+            &quot;defines&quot;: [],
+            &quot;compilerPath&quot;: &quot;/usr/bin/gcc&quot;,
+            &quot;cStandard&quot;: &quot;c11&quot;,
+            &quot;cppStandard&quot;: &quot;gnu++14&quot;,
+            &quot;intelliSenseMode&quot;: &quot;linux-gcc-x64&quot;,
+            &quot;compileCommands&quot;: &quot;${workspaceFolder}/compile_commands.json&quot;
+        }
+    ],
+    &quot;version&quot;: 4
+}
 </code></pre>
                                 
                                 </section>
@@ -216,7 +261,7 @@ make -j8        // &#x4EE5;8&#x6838;&#x7684;&#x80FD;&#x529B;&#x7F16;&#x8BD1;&#x5
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"环境搭建","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/environment-construction.md","mtime":"2022-09-19T04:03:23.975Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-19T04:03:47.289Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"环境搭建","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/environment-construction.md","mtime":"2022-09-19T06:52:43.766Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-19T06:53:20.614Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
