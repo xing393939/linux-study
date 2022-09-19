@@ -67,4 +67,8 @@ qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -initrd initramfs-busybox-x64
 }
 ```
 
+#### qemu网络
+* [QEMU网络操作相关说明及常用命令](https://github.com/QthCN/opsguide_book/blob/master/QEMU%E7%BD%91%E7%BB%9C%E6%93%8D%E4%BD%9C%E7%9B%B8%E5%85%B3%E8%AF%B4%E6%98%8E%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)
+* qemu支持的网卡驱动：qemu-system-x86_64 -net nic,model=?
+* qemu查看当前的网卡：(qemu) info network
 
