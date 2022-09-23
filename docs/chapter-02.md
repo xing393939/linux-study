@@ -142,3 +142,53 @@ ip_rcv(skb, skb->dev, pt_prev, orig_dev)
 
 inet_protos中保存着tcp_rcv()和udp_rcv()的函数地址，可以把包传给传输层
 ```
+
+#### UDP协议层处理
+```
+udp_rcv(skb)
+|-__udp4_lib_rcv(skb, &udp_table, IPPROTO_UDP)
+  |-sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable) // 找到对应的socket
+  |-udp_queue_rcv_skb(sk, skb)          
+    |-__udp_queue_rcv_skb(sk, skb)           // 用户没有正在读sk，放在sk的接收缓冲上
+    |-sk_add_backlog(sk, skb, sk->sk_rcvbuf) // 用户正在读sk，放在backlog队列
+```
+
+#### recvfrom系统调用
+![alt](../images/struct_socket.png)
+
+```
+struct socket的ops是协议的方法集合，tcp和udp的ops分别如下：
+const struct proto_ops inet_stream_ops = {
+    .sendmsg       = inet_sendmsg,
+    .recvmsg       = inet_recvmsg,
+}
+const struct proto_ops inet_dgram_ops = {
+    .sendmsg       = inet_sendmsg,
+    .recvmsg       = inet_recvmsg,
+}
+
+struct socket的sk.sk_prot又定义了二级处理函数，UDP的sk_prot如下：
+struct proto udp_prot = {
+    .name          = "UDP",
+    .owner         = THIS_MODULE,
+    .close         = udp_lib_close,
+    .connect       = ip4_datagram_connect,
+    ...
+    .sendmsg       = udp_sendmsg,
+    .recvmsg       = udp_recvmsg,
+    .sendpage      = udp_sendpage,
+}
+
+recvfrom系统调用流程如下：
+SYSC_recvfrom()
+|-sock_recvmsg(sock, &msg, iov_iter_count(&msg.msg_iter), flags)
+  |-sock_recvmsg_nosec(sock, msg, size, flags)
+    |-sock->ops->recvmsg(sock, msg, size, flags) // 这里即是inet_recvmsg
+      |-inet_recvmsg(sock, msg, size, flags)
+        |-sk->sk_prot->recvmsg(sk, msg, size, flags & MSG_DONTWAIT, flags & ~MSG_DONTWAIT, &addr_len)
+          |-udp_recvmsg(sk, msg, size, noblock, flags, &addr_len)
+            |-__skb_recv_datagram(sk, flags | (noblock ? MSG_DONTWAIT : 0), &peeked, &off, &err)
+              |-__skb_try_recv_datagram(sk, flags, peeked, off, err, &last) // 有数据直接取
+              |-__skb_wait_for_more_packets(sk, err, &timeo, last)          // 没数据，进程进入睡眠
+```
+
