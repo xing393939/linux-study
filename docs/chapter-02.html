@@ -177,9 +177,9 @@
 <h4 id="&#x521B;&#x5EFA;ksoftirqd&#x5185;&#x6838;&#x7EBF;&#x7A0B;">&#x521B;&#x5EFA;ksoftirqd&#x5185;&#x6838;&#x7EBF;&#x7A0B;</h4>
 <pre><code>// kernel/softirq.c
 struct smp_hotplug_thread softirq_threads = {
-    .store            = &amp;ksoftirqd,
+    .store                = &amp;ksoftirqd,
     .thread_should_run    = ksoftirqd_should_run,
-    .thread_fn        = run_ksoftirqd,
+    .thread_fn            = run_ksoftirqd,
     .thread_comm        = &quot;ksoftirqd/%u&quot;,
 }
 
@@ -206,7 +206,7 @@ fs_initcall(inet_init)
 
 &#x5168;&#x5C40;&#x53D8;&#x91CF;struct net_protocol *inet_protos[256]
 * ip_rcv()&#x4F1A;&#x901A;&#x8FC7;inet_protos&#x627E;&#x5230;TCP&#x7684;&#x5904;&#x7406;&#x51FD;&#x6570;tcp_v4_rcv
-</code></pre><h4 id="&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x521D;&#x59CB;&#x5316;">&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x521D;&#x59CB;&#x5316;</h4>
+</code></pre><h4 id="&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x521D;&#x59CB;&#x5316;&#x548C;&#x542F;&#x7528;&#x7F51;&#x5361;">&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x521D;&#x59CB;&#x5316;&#x548C;&#x542F;&#x7528;&#x7F51;&#x5361;</h4>
 <pre><code>// drivers/net/ethernet/intel/e100.c
 struct pci_driver e1000_driver = {
     .name     = e1000_driver_name,
@@ -214,12 +214,88 @@ struct pci_driver e1000_driver = {
     .probe    = e1000_probe,
     .remove   = e1000_remove
 }
+struct net_device_ops e1000_netdev_ops = {
+    .ndo_open        = e1000_open,
+    .ndo_stop        = e1000_close,
+    .ndo_start_xmit        = e1000_xmit_frame,
+    .ndo_get_stats        = e1000_get_stats,
+    .ndo_set_rx_mode    = e1000_set_rx_mode,
+    .ndo_set_mac_address= e1000_set_mac,
+    .ndo_tx_timeout        = e1000_tx_timeout,
+}
 
 module_init(e1000_init_module)
 |-e1000_init_module(void)
   |-pci_register_driver(&amp;e1000_driver)
 
 pci_register_driver&#x8C03;&#x7528;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x5185;&#x6838;&#x5C31;&#x77E5;&#x9053;&#x4E86;&#x8BE5;&#x9A71;&#x52A8;&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#xFF0C;&#x5F53;&#x786C;&#x4EF6;e1000&#x7F51;&#x5361;&#x88AB;&#x8BC6;&#x522B;&#x540E;&#xFF0C;&#x5C31;&#x4F1A;&#x8C03;&#x7528;&#x8BE5;&#x9A71;&#x52A8;&#x7684;probe&#x65B9;&#x6CD5;&#xFF08;e1000_probe&#xFF09;
+
+int e1000_probe(struct pci_dev *pdev, struct pci_device_id *ent)
+|-netdev-&gt;netdev_ops = &amp;e1000_netdev_ops;
+|-netif_napi_add(netdev, &amp;adapter-&gt;napi, e1000_clean, 64) // &#x6CE8;&#x518C;NAPI&#x673A;&#x5236;&#x6240;&#x5FC5;&#x987B;&#x7684;poll&#x51FD;&#x6570;e1000_clean
+
+&#x5728;&#x7F51;&#x5361;&#x88AB;&#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;(ifconfig eth0 up)&#x4F1A;&#x8C03;&#x7528;e1000_netdev_ops-&gt;ndo_open&#xFF0C;&#x5373;e1000_open
+
+int e1000_open(struct net_device *netdev)
+|-e1000_setup_all_tx_resources(adapter) // &#x8BBE;&#x7F6E;&#x4F20;&#x8F93;&#x7684;ringBuffer&#x548C;&#x63CF;&#x8FF0;&#x7B26;&#x6570;&#x7EC4;
+|-e1000_setup_all_rx_resources(adapter) // &#x8BBE;&#x7F6E;&#x63A5;&#x6536;&#x7684;ringBuffer&#x548C;&#x63CF;&#x8FF0;&#x7B26;&#x6570;&#x7EC4;
+|-e1000_request_irq(adapter)            // &#x8BBE;&#x7F6E;&#x786C;&#x4E2D;&#x65AD;&#x56DE;&#x8C03;&#x51FD;&#x6570;e1000_intr
+  |-request_irq(adapter-&gt;pdev-&gt;irq, handler, irq_flags, netdev-&gt;name, netdev)
+</code></pre><h4 id="&#x786C;&#x4E2D;&#x65AD;">&#x786C;&#x4E2D;&#x65AD;</h4>
+<pre><code>e1000_intr(int irq, void *data)
+|-__napi_schedule(&amp;adapter-&gt;napi)
+  |-____napi_schedule(this_cpu_ptr(&amp;softnet_data), n)
+    |-list_add_tail(&amp;napi-&gt;poll_list, &amp;sd-&gt;poll_list) // &#x628A;adapter-&gt;napi-&gt;poll_list&#x52A0;&#x5165;&#x5230;cpu&#x7684;softnet_data-&gt;poll_list
+    |-__raise_softirq_irqoff(NET_RX_SOFTIRQ)          // &#x89E6;&#x53D1;&#x4E86;&#x4E00;&#x4E2A;&#x8F6F;&#x4E2D;&#x65AD;NET_RX_SOFTIRQ
+      |-or_softirq_pending(1UL &lt;&lt; nr)                 // &#x5C55;&#x5F00;&#xFF1A;this_cpu_or(irq_stat.__softirq_pending, (1 &lt;&lt; nr))
+</code></pre><h4 id="&#x8F6F;&#x4E2D;&#x65AD;">&#x8F6F;&#x4E2D;&#x65AD;</h4>
+<pre><code>struct softirq_action softirq_vec[10] // &#x5206;&#x522B;&#x5BF9;&#x5E94;&#xFF1A;&quot;HI&quot;, &quot;TIMER&quot;, &quot;NET_TX&quot;, &quot;NET_RX&quot;, &quot;BLOCK&quot;, &quot;BLOCK_IOPOLL&quot;,
+                                      //         &quot;TASKLET&quot;, &quot;SCHED&quot;, &quot;HRTIMER&quot;, &quot;RCU&quot;
+
+ksoftirqd_should_run(int cpu)
+|-local_softirq_pending()     // &#x5C55;&#x5F00;&#xFF1A;this_cpu_read(irq_stat.__softirq_pending)
+
+run_ksoftirqd(int cpu)
+|-__do_softirq()
+  |-h = softirq_vec
+  |-h-&gt;action(h)
+
+&#x5168;&#x5C40;&#x53D8;&#x91CF;softirq_vec&#x5728;&#x201C;&#x7F51;&#x7EDC;&#x5B50;&#x7CFB;&#x7EDF;&#x521D;&#x59CB;&#x5316;&#x201D;&#x4E2D;&#x6CE8;&#x518C;&#x4E86;NET_RX_SOFTIRQ&#x5BF9;&#x5E94;&#x7684;&#x5904;&#x7406;&#x51FD;&#x6570;net_rx_action
+
+net_rx_action(struct softirq_action *h)
+|-n = list_first_entry(&amp;list, struct napi_struct, poll_list)
+|-napi_poll(n, &amp;repoll)
+  |-n-&gt;poll(n, weight)       // &#x8C03;&#x7528;NAPI&#x673A;&#x5236;&#x7684;poll&#x51FD;&#x6570;e1000_clean
+
+e1000_clean(struct napi_struct *napi, int budget)
+|-adapter-&gt;clean_rx(adapter, &amp;adapter-&gt;rx_ring[0], &amp;work_done, budget)
+  |-e1000_clean_rx_irq(adapter, &amp;adapter-&gt;rx_ring[0], &amp;work_done, budget)
+    |-e1000_receive_skb(adapter, status, rx_desc-&gt;special, skb)
+      |-napi_gro_receive(&amp;adapter-&gt;napi, skb)
+        |-napi_skb_finish(dev_gro_receive(napi, skb), skb)
+          |-netif_receive_skb_internal(skb)
+            |-__netif_receive_skb(skb)
+              |-__netif_receive_skb_core(skb, true)
+                |-pt_prev-&gt;func(skb, skb-&gt;dev, pt_prev, orig_dev)
+
+pt_prev-&gt;func()&#x4F1A;&#x8C03;&#x7814;&#x534F;&#x8BAE;&#x5C42;&#x6CE8;&#x518C;&#x7684;&#x51FD;&#x6570;ip_rcv&#x6216;&#x8005;arp_rcv
+</code></pre><h4 id="ip&#x534F;&#x8BAE;&#x5C42;&#x5904;&#x7406;">IP&#x534F;&#x8BAE;&#x5C42;&#x5904;&#x7406;</h4>
+<pre><code>ip_rcv(skb, skb-&gt;dev, pt_prev, orig_dev)
+|-NF_HOOK(NFPROTO_IPV4, NF_INET_PRE_ROUTING, net, NULL, skb, dev, NULL, ip_rcv_finish)
+  |-ip_rcv_finish(net, NULL, skb)
+    |-ip_route_input_noref(skb, iph-&gt;daddr, iph-&gt;saddr, iph-&gt;tos, skb-&gt;dev)
+      |-ip_route_input_mc(skb, daddr, saddr, tos, dev, our)
+        |-rth-&gt;dst.input = ip_mr_input
+    |-dst_input(skb)
+      |-skb_dst(skb)-&gt;input(skb)  // &#x8FD9;&#x91CC;&#x8C03;&#x7528;ip_mr_input
+        |-ip_mr_input(skb)
+          |-ip_local_deliver(skb)
+            |-NF_HOOK(NFPROTO_IPV4, NF_INET_LOCAL_IN, net, NULL, skb, skb-&gt;dev, NULL, ip_local_deliver_finish)
+              |-ip_local_deliver_finish(net, NULL, skb)
+                |-ipprot = rcu_dereference(inet_protos[protocol])
+                |-ipprot-&gt;handler(skb)
+
+inet_protos&#x4E2D;&#x4FDD;&#x5B58;&#x7740;tcp_rcv()&#x548C;udp_rcv()&#x7684;&#x51FD;&#x6570;&#x5730;&#x5740;&#xFF0C;&#x53EF;&#x4EE5;&#x628A;&#x5305;&#x4F20;&#x7ED9;&#x4F20;&#x8F93;&#x5C42;
 </code></pre>
                                 
                                 </section>
@@ -259,7 +335,7 @@ pci_register_driver&#x8C03;&#x7528;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x5185;&#x68
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"previous":{"title":"环境搭建","level":"1.2","depth":1,"path":"docs/environment-construction.md","ref":"docs/environment-construction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-02.md","mtime":"2022-09-20T00:31:08.614Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-20T00:31:34.127Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"previous":{"title":"环境搭建","level":"1.2","depth":1,"path":"docs/environment-construction.md","ref":"docs/environment-construction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-02.md","mtime":"2022-09-23T07:25:22.379Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-23T07:25:47.726Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
