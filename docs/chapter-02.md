@@ -4,9 +4,9 @@
 ```
 // kernel/softirq.c
 struct smp_hotplug_thread softirq_threads = {
-	.store			= &ksoftirqd,
+	.store			    = &ksoftirqd,
 	.thread_should_run	= ksoftirqd_should_run,
-	.thread_fn		= run_ksoftirqd,
+	.thread_fn		    = run_ksoftirqd,
 	.thread_comm		= "ksoftirqd/%u",
 }
 
@@ -41,7 +41,7 @@ fs_initcall(inet_init)
 * ip_rcv()会通过inet_protos找到TCP的处理函数tcp_v4_rcv
 ```
 
-#### 网卡驱动初始化
+#### 网卡驱动初始化和启用网卡
 ```
 // drivers/net/ethernet/intel/e100.c
 struct pci_driver e1000_driver = {
@@ -50,24 +50,95 @@ struct pci_driver e1000_driver = {
 	.probe    = e1000_probe,
 	.remove   = e1000_remove
 }
+struct net_device_ops e1000_netdev_ops = {
+	.ndo_open		= e1000_open,
+	.ndo_stop		= e1000_close,
+	.ndo_start_xmit		= e1000_xmit_frame,
+	.ndo_get_stats		= e1000_get_stats,
+	.ndo_set_rx_mode	= e1000_set_rx_mode,
+	.ndo_set_mac_address= e1000_set_mac,
+	.ndo_tx_timeout		= e1000_tx_timeout,
+}
 
 module_init(e1000_init_module)
 |-e1000_init_module(void)
   |-pci_register_driver(&e1000_driver)
 
 pci_register_driver调用完成后，内核就知道了该驱动的相关信息，当硬件e1000网卡被识别后，就会调用该驱动的probe方法（e1000_probe）
+
+int e1000_probe(struct pci_dev *pdev, struct pci_device_id *ent)
+|-netdev->netdev_ops = &e1000_netdev_ops;
+|-netif_napi_add(netdev, &adapter->napi, e1000_clean, 64) // 注册NAPI机制所必须的poll函数e1000_clean
+
+在网卡被启动的时候(ifconfig eth0 up)会调用e1000_netdev_ops->ndo_open，即e1000_open
+
+int e1000_open(struct net_device *netdev)
+|-e1000_setup_all_tx_resources(adapter) // 设置传输的ringBuffer和描述符数组
+|-e1000_setup_all_rx_resources(adapter) // 设置接收的ringBuffer和描述符数组
+|-e1000_request_irq(adapter)            // 设置硬中断回调函数e1000_intr
+  |-request_irq(adapter->pdev->irq, handler, irq_flags, netdev->name, netdev)
 ```
 
+#### 硬中断
+```
+e1000_intr(int irq, void *data)
+|-__napi_schedule(&adapter->napi)
+  |-____napi_schedule(this_cpu_ptr(&softnet_data), n)
+    |-list_add_tail(&napi->poll_list, &sd->poll_list) // 把adapter->napi->poll_list加入到cpu的softnet_data->poll_list
+    |-__raise_softirq_irqoff(NET_RX_SOFTIRQ)          // 触发了一个软中断NET_RX_SOFTIRQ
+      |-or_softirq_pending(1UL << nr)                 // 展开：this_cpu_or(irq_stat.__softirq_pending, (1 << nr))
+```
 
+#### 软中断
+```
+struct softirq_action softirq_vec[10] // 分别对应："HI", "TIMER", "NET_TX", "NET_RX", "BLOCK", "BLOCK_IOPOLL",
+                                      //         "TASKLET", "SCHED", "HRTIMER", "RCU"
 
+ksoftirqd_should_run(int cpu)
+|-local_softirq_pending()     // 展开：this_cpu_read(irq_stat.__softirq_pending)
 
+run_ksoftirqd(int cpu)
+|-__do_softirq()
+  |-h = softirq_vec
+  |-h->action(h)
 
+全局变量softirq_vec在“网络子系统初始化”中注册了NET_RX_SOFTIRQ对应的处理函数net_rx_action
 
+net_rx_action(struct softirq_action *h)
+|-n = list_first_entry(&list, struct napi_struct, poll_list)
+|-napi_poll(n, &repoll)
+  |-n->poll(n, weight)       // 调用NAPI机制的poll函数e1000_clean
 
+e1000_clean(struct napi_struct *napi, int budget)
+|-adapter->clean_rx(adapter, &adapter->rx_ring[0], &work_done, budget)
+  |-e1000_clean_rx_irq(adapter, &adapter->rx_ring[0], &work_done, budget)
+    |-e1000_receive_skb(adapter, status, rx_desc->special, skb)
+      |-napi_gro_receive(&adapter->napi, skb)
+        |-napi_skb_finish(dev_gro_receive(napi, skb), skb)
+          |-netif_receive_skb_internal(skb)
+            |-__netif_receive_skb(skb)
+              |-__netif_receive_skb_core(skb, true)
+                |-pt_prev->func(skb, skb->dev, pt_prev, orig_dev)
 
+pt_prev->func()会调研协议层注册的函数ip_rcv或者arp_rcv
+```
 
+#### IP协议层处理
+```
+ip_rcv(skb, skb->dev, pt_prev, orig_dev)
+|-NF_HOOK(NFPROTO_IPV4, NF_INET_PRE_ROUTING, net, NULL, skb, dev, NULL, ip_rcv_finish)
+  |-ip_rcv_finish(net, NULL, skb)
+    |-ip_route_input_noref(skb, iph->daddr, iph->saddr, iph->tos, skb->dev)
+      |-ip_route_input_mc(skb, daddr, saddr, tos, dev, our)
+        |-rth->dst.input = ip_mr_input
+    |-dst_input(skb)
+      |-skb_dst(skb)->input(skb)  // 这里调用ip_mr_input
+        |-ip_mr_input(skb)
+          |-ip_local_deliver(skb)
+            |-NF_HOOK(NFPROTO_IPV4, NF_INET_LOCAL_IN, net, NULL, skb, skb->dev, NULL, ip_local_deliver_finish)
+              |-ip_local_deliver_finish(net, NULL, skb)
+                |-ipprot = rcu_dereference(inet_protos[protocol])
+                |-ipprot->handler(skb)
 
-
-
-
-
+inet_protos中保存着tcp_rcv()和udp_rcv()的函数地址，可以把包传给传输层
+```
