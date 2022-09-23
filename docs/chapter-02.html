@@ -296,6 +296,48 @@ pt_prev-&gt;func()&#x4F1A;&#x8C03;&#x7814;&#x534F;&#x8BAE;&#x5C42;&#x6CE8;&#x518
                 |-ipprot-&gt;handler(skb)
 
 inet_protos&#x4E2D;&#x4FDD;&#x5B58;&#x7740;tcp_rcv()&#x548C;udp_rcv()&#x7684;&#x51FD;&#x6570;&#x5730;&#x5740;&#xFF0C;&#x53EF;&#x4EE5;&#x628A;&#x5305;&#x4F20;&#x7ED9;&#x4F20;&#x8F93;&#x5C42;
+</code></pre><h4 id="udp&#x534F;&#x8BAE;&#x5C42;&#x5904;&#x7406;">UDP&#x534F;&#x8BAE;&#x5C42;&#x5904;&#x7406;</h4>
+<pre><code>udp_rcv(skb)
+|-__udp4_lib_rcv(skb, &amp;udp_table, IPPROTO_UDP)
+  |-sk = __udp4_lib_lookup_skb(skb, uh-&gt;source, uh-&gt;dest, udptable) // &#x627E;&#x5230;&#x5BF9;&#x5E94;&#x7684;socket
+  |-udp_queue_rcv_skb(sk, skb)          
+    |-__udp_queue_rcv_skb(sk, skb)           // &#x7528;&#x6237;&#x6CA1;&#x6709;&#x6B63;&#x5728;&#x8BFB;sk&#xFF0C;&#x653E;&#x5728;sk&#x7684;&#x63A5;&#x6536;&#x7F13;&#x51B2;&#x4E0A;
+    |-sk_add_backlog(sk, skb, sk-&gt;sk_rcvbuf) // &#x7528;&#x6237;&#x6B63;&#x5728;&#x8BFB;sk&#xFF0C;&#x653E;&#x5728;backlog&#x961F;&#x5217;
+</code></pre><h4 id="recvfrom&#x7CFB;&#x7EDF;&#x8C03;&#x7528;">recvfrom&#x7CFB;&#x7EDF;&#x8C03;&#x7528;</h4>
+<p><img src="../images/struct_socket.png" alt="alt"></p>
+<pre><code>struct socket&#x7684;ops&#x662F;&#x534F;&#x8BAE;&#x7684;&#x65B9;&#x6CD5;&#x96C6;&#x5408;&#xFF0C;tcp&#x548C;udp&#x7684;ops&#x5206;&#x522B;&#x5982;&#x4E0B;&#xFF1A;
+const struct proto_ops inet_stream_ops = {
+    .sendmsg       = inet_sendmsg,
+    .recvmsg       = inet_recvmsg,
+}
+const struct proto_ops inet_dgram_ops = {
+    .sendmsg       = inet_sendmsg,
+    .recvmsg       = inet_recvmsg,
+}
+
+struct socket&#x7684;sk.sk_prot&#x53C8;&#x5B9A;&#x4E49;&#x4E86;&#x4E8C;&#x7EA7;&#x5904;&#x7406;&#x51FD;&#x6570;&#xFF0C;UDP&#x7684;sk_prot&#x5982;&#x4E0B;&#xFF1A;
+struct proto udp_prot = {
+    .name          = &quot;UDP&quot;,
+    .owner         = THIS_MODULE,
+    .close         = udp_lib_close,
+    .connect       = ip4_datagram_connect,
+    ...
+    .sendmsg       = udp_sendmsg,
+    .recvmsg       = udp_recvmsg,
+    .sendpage      = udp_sendpage,
+}
+
+recvfrom&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x6D41;&#x7A0B;&#x5982;&#x4E0B;&#xFF1A;
+SYSC_recvfrom()
+|-sock_recvmsg(sock, &amp;msg, iov_iter_count(&amp;msg.msg_iter), flags)
+  |-sock_recvmsg_nosec(sock, msg, size, flags)
+    |-sock-&gt;ops-&gt;recvmsg(sock, msg, size, flags) // &#x8FD9;&#x91CC;&#x5373;&#x662F;inet_recvmsg
+      |-inet_recvmsg(sock, msg, size, flags)
+        |-sk-&gt;sk_prot-&gt;recvmsg(sk, msg, size, flags &amp; MSG_DONTWAIT, flags &amp; ~MSG_DONTWAIT, &amp;addr_len)
+          |-udp_recvmsg(sk, msg, size, noblock, flags, &amp;addr_len)
+            |-__skb_recv_datagram(sk, flags | (noblock ? MSG_DONTWAIT : 0), &amp;peeked, &amp;off, &amp;err)
+              |-__skb_try_recv_datagram(sk, flags, peeked, off, err, &amp;last) // &#x6709;&#x6570;&#x636E;&#x76F4;&#x63A5;&#x53D6;
+              |-__skb_wait_for_more_packets(sk, err, &amp;timeo, last)          // &#x6CA1;&#x6570;&#x636E;&#xFF0C;&#x8FDB;&#x7A0B;&#x8FDB;&#x5165;&#x7761;&#x7720;
 </code></pre>
                                 
                                 </section>
@@ -335,7 +377,7 @@ inet_protos&#x4E2D;&#x4FDD;&#x5B58;&#x7740;tcp_rcv()&#x548C;udp_rcv()&#x7684;&#x
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"previous":{"title":"环境搭建","level":"1.2","depth":1,"path":"docs/environment-construction.md","ref":"docs/environment-construction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-02.md","mtime":"2022-09-23T07:25:22.379Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-23T07:25:47.726Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"previous":{"title":"环境搭建","level":"1.2","depth":1,"path":"docs/environment-construction.md","ref":"docs/environment-construction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-02.md","mtime":"2022-09-23T09:27:48.017Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-23T09:28:10.731Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
