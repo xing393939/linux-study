@@ -24,16 +24,6 @@ socket(AF_INET, SOCK_DGRAM, 0)                      // 创建UDP的socket
 
 #### 内核和用户进程协作之阻塞方式
 ```
-sk_wait_data(struct sock * sk, long * timeo, const struct sk_buff * skb) (\home\ubuntu\linux-4.6.2\net\core\sock.c:2028)
-tcp_recvmsg(struct sock * sk, struct msghdr * msg, size_t len, int nonblock, int flags, int * addr_len) (\home\ubuntu\linux-4.6.2\net\ipv4\tcp.c:1758)
-inet_recvmsg(struct socket * sock, struct msghdr * msg, size_t size, int flags) (\home\ubuntu\linux-4.6.2\net\ipv4\af_inet.c:771)
-sock_recvmsg_nosec() (\home\ubuntu\linux-4.6.2\net\socket.c:714)
-sock_recvmsg(struct socket * sock, struct msghdr * msg, size_t size, int flags) (\home\ubuntu\linux-4.6.2\net\socket.c:722)
-sock_read_iter(struct kiocb * iocb, struct iov_iter * to) (\home\ubuntu\linux-4.6.2\net\socket.c:799)
-new_sync_read(struct file * filp, char * buf, size_t len, loff_t * ppos) (\home\ubuntu\linux-4.6.2\fs\read_write.c:462)
-__vfs_read(struct file * file, char * buf, size_t count, loff_t * pos) (\home\ubuntu\linux-4.6.2\fs\read_write.c:474)
-vfs_read(struct file * file, char * buf, size_t count, loff_t * pos) (\home\ubuntu\linux-4.6.2\fs\read_write.c:494)
-
 read(fd, buf, 1024)        // 读取tcp socket上的数据
 |-SYSC_read(fd, buf, 1024)
   |-vfs_read(f.file, buf, count, &pos)
