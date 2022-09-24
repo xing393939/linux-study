@@ -1,0 +1,292 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>第3章-内核是如何与用户进程协作的 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="chapter-02.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">目录</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="environment-construction.html">
+            
+                <a href="environment-construction.html">
+            
+                    
+                    环境搭建
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="chapter-02.html">
+            
+                <a href="chapter-02.html">
+            
+                    
+                    第2章-内核是如何接收网络包的
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4" data-path="chapter-03.html">
+            
+                <a href="chapter-03.html">
+            
+                    
+                    第3章-内核是如何与用户进程协作的
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >第3章-内核是如何与用户进程协作的</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="&#x7B2C;3&#x7AE0;-&#x5185;&#x6838;&#x662F;&#x5982;&#x4F55;&#x4E0E;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x7684;">&#x7B2C;3&#x7AE0;-&#x5185;&#x6838;&#x662F;&#x5982;&#x4F55;&#x4E0E;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x7684;</h3>
+<h4 id="socket&#x7684;&#x76F4;&#x63A5;&#x521B;&#x5EFA;">socket&#x7684;&#x76F4;&#x63A5;&#x521B;&#x5EFA;</h4>
+<pre><code>socket&#x7684;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x5982;&#x4E0B;
+inet_create(struct net * net, struct socket * sock, int protocol, int kern) (\home\ubuntu\linux-4.6.2\net\ipv4\af_inet.c:263)
+__sock_create(struct net * net, int family, int type, int protocol, struct socket ** res, int kern) (\home\ubuntu\linux-4.6.2\net\socket.c:1160)
+sock_create(int family, int type, int protocol, struct socket ** res) (\home\ubuntu\linux-4.6.2\net\socket.c:1200)
+
+socket(AF_INET, SOCK_DGRAM, 0) // &#x521B;&#x5EFA;UDP&#x7684;socket
+|-SYSC_socket(family = 2, type = 2, protocol = 0)
+  |-sock_create(family, type, protocol, &amp;sock)
+    |-__sock_create(net, family, type, protocol, res, 0)
+      |-sock = sock_alloc()                         // &#x521B;&#x5EFA;socket&#x5BF9;&#x8C61;
+      |-pf = rcu_dereference(net_families[family])  // &#x901A;&#x8FC7;family&#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;&#x534F;&#x8BAE;&#x65CF;
+      |-pf-&gt;create(net, sock, protocol, kern)       // &#x8C03;&#x7528;&#x534F;&#x8BAE;&#x65CF;&#x7684;create&#x51FD;&#x6570;&#xFF0C;&#x5373;inet_create
+        |-inet_create(net, sock, protocol, kern)
+          |-sock-&gt;ops = answer-&gt;ops;                // &#x8BBE;&#x7F6E;socket-&gt;ops
+          |-answer_prot = answer-&gt;prot;             // answer_prot=udp_prot
+          |-sk = sk_alloc(net, PF_INET, GFP_KERNEL, answer_prot, kern)  // &#x521B;&#x5EFA;sk&#x5BF9;&#x8C61;&#xFF0C;&#x5E76;&#x8BBE;&#x7F6E;sk.sk_prot=answer_prot
+          |-sock_init_data(sock, sk)
+            |-sk-&gt;sk_data_ready    = sock_def_readable // &#x8F6F;&#x4E2D;&#x65AD;&#x6536;&#x5230;&#x6570;&#x636E;&#x5305;&#x4F1A;&#x8C03;&#x7528;&#x6B64;&#x51FD;&#x6570;&#x5524;&#x9192;&#x7B49;&#x5F85;&#x7684;&#x8FDB;&#x7A0B;
+</code></pre><h4 id="&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;&#x963B;&#x585E;&#x65B9;&#x5F0F;">&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;&#x963B;&#x585E;&#x65B9;&#x5F0F;</h4>
+<h4 id="&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;">&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;</h4>
+<h4 id="&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;">&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;</h4>
+<h4 id="&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll">&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll</h4>
+<h4 id="epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;">epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;</h4>
+<h4 id="&#x4E3A;epoll&#x6DFB;&#x52A0;socket">&#x4E3A;epoll&#x6DFB;&#x52A0;socket</h4>
+<h4 id="epollwait&#x4E4B;&#x7B49;&#x5F85;&#x63A5;&#x6536;">epoll_wait&#x4E4B;&#x7B49;&#x5F85;&#x63A5;&#x6536;</h4>
+<h4 id="&#x6570;&#x636E;&#x6765;&#x4E86;">&#x6570;&#x636E;&#x6765;&#x4E86;</h4>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="chapter-02.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 第2章-内核是如何接收网络包的">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.4","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-24T03:11:13.701Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-24T03:11:38.922Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
