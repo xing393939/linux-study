@@ -193,7 +193,7 @@ inet_create(struct net * net, struct socket * sock, int protocol, int kern) (\ho
 __sock_create(struct net * net, int family, int type, int protocol, struct socket ** res, int kern) (\home\ubuntu\linux-4.6.2\net\socket.c:1160)
 sock_create(int family, int type, int protocol, struct socket ** res) (\home\ubuntu\linux-4.6.2\net\socket.c:1200)
 
-socket(AF_INET, SOCK_DGRAM, 0) // &#x521B;&#x5EFA;UDP&#x7684;socket
+socket(AF_INET, SOCK_DGRAM, 0)                      // &#x521B;&#x5EFA;UDP&#x7684;socket
 |-SYSC_socket(family = 2, type = 2, protocol = 0)
   |-sock_create(family, type, protocol, &amp;sock)
     |-__sock_create(net, family, type, protocol, res, 0)
@@ -207,7 +207,20 @@ socket(AF_INET, SOCK_DGRAM, 0) // &#x521B;&#x5EFA;UDP&#x7684;socket
           |-sock_init_data(sock, sk)
             |-sk-&gt;sk_data_ready    = sock_def_readable // &#x8F6F;&#x4E2D;&#x65AD;&#x6536;&#x5230;&#x6570;&#x636E;&#x5305;&#x4F1A;&#x8C03;&#x7528;&#x6B64;&#x51FD;&#x6570;&#x5524;&#x9192;&#x7B49;&#x5F85;&#x7684;&#x8FDB;&#x7A0B;
 </code></pre><h4 id="&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;&#x963B;&#x585E;&#x65B9;&#x5F0F;">&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;&#x963B;&#x585E;&#x65B9;&#x5F0F;</h4>
-<h4 id="&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;">&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;</h4>
+<pre><code>read(fd, buf, 1024)        // &#x8BFB;&#x53D6;tcp socket&#x4E0A;&#x7684;&#x6570;&#x636E;
+|-SYSC_read(fd, buf, 1024)
+  |-vfs_read(f.file, buf, count, &amp;pos)
+    |-__vfs_read(file, buf, count, pos)
+      |-new_sync_read(file, buf, count, pos)
+        |-filp-&gt;f_op-&gt;read_iter(&amp;kiocb, &amp;iter)
+          |-sock_recvmsg(sock, &amp;msg, iov_iter_count(to), msg.msg_flags)
+            |-sock_recvmsg_nosec(sock, msg, size, flags)
+              |-sock-&gt;ops-&gt;recvmsg(sock, msg, size, flags) // &#x8FD9;&#x91CC;&#x5373;&#x662F;inet_recvmsg
+                |-inet_recvmsg(sock, msg, size, flags)
+                  |-sk-&gt;sk_prot-&gt;recvmsg(sk, msg, size, flags &amp; MSG_DONTWAIT, flags &amp; ~MSG_DONTWAIT, &amp;addr_len)
+                    |-tcp_recvmsg(sk, msg, size, noblock, flags, &amp;addr_len) 
+                      |-sk_wait_data(sk, &amp;timeo, last)     // &#x6CA1;&#x6709;&#x6536;&#x5230;&#x8DB3;&#x591F;&#x6570;&#x636E;&#xFF0C;&#x963B;&#x585E;&#x5F53;&#x524D;&#x8FDB;&#x7A0B;
+</code></pre><h4 id="&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;">&#x7B49;&#x5F85;&#x63A5;&#x6536;&#x6D88;&#x606F;</h4>
 <h4 id="&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;">&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;</h4>
 <h4 id="&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll">&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll</h4>
 <h4 id="epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;">epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;</h4>
@@ -253,7 +266,7 @@ socket(AF_INET, SOCK_DGRAM, 0) // &#x521B;&#x5EFA;UDP&#x7684;socket
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.4","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-24T03:11:13.701Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-24T03:11:38.922Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.4","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.3","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-24T03:39:30.191Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-24T03:40:05.266Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
