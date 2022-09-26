@@ -37,11 +37,25 @@ read(fd, buf, 1024)        // 读取tcp socket上的数据
                   |-sk->sk_prot->recvmsg(sk, msg, size, flags & MSG_DONTWAIT, flags & ~MSG_DONTWAIT, &addr_len)
                     |-tcp_recvmsg(sk, msg, size, noblock, flags, &addr_len) 
                       |-sk_wait_data(sk, &timeo, last)     // 没有收到足够数据，阻塞当前进程
+
+sk_wait_data是如何阻塞当前进程的
+#define DEFINE_WAIT_FUNC(name,function) wait_queue_t name = { .private = current, .func = function, .task_list = LIST_HEAD_INIT((name).task_list) }
+
+sk_wait_data(sk, &timeo, skb)
+|-DEFINE_WAIT(wait) // 展开为：DEFINE_WAIT_FUNC(wait, autoremove_wake_function)，创建一个等待对象wait
+|-sk_sleep(sk)      // 获取当前socket的等待列表
+|-prepare_to_wait(sk_sleep(sk), &wait, TASK_INTERRUPTIBLE) // 把wait插入等待列表
+|-sk_wait_event(sk, timeo, condition)                      // 让出CPU，进程将进入睡眠状态
+  |-schedule_timeout(timeo)
+    |-schedule()
 ```
 
-#### 等待接收消息
-
 #### 软中断模块
+```
+tcp的软中断在tcp_v4_rcv后会执行tcp_queue_rcv和sock_def_readable
+
+
+```
 
 #### 内核和用户进程协作之epoll
 

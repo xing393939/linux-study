@@ -143,6 +143,16 @@ ip_rcv(skb, skb->dev, pt_prev, orig_dev)
 inet_protos中保存着tcp_rcv()和udp_rcv()的函数地址，可以把包传给传输层
 ```
 
+#### TCP协议层处理
+```
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&tcp_hashinfo, skb, __tcp_hdrlen(th), th->source, th->dest)
+|-tcp_v4_do_rcv(sk, skb)
+  |-tcp_rcv_established(sk, skb, tcp_hdr(skb), skb->len)  // tcp是established状态
+    |-tcp_queue_rcv(sk, skb, tcp_header_len, &fragstolen) // 把数据放在socket接收队列
+    |-sk->sk_data_ready(sk)                               // 即sock_def_readable，唤醒等待队列上的进程
+```
+
 #### UDP协议层处理
 ```
 udp_rcv(skb)
