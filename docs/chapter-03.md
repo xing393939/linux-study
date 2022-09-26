@@ -39,7 +39,11 @@ read(fd, buf, 1024)        // 读取tcp socket上的数据
                       |-sk_wait_data(sk, &timeo, last)     // 没有收到足够数据，阻塞当前进程
 
 sk_wait_data是如何阻塞当前进程的
-#define DEFINE_WAIT_FUNC(name,function) wait_queue_t name = { .private = current, .func = function, .task_list = LIST_HEAD_INIT((name).task_list) }
+#define DEFINE_WAIT_FUNC(name,function) wait_queue_t name = { 
+    .private = current, 
+    .func = function, 
+    .task_list = LIST_HEAD_INIT((name).task_list) 
+}
 
 sk_wait_data(sk, &timeo, skb)
 |-DEFINE_WAIT(wait) // 展开为：DEFINE_WAIT_FUNC(wait, autoremove_wake_function)，创建一个等待对象wait
@@ -53,8 +57,19 @@ sk_wait_data(sk, &timeo, skb)
 #### 软中断模块
 ```
 tcp的软中断在tcp_v4_rcv后会执行tcp_queue_rcv和sock_def_readable
+tcp_queue_rcv(sk, skb, tcp_header_len, &fragstolen)
+|-__skb_queue_tail(&sk->sk_receive_queue, skb)      // 把skb放在sk的接收链表的尾部
 
+sock_def_readable(sk)
+|-wq = rcu_dereference(sk->sk_wq)                   // 获取sk->sk_wq
+|-wake_up_interruptible_sync_poll(&wq->wait, key)   // 即__wake_up_sync_key
+  |-__wake_up_sync_key(&wq->wait, mode=1, nr_exclusive=1, key)
+    |-__wake_up_common(q, mode, nr_exclusive, wake_flags, key)
+      |-curr->func(curr, mode, wake_flags, key)     // 在define DEFINE_WAIT语句中，curr->func设置为了autoremove_wake_function
 
+autoremove_wake_function(wait, mode, sync, key)
+|-default_wake_function(wait, mode, sync, key)
+  |-try_to_wake_up(curr->private, mode, wake_flags) // 唤醒因为等待而被阻塞的进程
 ```
 
 #### 内核和用户进程协作之epoll

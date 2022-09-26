@@ -159,7 +159,10 @@ udp_rcv(skb)
 |-__udp4_lib_rcv(skb, &udp_table, IPPROTO_UDP)
   |-sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable) // 找到对应的socket
   |-udp_queue_rcv_skb(sk, skb)          
-    |-__udp_queue_rcv_skb(sk, skb)           // 用户没有正在读sk，放在sk的接收缓冲上
+    |-__udp_queue_rcv_skb(sk, skb)           // 用户没有正在读sk
+      |-sock_queue_rcv_skb(sk, skb)
+        |-__skb_queue_tail(list, skb)        // 把数据放在socket接收队列
+        |-sk->sk_data_ready(sk)              // 即sock_def_readable，唤醒等待队列上的进程
     |-sk_add_backlog(sk, skb, sk->sk_rcvbuf) // 用户正在读sk，放在backlog队列
 ```
 
