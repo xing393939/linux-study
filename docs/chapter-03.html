@@ -235,7 +235,11 @@ socket(AF_INET, SOCK_DGRAM, 0)                      // &#x521B;&#x5EFA;UDP&#x768
                       |-sk_wait_data(sk, &amp;timeo, last)     // &#x6CA1;&#x6709;&#x6536;&#x5230;&#x8DB3;&#x591F;&#x6570;&#x636E;&#xFF0C;&#x963B;&#x585E;&#x5F53;&#x524D;&#x8FDB;&#x7A0B;
 
 sk_wait_data&#x662F;&#x5982;&#x4F55;&#x963B;&#x585E;&#x5F53;&#x524D;&#x8FDB;&#x7A0B;&#x7684;
-#define DEFINE_WAIT_FUNC(name,function) wait_queue_t name = { .private = current, .func = function, .task_list = LIST_HEAD_INIT((name).task_list) }
+#define DEFINE_WAIT_FUNC(name,function) wait_queue_t name = { 
+    .private = current, 
+    .func = function, 
+    .task_list = LIST_HEAD_INIT((name).task_list) 
+}
 
 sk_wait_data(sk, &amp;timeo, skb)
 |-DEFINE_WAIT(wait) // &#x5C55;&#x5F00;&#x4E3A;&#xFF1A;DEFINE_WAIT_FUNC(wait, autoremove_wake_function)&#xFF0C;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x7B49;&#x5F85;&#x5BF9;&#x8C61;wait
@@ -246,6 +250,19 @@ sk_wait_data(sk, &amp;timeo, skb)
     |-schedule()
 </code></pre><h4 id="&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;">&#x8F6F;&#x4E2D;&#x65AD;&#x6A21;&#x5757;</h4>
 <pre><code>tcp&#x7684;&#x8F6F;&#x4E2D;&#x65AD;&#x5728;tcp_v4_rcv&#x540E;&#x4F1A;&#x6267;&#x884C;tcp_queue_rcv&#x548C;sock_def_readable
+tcp_queue_rcv(sk, skb, tcp_header_len, &amp;fragstolen)
+|-__skb_queue_tail(&amp;sk-&gt;sk_receive_queue, skb)      // &#x628A;skb&#x653E;&#x5728;sk&#x7684;&#x63A5;&#x6536;&#x94FE;&#x8868;&#x7684;&#x5C3E;&#x90E8;
+
+sock_def_readable(sk)
+|-wq = rcu_dereference(sk-&gt;sk_wq)                   // &#x83B7;&#x53D6;sk-&gt;sk_wq
+|-wake_up_interruptible_sync_poll(&amp;wq-&gt;wait, key)   // &#x5373;__wake_up_sync_key
+  |-__wake_up_sync_key(&amp;wq-&gt;wait, mode=1, nr_exclusive=1, key)
+    |-__wake_up_common(q, mode, nr_exclusive, wake_flags, key)
+      |-curr-&gt;func(curr, mode, wake_flags, key)     // &#x5728;define DEFINE_WAIT&#x8BED;&#x53E5;&#x4E2D;&#xFF0C;curr-&gt;func&#x8BBE;&#x7F6E;&#x4E3A;&#x4E86;autoremove_wake_function
+
+autoremove_wake_function(wait, mode, sync, key)
+|-default_wake_function(wait, mode, sync, key)
+  |-try_to_wake_up(curr-&gt;private, mode, wake_flags) // &#x5524;&#x9192;&#x56E0;&#x4E3A;&#x7B49;&#x5F85;&#x800C;&#x88AB;&#x963B;&#x585E;&#x7684;&#x8FDB;&#x7A0B;
 </code></pre><h4 id="&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll">&#x5185;&#x6838;&#x548C;&#x7528;&#x6237;&#x8FDB;&#x7A0B;&#x534F;&#x4F5C;&#x4E4B;epoll</h4>
 <h4 id="epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;">epoll&#x5185;&#x6838;&#x5BF9;&#x8C61;&#x7684;&#x521B;&#x5EFA;</h4>
 <h4 id="&#x4E3A;epoll&#x6DFB;&#x52A0;socket">&#x4E3A;epoll&#x6DFB;&#x52A0;socket</h4>
@@ -290,7 +307,7 @@ sk_wait_data(sk, &amp;timeo, skb)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-26T03:20:38.262Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-26T03:21:08.243Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-26T07:30:30.816Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-26T07:30:54.036Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
