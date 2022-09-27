@@ -147,14 +147,25 @@ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events, int,
       |-schedule()
         |-__schedule(false)
           |-context_switch(rq, prev, next)
+  |-ep_send_events(ep, events, maxevents)                 // 休眠的进程被唤醒：transfer events to user space
 ```
 
 #### 数据来了
 ```
+硬中断->软中断->tcp_v4_rcv->sk->sk_data_ready(sk)，即sock_def_readable
+sock_def_readable再执行curr->func(curr, mode, wake_flags, key)，这里的func在ep_insert时设置成了ep_poll_callback 
 
+ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key)
+|-epi = ep_item_from_wait(wait)                          // 获取epitem
+|-ep = epi->ep                                           // 获取对应的eventpoll结构体
+|-list_add_tail(&epi->rdllink, &ep->rdllist)             // 把epitem加到eventpoll的就绪队列
+|-if (waitqueue_active(&ep->wq)) wake_up_locked(&ep->wq) // 如果eventpoll等待队列有等待进程，唤醒它
+  |-__wake_up_locked(&ep->wq, mode, nr)
+    |--__wake_up_common(q, mode, nr, 0, NULL)
+       |-curr->func(curr, mode, wake_flags, key)         // 这里的func在epoll_wait时被设置为default_wake_function
+
+default_wake_function(curr, mode, wake_flags, key)
+|-try_to_wake_up(curr->private, mode, wake_flags)        // 这里的curr->private就是休眠的进程
 ```
-
-
-
 
 
