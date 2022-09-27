@@ -72,12 +72,89 @@ autoremove_wake_function(wait, mode, sync, key)
   |-try_to_wake_up(curr->private, mode, wake_flags) // 唤醒因为等待而被阻塞的进程
 ```
 
-#### 内核和用户进程协作之epoll
+#### accept创建新socket
+![img](../images/struct_socket2.png)
+
+```
+static const struct file_operations socket_file_ops = {
+	.read_iter =	sock_read_iter,
+	.write_iter =	sock_write_iter,
+	.poll =		sock_poll,
+	.release =	sock_close,
+};
+
+SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int __user *, upeer_addrlen, int, flags)
+|-sock = sockfd_lookup_light(fd, &err, &fput_needed)    // 通过fd找到监听的socket
+|-newsock = sock_alloc()                                // 创建一个新的socket
+|-newsock->type = sock->type
+|-newsock->ops = sock->ops                              // 直接把监听的socket的ops方法赋值给新的socket
+|-newfile = sock_alloc_file(newsock, flags, sock->sk->sk_prot_creator->name)
+  |-alloc_file(&path, mod, &socket_file_ops)
+    |-file->f_op = fop                                  // file.f_op即是socket_file_ops
+|-sock->ops->accept(sock, newsock, sock->file->f_flags) // 即是inet_accept
+  |-inet_accept(sock, newsock, sock->file->f_flags)
+    |-sk1 = sock->sk
+    |-sk1->sk_prot->accept(sk1, flags, &err)            // 即是inet_csk_accept
+      |-inet_csk_accept(sk1, flags, &err)               
+        |-reqsk_queue_remove(queue, sk1)                // 握手队列里直接获取创建好的sock
+|-fd_install(newfd, newfile)                            // 把newfile加到当前进程的打开文件列表
+```
 
 #### epoll内核对象的创建
+![img](../images/struct_eventpoll.png)
 
-#### 为epoll添加socket
+```
+SYSCALL_DEFINE1(epoll_create1, int, flags)
+|-ep_alloc(&ep)
+  |-ep = kzalloc(sizeof(*ep), GFP_KERNEL)    // 申请ep的内存
+  |-init_waitqueue_head(&ep->wq)             // 初始化等待队列
+  |-INIT_LIST_HEAD(&ep->rdllist)             // 初始化就绪列表
+  |-ep->rbr = RB_ROOT                        // 初始化红黑树指针   
+```
+
+#### epoll添加socket
+```
+SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd, struct epoll_event __user *, event)
+|-ep_insert(ep, &epds, tf.file, fd, full_check)
+  |-epi = kmem_cache_alloc(epi_cache, GFP_KERNEL)    // 分配并初始化epitem
+  |-epq.epi = epi
+  |-init_poll_funcptr(&epq.pt, ep_ptable_queue_proc)
+  |-ep_item_poll(epi, &epq.pt)                       // 设置回调是ep_poll_callback
+    |-epi->ffd.file->f_op->poll(epi->ffd.file, pt)   // 即是sock_poll
+      |-sock_poll(epi->ffd.file, pt)
+        |-sock->ops->poll(file, sock, wait)          // 即是tcp_poll
+          |-tcp_poll(file, sock, wait)
+            |-sock_poll_wait(file, sk_sleep(sk), wait)
+              |-poll_wait(filp, wait_address, p)
+                |-p->_qproc(filp, wait_address, p)   // 即是ep_ptable_queue_proc
+                  |-ep_ptable_queue_proc(filp, wait_address, p)
+                    |-init_waitqueue_func_entry(&pwq->wait, ep_poll_callback) // 新建一个等待项，回调是ep_poll_callback
+                    |-add_wait_queue(whead, &pwq->wait)                       // 插入sock的等待队列
+  |-ep_rbtree_insert(ep, epi)                        // 插入红黑树
+```
 
 #### epoll_wait之等待接收
+```
+SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events, int, maxevents, int, timeout)
+|-ep_poll(ep, events, maxevents, timeout)
+  |-ep_events_available(ep)                               // 检查就绪队列上有没有事件就绪
+  |-init_waitqueue_entry(&wait, current)                  // 没有就定义等待事件
+    |-wait->func = default_wake_function
+  |-__add_wait_queue_exclusive(&ep->wq, &wait)            // 把等待事件挂在ep->wq上
+    |-__add_wait_queue(&ep->wq, &wait)
+  |-schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS) // 让出CPU，主动进入休眠
+    |-schedule_hrtimeout_range_clock(expires, delta, mode, CLOCK_MONOTONIC)
+      |-schedule()
+        |-__schedule(false)
+          |-context_switch(rq, prev, next)
+```
 
 #### 数据来了
+```
+
+```
+
+
+
+
+
