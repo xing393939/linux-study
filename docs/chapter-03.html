@@ -326,9 +326,22 @@ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int 
       |-schedule()
         |-__schedule(false)
           |-context_switch(rq, prev, next)
+  |-ep_send_events(ep, events, maxevents)                 // &#x4F11;&#x7720;&#x7684;&#x8FDB;&#x7A0B;&#x88AB;&#x5524;&#x9192;&#xFF1A;transfer events to user space
 </code></pre><h4 id="&#x6570;&#x636E;&#x6765;&#x4E86;">&#x6570;&#x636E;&#x6765;&#x4E86;</h4>
-<pre><code>
+<pre><code>&#x786C;&#x4E2D;&#x65AD;-&gt;&#x8F6F;&#x4E2D;&#x65AD;-&gt;tcp_v4_rcv-&gt;sk-&gt;sk_data_ready(sk)&#xFF0C;&#x5373;sock_def_readable
+sock_def_readable&#x518D;&#x6267;&#x884C;curr-&gt;func(curr, mode, wake_flags, key)&#xFF0C;&#x8FD9;&#x91CC;&#x7684;func&#x5728;ep_insert&#x65F6;&#x8BBE;&#x7F6E;&#x6210;&#x4E86;ep_poll_callback 
 
+ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key)
+|-epi = ep_item_from_wait(wait)                          // &#x83B7;&#x53D6;epitem
+|-ep = epi-&gt;ep                                           // &#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;eventpoll&#x7ED3;&#x6784;&#x4F53;
+|-list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist)             // &#x628A;epitem&#x52A0;&#x5230;eventpoll&#x7684;&#x5C31;&#x7EEA;&#x961F;&#x5217;
+|-if (waitqueue_active(&amp;ep-&gt;wq)) wake_up_locked(&amp;ep-&gt;wq) // &#x5982;&#x679C;eventpoll&#x7B49;&#x5F85;&#x961F;&#x5217;&#x6709;&#x7B49;&#x5F85;&#x8FDB;&#x7A0B;&#xFF0C;&#x5524;&#x9192;&#x5B83;
+  |-__wake_up_locked(&amp;ep-&gt;wq, mode, nr)
+    |--__wake_up_common(q, mode, nr, 0, NULL)
+       |-curr-&gt;func(curr, mode, wake_flags, key)         // &#x8FD9;&#x91CC;&#x7684;func&#x5728;epoll_wait&#x65F6;&#x88AB;&#x8BBE;&#x7F6E;&#x4E3A;default_wake_function
+
+default_wake_function(curr, mode, wake_flags, key)
+|-try_to_wake_up(curr-&gt;private, mode, wake_flags)        // &#x8FD9;&#x91CC;&#x7684;curr-&gt;private&#x5C31;&#x662F;&#x4F11;&#x7720;&#x7684;&#x8FDB;&#x7A0B;
 </code></pre>
                                 
                                 </section>
@@ -368,7 +381,7 @@ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int 
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-27T07:35:28.120Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-27T07:36:03.708Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-27T08:15:03.204Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-27T08:15:26.801Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
