@@ -77,10 +77,10 @@ autoremove_wake_function(wait, mode, sync, key)
 
 ```
 static const struct file_operations socket_file_ops = {
-	.read_iter =	sock_read_iter,
-	.write_iter =	sock_write_iter,
-	.poll =		sock_poll,
-	.release =	sock_close,
+	.read_iter  = sock_read_iter,
+	.write_iter = sock_write_iter,
+	.poll       = sock_poll,
+	.release    = sock_close,
 };
 
 SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int __user *, upeer_addrlen, int, flags)

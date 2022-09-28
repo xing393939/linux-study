@@ -4,10 +4,10 @@
 ```
 // kernel/softirq.c
 struct smp_hotplug_thread softirq_threads = {
-	.store			    = &ksoftirqd,
-	.thread_should_run	= ksoftirqd_should_run,
-	.thread_fn		    = run_ksoftirqd,
-	.thread_comm		= "ksoftirqd/%u",
+	.store              = &ksoftirqd,
+	.thread_should_run  = ksoftirqd_should_run,
+	.thread_fn          = run_ksoftirqd,
+	.thread_comm        = "ksoftirqd/%u",
 }
 
 early_initcall(spawn_ksoftirqd)
@@ -51,13 +51,13 @@ struct pci_driver e1000_driver = {
 	.remove   = e1000_remove
 }
 struct net_device_ops e1000_netdev_ops = {
-	.ndo_open		= e1000_open,
-	.ndo_stop		= e1000_close,
-	.ndo_start_xmit		= e1000_xmit_frame,
-	.ndo_get_stats		= e1000_get_stats,
-	.ndo_set_rx_mode	= e1000_set_rx_mode,
+	.ndo_open           = e1000_open,
+	.ndo_stop           = e1000_close,
+	.ndo_start_xmit     = e1000_xmit_frame,
+	.ndo_get_stats      = e1000_get_stats,
+	.ndo_set_rx_mode    = e1000_set_rx_mode,
 	.ndo_set_mac_address= e1000_set_mac,
-	.ndo_tx_timeout		= e1000_tx_timeout,
+	.ndo_tx_timeout     = e1000_tx_timeout,
 }
 
 module_init(e1000_init_module)
