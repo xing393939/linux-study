@@ -281,10 +281,10 @@ autoremove_wake_function(wait, mode, sync, key)
 </code></pre><h4 id="accept&#x521B;&#x5EFA;&#x65B0;socket">accept&#x521B;&#x5EFA;&#x65B0;socket</h4>
 <p><img src="../images/struct_socket2.png" alt="img"></p>
 <pre><code>static const struct file_operations socket_file_ops = {
-    .read_iter =    sock_read_iter,
-    .write_iter =    sock_write_iter,
-    .poll =        sock_poll,
-    .release =    sock_close,
+    .read_iter  = sock_read_iter,
+    .write_iter = sock_write_iter,
+    .poll       = sock_poll,
+    .release    = sock_close,
 };
 
 SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int __user *, upeer_addrlen, int, flags)
@@ -400,7 +400,7 @@ default_wake_function(curr, mode, wake_flags, key)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"next":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-28T03:46:50.816Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-28T03:47:26.269Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"next":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},"previous":{"title":"第2章-内核是如何接收网络包的","level":"1.4","depth":1,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-03.md","mtime":"2022-09-28T03:54:45.416Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-28T03:55:11.546Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
