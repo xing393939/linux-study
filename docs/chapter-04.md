@@ -114,13 +114,56 @@ dst_neigh_output(dst, neigh, skb)
 ```
 
 #### 网络设备子系统
+```
+dev_queue_xmit(skb)
+|-__dev_queue_xmit(skb, NULL)
+  |-txq = netdev_pick_tx(dev, skb, accel_priv)       // 网卡有多个发送队列，这里选择一个
+  |-q = rcu_dereference_bh(txq->qdisc)               // 获取与队列相关联的排序规则
+  |-__dev_xmit_skb(skb, q, dev, txq)                 // 回环设备和隧道设备不会执行这里
+    |-q->enqueue(skb, q)                             // 加入发送队列
+    |-__qdisc_run(q)                                 // 开始发送
+      |-qdisc_restart(q, &packets)                   // 依次取包发送
+        |-skb = dequeue_skb(q, &validate, packets)
+        |-sch_direct_xmit(skb, q, dev, txq, ...)   
+          |-dev_hard_start_xmit(skb, dev, txq, &ret) // 调用驱动程序来发送数据
+      |-__netif_schedule(q)                          // 用户态的配额用尽，就触发一个软中断
+```
 
 #### 软中断调度
+```
+__netif_schedule(q)
+|-__netif_reschedule(q)
+  |-raise_softirq_irqoff(NET_TX_SOFTIRQ)             // 触发NET_TX_SOFTIRQ软中断，对应处理函数是net_tx_action
+
+net_tx_action(h)
+|-sd = this_cpu_ptr(&softnet_data)                   // 获取发送队列
+|-head = sd->output_queue                            // 获取发送队列
+|-qdisc_run(q)
+  |-__qdisc_run(q)                                   // 进入上一节的__qdisc_run(q)
+```
 
 #### e1000网卡驱动发送
+```
+dev_hard_start_xmit(skb, dev, txq, &ret)
+|-xmit_one(skb, dev, txq, next != NULL)
+  |-netdev_start_xmit(skb, dev, txq, more)
+    |-ops = dev->netdev_ops
+    |-ops->ndo_start_xmit(skb, dev)                    // 即是e1000_xmit_frame
+
+e1000_xmit_frame(skb, netdev)
+|-adapter = netdev_priv(netdev)
+|-tx_ring = adapter->tx_ring
+|-first = tx_ring->next_to_use                         // 获取TX Queue中下一个可用缓冲区信息
+|-e1000_tx_map(adapter, tx_ring, skb, first, ...)      // 准备给设备发送的数据 
+```
 
 #### RingBuffer内存回收
+```
+第二章讲过网卡发送数据后的硬中断触发NET_RX_SOFTIRQ软中断，进而进入net_rx_action，进而是e1000_clean
 
+e1000_clean(struct napi_struct *napi, int budget)
+|-e1000_clean_tx_irq(adapter, &adapter->tx_ring[0])   // 清理了skb，解除了DMA映射
+```
 
 
 
