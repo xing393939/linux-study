@@ -56,7 +56,7 @@ tcp_write_xmit(sk, mss_now, TCP_NAGLE_PUSH, 1, sk->sk_allocation)
   |-icsk->icsk_af_ops->queue_xmit(sk, skb, &inet->cork.fl) // 即是ip_queue_xmit
 ```
 
-#### 网络层发送处理　　
+#### 网络层发送处理
 ```
 ip_queue_xmit(sk, skb, &inet->cork.fl)
 |-rt = ip_route_output_ports(net, fl4, sk, ...)                        // 查看路由表，并设置到skb->_skb_refdst
@@ -76,15 +76,50 @@ ip_queue_xmit(sk, skb, &inet->cork.fl)
               |-dst_neigh_output(dst, neigh, skb)                      // 向下层传递
 ```
 
-#### 邻居子系统　　
+#### 邻居子系统
+```
+struct neigh_table {
+	struct neigh_hash_table *nht;  
+};
 
-#### 网络设备子系统　
+struct neigh_hash_table {
+	struct neighbour **hash_buckets;
+}
 
-#### 软中断调度　　
+struct neighbour {
+	struct neighbour  *next;  // 链表指针
+	struct net_device *dev;   // 设备
+	unsigned char     ha[32]  // mac地址
+};
 
-#### e1000网卡驱动发送　　
+__ipv4_neigh_lookup_noref(dev, nexthop)
+|-___neigh_lookup_noref(&arp_tbl, neigh_key_eq32, arp_hashfn, &key, dev)
+  |-nht = rcu_dereference_bh(tbl->nht)
+  |-hash_val = hash(pkey, dev, nht->hash_rnd) >> (32 - nht->hash_shift)
+  |-for (n = rcu_dereference_bh(nht->hash_buckets[hash_val]); n != NULL; n = rcu_dereference_bh(n->next)) {
+        if (n->dev == dev && key_eq(n, pkey)) return n
+    }
 
-#### RingBuffer内存回收　　
+__neigh_create(&arp_tbl, &nexthop, dev, false)
+|-n = neigh_alloc(tbl, dev)                          // 创建
+|-n->dev = dev                                       // 赋值
+|-rcu_assign_pointer(nht->hash_buckets[hash_val], n) // 添加到nht->hash_buckets哈希表中
+
+dst_neigh_output(dst, neigh, skb)
+|-n->output(n, skb)                                  // 即是neigh_resolve_output
+  |-neigh_resolve_output(neigh, skb)                    
+    |-neigh_event_send(neigh, skb)                   // 这里可能发送arp请求 
+    |-dev_hard_header(skb, dev, neigh->ha, ...)      // 设置mac头
+    |-dev_queue_xmit(skb)                            // 向下层传递  
+```
+
+#### 网络设备子系统
+
+#### 软中断调度
+
+#### e1000网卡驱动发送
+
+#### RingBuffer内存回收
 
 
 
