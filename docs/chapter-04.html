@@ -259,7 +259,7 @@ tcp_write_xmit(sk, mss_now, TCP_NAGLE_PUSH, 1, sk-&gt;sk_allocation)
   |-th-&gt;dest        = inet-&gt;inet_dport                     // &#x8BBE;&#x7F6E;skb&#x7684;tcp&#x5934;
   |-icsk = inet_csk(sk)
   |-icsk-&gt;icsk_af_ops-&gt;queue_xmit(sk, skb, &amp;inet-&gt;cork.fl) // &#x5373;&#x662F;ip_queue_xmit
-</code></pre><h4 id="&#x7F51;&#x7EDC;&#x5C42;&#x53D1;&#x9001;&#x5904;&#x7406;&#x3000;&#x3000;">&#x7F51;&#x7EDC;&#x5C42;&#x53D1;&#x9001;&#x5904;&#x7406;&#x3000;&#x3000;</h4>
+</code></pre><h4 id="&#x7F51;&#x7EDC;&#x5C42;&#x53D1;&#x9001;&#x5904;&#x7406;">&#x7F51;&#x7EDC;&#x5C42;&#x53D1;&#x9001;&#x5904;&#x7406;</h4>
 <pre><code>ip_queue_xmit(sk, skb, &amp;inet-&gt;cork.fl)
 |-rt = ip_route_output_ports(net, fl4, sk, ...)                        // &#x67E5;&#x770B;&#x8DEF;&#x7531;&#x8868;&#xFF0C;&#x5E76;&#x8BBE;&#x7F6E;&#x5230;skb-&gt;_skb_refdst
 |-iph = ip_hdr(skb)                                                    // &#x8BBE;&#x7F6E;ip&#x5934; 
@@ -276,11 +276,44 @@ tcp_write_xmit(sk, mss_now, TCP_NAGLE_PUSH, 1, sk-&gt;sk_allocation)
               |-neigh = __ipv4_neigh_lookup_noref(dev, nexthop)        // &#x6839;&#x636E;&#x4E0B;&#x4E00;&#x8DF3;ip&#x67E5;&#x627E;&#x90BB;&#x5C45;&#x9879;
               |-neigh = __neigh_create(&amp;arp_tbl, &amp;nexthop, dev, false) // &#x627E;&#x4E0D;&#x5230;&#x5C31;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;
               |-dst_neigh_output(dst, neigh, skb)                      // &#x5411;&#x4E0B;&#x5C42;&#x4F20;&#x9012;
-</code></pre><h4 id="&#x90BB;&#x5C45;&#x5B50;&#x7CFB;&#x7EDF;&#x3000;&#x3000;">&#x90BB;&#x5C45;&#x5B50;&#x7CFB;&#x7EDF;&#x3000;&#x3000;</h4>
-<h4 id="&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;&#x3000;">&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;&#x3000;</h4>
-<h4 id="&#x8F6F;&#x4E2D;&#x65AD;&#x8C03;&#x5EA6;&#x3000;&#x3000;">&#x8F6F;&#x4E2D;&#x65AD;&#x8C03;&#x5EA6;&#x3000;&#x3000;</h4>
-<h4 id="e1000&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x53D1;&#x9001;&#x3000;&#x3000;">e1000&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x53D1;&#x9001;&#x3000;&#x3000;</h4>
-<h4 id="ringbuffer&#x5185;&#x5B58;&#x56DE;&#x6536;&#x3000;&#x3000;">RingBuffer&#x5185;&#x5B58;&#x56DE;&#x6536;&#x3000;&#x3000;</h4>
+</code></pre><h4 id="&#x90BB;&#x5C45;&#x5B50;&#x7CFB;&#x7EDF;">&#x90BB;&#x5C45;&#x5B50;&#x7CFB;&#x7EDF;</h4>
+<pre><code>struct neigh_table {
+    struct neigh_hash_table *nht;  
+};
+
+struct neigh_hash_table {
+    struct neighbour **hash_buckets;
+}
+
+struct neighbour {
+    struct neighbour  *next;  // &#x94FE;&#x8868;&#x6307;&#x9488;
+    struct net_device *dev;   // &#x8BBE;&#x5907;
+    unsigned char     ha[32]  // mac&#x5730;&#x5740;
+};
+
+__ipv4_neigh_lookup_noref(dev, nexthop)
+|-___neigh_lookup_noref(&amp;arp_tbl, neigh_key_eq32, arp_hashfn, &amp;key, dev)
+  |-nht = rcu_dereference_bh(tbl-&gt;nht)
+  |-hash_val = hash(pkey, dev, nht-&gt;hash_rnd) &gt;&gt; (32 - nht-&gt;hash_shift)
+  |-for (n = rcu_dereference_bh(nht-&gt;hash_buckets[hash_val]); n != NULL; n = rcu_dereference_bh(n-&gt;next)) {
+        if (n-&gt;dev == dev &amp;&amp; key_eq(n, pkey)) return n
+    }
+
+__neigh_create(&amp;arp_tbl, &amp;nexthop, dev, false)
+|-n = neigh_alloc(tbl, dev)                          // &#x521B;&#x5EFA;
+|-n-&gt;dev = dev                                       // &#x8D4B;&#x503C;
+|-rcu_assign_pointer(nht-&gt;hash_buckets[hash_val], n) // &#x6DFB;&#x52A0;&#x5230;nht-&gt;hash_buckets&#x54C8;&#x5E0C;&#x8868;&#x4E2D;
+
+dst_neigh_output(dst, neigh, skb)
+|-n-&gt;output(n, skb)                                  // &#x5373;&#x662F;neigh_resolve_output
+  |-neigh_resolve_output(neigh, skb)                    
+    |-neigh_event_send(neigh, skb)                   // &#x8FD9;&#x91CC;&#x53EF;&#x80FD;&#x53D1;&#x9001;arp&#x8BF7;&#x6C42; 
+    |-dev_hard_header(skb, dev, neigh-&gt;ha, ...)      // &#x8BBE;&#x7F6E;mac&#x5934;
+    |-dev_queue_xmit(skb)                            // &#x5411;&#x4E0B;&#x5C42;&#x4F20;&#x9012;
+</code></pre><h4 id="&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;">&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;</h4>
+<h4 id="&#x8F6F;&#x4E2D;&#x65AD;&#x8C03;&#x5EA6;">&#x8F6F;&#x4E2D;&#x65AD;&#x8C03;&#x5EA6;</h4>
+<h4 id="e1000&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x53D1;&#x9001;">e1000&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x53D1;&#x9001;</h4>
+<h4 id="ringbuffer&#x5185;&#x5B58;&#x56DE;&#x6536;">RingBuffer&#x5185;&#x5B58;&#x56DE;&#x6536;</h4>
 
                                 
                                 </section>
@@ -320,7 +353,7 @@ tcp_write_xmit(sk, mss_now, TCP_NAGLE_PUSH, 1, sk-&gt;sk_allocation)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"previous":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-04.md","mtime":"2022-09-28T03:54:45.416Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-28T03:55:11.546Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"previous":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-04.md","mtime":"2022-09-28T07:53:13.159Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-28T07:53:42.103Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
