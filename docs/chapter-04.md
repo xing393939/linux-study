@@ -165,7 +165,29 @@ e1000_clean(struct napi_struct *napi, int budget)
 |-e1000_clean_tx_irq(adapter, &adapter->tx_ring[0])   // 清理了skb，解除了DMA映射
 ```
 
+#### PS：send的非阻塞调用
+* [动画图解 socket 缓冲区的那些事儿](https://mp.weixin.qq.com/s/yImrTDVCsVsbZicj-ncn4Q)
+* [从linux源码看socket(tcp)的timeout](https://www.cnblogs.com/alchemystar/p/13084012.html)
 
+```
+inet_sendmsg(sock, msg, msg_data_left(msg))
+|-sk->sk_prot->sendmsg(sk, msg, size)                         // 即是tcp_sendmsg
+  |-tcp_sendmsg(sk, msg, size)
+    |-if (skb_availroom(skb) > 0) {                           // 发送缓冲区有空闲 
+          skb_add_data_nocache(sk, skb, &msg->msg_iter, copy) 
+      } else {                                                // 发送缓冲区没有空闲 
+          goto wait_for_memory
+          sk_stream_wait_memory(sk, &timeo)
+      }
+
+sk_stream_wait_memory(sk, &timeo)
+|-if (!*timeo_p)
+  |-goto do_nonblock                                                     // 如果没有超时时间(默认是long型最大值)，即是非阻塞，直接返回EAGAIN
+|-sk_wait_event(sk, &current_timeo, sk->sk_err ||                        // socket出现错误
+                                    (sk->sk_shutdown & SEND_SHUTDOWN) || // socket被关闭
+                                    (sk_stream_memory_free(sk) &&        // 发送缓冲区有空闲 
+                                    !vm_wait));
+```
 
 
 
