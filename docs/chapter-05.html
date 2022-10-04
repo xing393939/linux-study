@@ -230,6 +230,7 @@
 <p><img src="../images/network_io.jpg" alt="img"></p>
 <h4 id="&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x7F51;&#x7EDC;&#x5C42;&#x8DEF;&#x7531;">&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x7F51;&#x7EDC;&#x5C42;&#x8DEF;&#x7531;</h4>
 <pre><code>&#x7F51;&#x7EDC;&#x5C42;&#x53D1;&#x9001;&#x5904;&#x7406;&#x4EE5;ip_queue_xmit&#x5F00;&#x59CB;
+&#xFF08;&#x67E5;&#x770B;local&#x7684;&#x8DEF;&#x7531;&#xFF1A;ip route list table local&#xFF09;
 
 ip_queue_xmit(sk, skb, &amp;inet-&gt;cork.fl)
 |-rt = ip_route_output_ports(net, fl4, sk, ...) 
@@ -237,11 +238,40 @@ ip_queue_xmit(sk, skb, &amp;inet-&gt;cork.fl)
     |-__ip_route_output_key(net, flp4)
       |-__ip_route_output_key_hash(net, flp, -1)
         |-fib_lookup(net, fl4, &amp;res, 0)
-</code></pre><p>5.3.2&#x672C;&#x673A;IP&#x8DEF;&#x7531;
-5.3.3&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;
-5.3.4&#x201C;&#x9A71;&#x52A8;&#x201D;&#x7A0B;&#x5E8F;
-5.4&#x672C;&#x673A;&#x63A5;&#x6536;&#x8FC7;&#x7A0B;</p>
+          |-fib_table_lookup(tb, flp, res, flags)  // tb&#x662F;main&#x8868;
+          |-fib_table_lookup(tb, flp, res, flags)  // tb&#x662F;local&#x8868;&#xFF0C;&#x6700;&#x7EC8;&#x4F1A;&#x627E;&#x5230;loopback&#x8BBE;&#x5907;
+</code></pre><h4 id="&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;">&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;</h4>
+<pre><code>&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;&#x4EE5;dev_queue_xmit&#x5F00;&#x59CB;
 
+dev_queue_xmit(skb)
+|-__dev_queue_xmit(skb, NULL)
+  |-txq = netdev_pick_tx(dev, skb, accel_priv)       // &#x7F51;&#x5361;&#x6709;&#x591A;&#x4E2A;&#x53D1;&#x9001;&#x961F;&#x5217;&#xFF0C;&#x8FD9;&#x91CC;&#x9009;&#x62E9;&#x4E00;&#x4E2A;
+  |-q = rcu_dereference_bh(txq-&gt;qdisc)               // &#x83B7;&#x53D6;&#x4E0E;&#x961F;&#x5217;&#x76F8;&#x5173;&#x8054;&#x7684;&#x6392;&#x5E8F;&#x89C4;&#x5219;
+  |-dev_hard_start_xmit(skb, dev, txq, &amp;rc)
+
+dev_hard_start_xmit(skb, dev, txq, &amp;ret)
+|-xmit_one(skb, dev, txq, next != NULL)
+  |-netdev_start_xmit(skb, dev, txq, more)
+    |-ops = dev-&gt;netdev_ops
+    |-ops-&gt;ndo_start_xmit(skb, dev)                  // &#x5373;&#x662F;loopback_xmit
+</code></pre><h4 id="&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x9A71;&#x52A8;&#x7A0B;&#x5E8F;">&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x9A71;&#x52A8;&#x7A0B;&#x5E8F;</h4>
+<pre><code>loopback_xmit(skb, dev)
+|-netif_rx(skb)
+  |-netif_rx_internal(skb)
+    |-enqueue_to_backlog(skb, get_cpu(), &amp;qtail)
+      |-__skb_queue_tail(&amp;sd-&gt;input_pkt_queue, skb)  // &#x628A;skb&#x653E;&#x5728;sd&#x7684;&#x63A5;&#x6536;&#x94FE;&#x8868;&#x7684;&#x5C3E;&#x90E8;
+      |-____napi_schedule(sd, &amp;sd-&gt;backlog)          // &#x89E6;&#x53D1;&#x8F6F;&#x4E2D;&#x65AD;
+</code></pre><h4 id="&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x672C;&#x673A;&#x63A5;&#x6536;&#x8FC7;&#x7A0B;">&#x672C;&#x673A;&#x53D1;&#x9001;&#x4E4B;&#x672C;&#x673A;&#x63A5;&#x6536;&#x8FC7;&#x7A0B;</h4>
+<pre><code>net_rx_action(struct softirq_action *h)
+|-n = list_first_entry(&amp;list, struct napi_struct, poll_list)
+|-napi_poll(n, &amp;repoll)
+  |-n-&gt;poll(n, weight)       // &#x8C03;&#x7528;NAPI&#x673A;&#x5236;&#x7684;poll&#x51FD;&#x6570;process_backlog
+
+process_backlog(napi, quota)
+|-skb_queue_splice_tail_init(&amp;sd-&gt;input_pkt_queue, &amp;sd-&gt;process_queue) // &#x628A;sd&#x7684;input_pkt_queue&#x8F6C;&#x5230;process_queue
+|-skb = __skb_dequeue(&amp;sd-&gt;process_queue)                              // &#x4E0D;&#x505C;&#x7684;&#x4ECE;sd-&gt;process_queue&#x53D6;skb
+  |-__netif_receive_skb(skb)                                           // &#x628A;skb&#x9001;&#x5F80;&#x534F;&#x8BAE;&#x6808;
+</code></pre>
                                 
                                 </section>
                             
@@ -280,7 +310,7 @@ ip_queue_xmit(sk, skb, &amp;inet-&gt;cork.fl)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"previous":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-05.md","mtime":"2022-09-29T08:33:05.851Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-09-29T08:33:39.339Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"previous":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-05.md","mtime":"2022-10-04T09:04:23.737Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-04T09:04:54.736Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
