@@ -59,6 +59,12 @@ struct net_device_ops e1000_netdev_ops = {
 	.ndo_set_mac_address= e1000_set_mac,
 	.ndo_tx_timeout     = e1000_tx_timeout,
 }
+struct net_device_ops loopback_ops = {
+	.ndo_init            = loopback_dev_init,
+	.ndo_start_xmit      = loopback_xmit,
+	.ndo_get_stats64     = loopback_get_stats64,
+	.ndo_set_mac_address = eth_mac_addr,
+};
 
 module_init(e1000_init_module)
 |-e1000_init_module(void)
