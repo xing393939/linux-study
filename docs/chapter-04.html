@@ -365,6 +365,28 @@ e1000_xmit_frame(skb, netdev)
 
 e1000_clean(struct napi_struct *napi, int budget)
 |-e1000_clean_tx_irq(adapter, &amp;adapter-&gt;tx_ring[0])   // &#x6E05;&#x7406;&#x4E86;skb&#xFF0C;&#x89E3;&#x9664;&#x4E86;DMA&#x6620;&#x5C04;
+</code></pre><h4 id="ps&#xFF1A;send&#x7684;&#x975E;&#x963B;&#x585E;&#x8C03;&#x7528;">PS&#xFF1A;send&#x7684;&#x975E;&#x963B;&#x585E;&#x8C03;&#x7528;</h4>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/yImrTDVCsVsbZicj-ncn4Q" target="_blank">&#x52A8;&#x753B;&#x56FE;&#x89E3; socket &#x7F13;&#x51B2;&#x533A;&#x7684;&#x90A3;&#x4E9B;&#x4E8B;&#x513F;</a></li>
+<li><a href="https://www.cnblogs.com/alchemystar/p/13084012.html" target="_blank">&#x4ECE;linux&#x6E90;&#x7801;&#x770B;socket(tcp)&#x7684;timeout</a></li>
+</ul>
+<pre><code>inet_sendmsg(sock, msg, msg_data_left(msg))
+|-sk-&gt;sk_prot-&gt;sendmsg(sk, msg, size)                         // &#x5373;&#x662F;tcp_sendmsg
+  |-tcp_sendmsg(sk, msg, size)
+    |-if (skb_availroom(skb) &gt; 0) {                           // &#x53D1;&#x9001;&#x7F13;&#x51B2;&#x533A;&#x6709;&#x7A7A;&#x95F2; 
+          skb_add_data_nocache(sk, skb, &amp;msg-&gt;msg_iter, copy) 
+      } else {                                                // &#x53D1;&#x9001;&#x7F13;&#x51B2;&#x533A;&#x6CA1;&#x6709;&#x7A7A;&#x95F2; 
+          goto wait_for_memory
+          sk_stream_wait_memory(sk, &amp;timeo)
+      }
+
+sk_stream_wait_memory(sk, &amp;timeo)
+|-if (!*timeo_p)
+  |-goto do_nonblock                                                     // &#x5982;&#x679C;&#x6CA1;&#x6709;&#x8D85;&#x65F6;&#x65F6;&#x95F4;(&#x9ED8;&#x8BA4;&#x662F;long&#x578B;&#x6700;&#x5927;&#x503C;)&#xFF0C;&#x5373;&#x662F;&#x975E;&#x963B;&#x585E;&#xFF0C;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;EAGAIN
+|-sk_wait_event(sk, &amp;current_timeo, sk-&gt;sk_err ||                        // socket&#x51FA;&#x73B0;&#x9519;&#x8BEF;
+                                    (sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN) || // socket&#x88AB;&#x5173;&#x95ED;
+                                    (sk_stream_memory_free(sk) &amp;&amp;        // &#x53D1;&#x9001;&#x7F13;&#x51B2;&#x533A;&#x6709;&#x7A7A;&#x95F2; 
+                                    !vm_wait));
 </code></pre>
                                 
                                 </section>
@@ -408,7 +430,7 @@ e1000_clean(struct napi_struct *napi, int budget)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"next":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"previous":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-04.md","mtime":"2022-10-04T09:04:23.737Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-04T09:04:54.736Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第4章-内核是如何发送网络包的","level":"1.6","depth":1,"next":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"previous":{"title":"第3章-内核是如何与用户进程协作的","level":"1.5","depth":1,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-04.md","mtime":"2022-10-04T09:50:09.611Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-04T09:50:46.050Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
