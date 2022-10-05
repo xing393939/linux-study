@@ -60,6 +60,9 @@ tcp_v4_rcv(skb)
       |-tcp_v4_conn_request(sk, skb)
         |-tcp_conn_request(..., sk, skb)
           |-inet_csk_reqsk_queue_hash_add(sk, req, ...)     // 存放半连接
+            |-reqsk_queue_hash_req(req, timeout)
+              |-inet_ehash_insert(req_to_sk(req), NULL)
+                |-__sk_nulls_add_node_rcu(sk, list)         // 半连接的hash表存item
           |-af_ops->send_synack(sk, dst, &fl, req, ...)     // 发送SYNACK包，即是tcp_v4_send_synack
             |-tcp_v4_send_synack(sk, dst, &fl, req, ...)
               |-skb = tcp_make_synack(sk, dst, req, ...)
@@ -86,6 +89,17 @@ tcp_v4_rcv(skb)
       tcp_child_process(sk, nsk, skb)                 // 唤醒listener对应的进程
       sock_put(sk)                                    // 检查是否要清理listener
   }
+
+tcp_check_req(sk, skb, req, false)
+|-inet_csk(sk)->icsk_af_ops->syn_recv_sock(sk, skb, req, ...)  // 即是tcp_v4_syn_recv_sock
+  |-tcp_v4_syn_recv_sock(sk, skb, req, ...)
+    |-newsk = tcp_create_openreq_child(sk, req, skb)           // 创建新的socket
+|-inet_csk_complete_hashdance(sk, child, req, own_req)
+  |-inet_csk_reqsk_queue_drop(sk, req)                         // 清理半连接
+    |-reqsk_queue_unlink(&inet_csk(sk)->icsk_accept_queue, req) 
+      |-__sk_nulls_del_node_init_rcu(req_to_sk(req)            // 从半连接的hash表删除item
+  |-reqsk_queue_removed(&inet_csk(sk)->icsk_accept_queue, req) // 清理半连接
+  |-inet_csk_reqsk_queue_add(sk, req, child)                   // 添加全连接
 ```
 
 #### 服务端accept
