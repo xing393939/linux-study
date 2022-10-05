@@ -290,6 +290,9 @@ tcp_v4_rcv(skb)
       |-tcp_v4_conn_request(sk, skb)
         |-tcp_conn_request(..., sk, skb)
           |-inet_csk_reqsk_queue_hash_add(sk, req, ...)     // &#x5B58;&#x653E;&#x534A;&#x8FDE;&#x63A5;
+            |-reqsk_queue_hash_req(req, timeout)
+              |-inet_ehash_insert(req_to_sk(req), NULL)
+                |-__sk_nulls_add_node_rcu(sk, list)         // &#x534A;&#x8FDE;&#x63A5;&#x7684;hash&#x8868;&#x5B58;item
           |-af_ops-&gt;send_synack(sk, dst, &amp;fl, req, ...)     // &#x53D1;&#x9001;SYNACK&#x5305;&#xFF0C;&#x5373;&#x662F;tcp_v4_send_synack
             |-tcp_v4_send_synack(sk, dst, &amp;fl, req, ...)
               |-skb = tcp_make_synack(sk, dst, req, ...)
@@ -316,6 +319,17 @@ tcp_v4_rcv(skb)
       tcp_child_process(sk, nsk, skb)                 // &#x5524;&#x9192;listener&#x5BF9;&#x5E94;&#x7684;&#x8FDB;&#x7A0B;
       sock_put(sk)                                    // &#x68C0;&#x67E5;&#x662F;&#x5426;&#x8981;&#x6E05;&#x7406;listener
   }
+
+tcp_check_req(sk, skb, req, false)
+|-inet_csk(sk)-&gt;icsk_af_ops-&gt;syn_recv_sock(sk, skb, req, ...)  // &#x5373;&#x662F;tcp_v4_syn_recv_sock
+  |-tcp_v4_syn_recv_sock(sk, skb, req, ...)
+    |-newsk = tcp_create_openreq_child(sk, req, skb)           // &#x521B;&#x5EFA;&#x65B0;&#x7684;socket
+|-inet_csk_complete_hashdance(sk, child, req, own_req)
+  |-inet_csk_reqsk_queue_drop(sk, req)                         // &#x6E05;&#x7406;&#x534A;&#x8FDE;&#x63A5;
+    |-reqsk_queue_unlink(&amp;inet_csk(sk)-&gt;icsk_accept_queue, req) 
+      |-__sk_nulls_del_node_init_rcu(req_to_sk(req)            // &#x4ECE;&#x534A;&#x8FDE;&#x63A5;&#x7684;hash&#x8868;&#x5220;&#x9664;item
+  |-reqsk_queue_removed(&amp;inet_csk(sk)-&gt;icsk_accept_queue, req) // &#x6E05;&#x7406;&#x534A;&#x8FDE;&#x63A5;
+  |-inet_csk_reqsk_queue_add(sk, req, child)                   // &#x6DFB;&#x52A0;&#x5168;&#x8FDE;&#x63A5;
 </code></pre><h4 id="&#x670D;&#x52A1;&#x7AEF;accept">&#x670D;&#x52A1;&#x7AEF;accept</h4>
 <pre><code>SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int __user *, upeer_addrlen, int, flags)
 |-sock-&gt;ops-&gt;accept(sock, newsock, sock-&gt;file-&gt;f_flags) // &#x5373;&#x662F;inet_accept
@@ -390,7 +404,7 @@ netstat -antp | grep SYN_RECV | wc -l
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第6章-深度理解TCP连接建立过程","level":"1.8","depth":1,"previous":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-06.md","mtime":"2022-10-05T12:39:16.832Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-05T12:39:46.336Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第6章-深度理解TCP连接建立过程","level":"1.8","depth":1,"previous":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-06.md","mtime":"2022-10-05T13:06:09.592Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-05T13:06:38.923Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
