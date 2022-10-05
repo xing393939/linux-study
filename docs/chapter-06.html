@@ -1,0 +1,429 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>第6章-深度理解TCP连接建立过程 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="chapter-05.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">目录</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="environment-construction.html">
+            
+                <a href="environment-construction.html">
+            
+                    
+                    环境搭建
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="core-data-structure.html">
+            
+                <a href="core-data-structure.html">
+            
+                    
+                    核心数据结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="chapter-02.html">
+            
+                <a href="chapter-02.html">
+            
+                    
+                    第2章-内核是如何接收网络包的
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="chapter-03.html">
+            
+                <a href="chapter-03.html">
+            
+                    
+                    第3章-内核是如何与用户进程协作的
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="chapter-04.html">
+            
+                <a href="chapter-04.html">
+            
+                    
+                    第4章-内核是如何发送网络包的
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="chapter-05.html">
+            
+                <a href="chapter-05.html">
+            
+                    
+                    第5章-深度理解本机网络IO
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.8" data-path="chapter-06.html">
+            
+                <a href="chapter-06.html">
+            
+                    
+                    第6章-深度理解TCP连接建立过程
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >第6章-深度理解TCP连接建立过程</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="&#x7B2C;6&#x7AE0;-&#x6DF1;&#x5EA6;&#x7406;&#x89E3;tcp&#x8FDE;&#x63A5;&#x5EFA;&#x7ACB;&#x8FC7;&#x7A0B;">&#x7B2C;6&#x7AE0;-&#x6DF1;&#x5EA6;&#x7406;&#x89E3;TCP&#x8FDE;&#x63A5;&#x5EFA;&#x7ACB;&#x8FC7;&#x7A0B;</h3>
+<h4 id="&#x5185;&#x6838;&#x53C2;&#x6570;">&#x5185;&#x6838;&#x53C2;&#x6570;</h4>
+<p><img src="../images/tcp_shake_hand.jpg" alt="img"></p>
+<pre><code>sysctl -a | grep net.ipv4.tcp_max_syn_backlog // &#x534A;&#x8FDE;&#x63A5;syns   queue&#x7684;&#x957F;&#x5EA6;&#xFF0C;&#x9ED8;&#x8BA4;&#x662F;128
+sysctl -a | grep net.core.somaxconn           // &#x5168;&#x8FDE;&#x63A5;accept queue&#x7684;&#x957F;&#x5EA6;&#xFF0C;&#x9ED8;&#x8BA4;&#x662F;128
+
+&#x4FEE;&#x6539;&#x547D;&#x4EE4;&#xFF1A;sysctl -w xxx=xxx &amp;&amp; sysctl -p
+</code></pre><h4 id="&#x6DF1;&#x5165;&#x7406;&#x89E3;listen">&#x6DF1;&#x5165;&#x7406;&#x89E3;listen</h4>
+<pre><code>struct inet_connection_sock {
+    struct inet_sock          icsk_inet;         // &#x8FD9;&#x662F;&#x7B2C;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x800C;struct inet_sock&#x7684;&#x7B2C;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x662F;struct sock
+    struct request_sock_queue icsk_accept_queue; // tcp&#x7684;&#x8FDE;&#x63A5;&#x961F;&#x5217;
+}
+
+struct request_sock_queue {
+    struct request_sock *rskq_accept_head;        // &#x5168;&#x8FDE;&#x63A5;&#x94FE;&#x8868;head
+    struct request_sock *rskq_accept_tail;        // &#x5168;&#x8FDE;&#x63A5;&#x94FE;&#x8868;tail
+    struct fastopen_queue fastopenq;              // &#x5F00;&#x542F;fastopen&#x65F6;&#x9700;&#x8981;&#x7528;&#x5230;
+};
+
+SYSCALL_DEFINE2(listen, int, fd, int, backlog)
+|-sock = sockfd_lookup_light(fd, &amp;err, &amp;fput_needed)    // &#x627E;&#x5230;sock&#x5BF9;&#x8C61;
+|-somaxconn = sock_net(sock-&gt;sk)-&gt;core.sysctl_somaxconn // &#x53D6;&#x503C;net.core.somaxconn
+|-backlog = min(backlog, somaxconn)
+|-sock-&gt;ops-&gt;listen(sock, backlog)                      // &#x5373;&#x662F;inet_listen
+
+inet_listen(sock, backlog)
+|-sk = sock-&gt;sk
+|-inet_csk_listen_start(sk, backlog)                    // &#x5F00;&#x59CB;&#x76D1;&#x542C;
+  |-struct inet_connection_sock *icsk = inet_csk(sk)    // sock&#x7ED3;&#x6784;&#x4F53;&#x8F6C;&#x6210;inet_connection_sock&#x7ED3;&#x6784;&#x4F53;
+  |-reqsk_queue_alloc(&amp;icsk-&gt;icsk_accept_queue)
+</code></pre><h4 id="&#x6DF1;&#x5165;&#x7406;&#x89E3;connect">&#x6DF1;&#x5165;&#x7406;&#x89E3;connect</h4>
+<pre><code>&#x5BA2;&#x6237;&#x7AEF;&#x53D1;SYN&#x5305;
+SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr, int, addrlen)
+|-sock-&gt;ops-&gt;connect(sock, ...)                // &#x5373;&#x662F;tcp_v4_connect
+  |-tcp_v4_connect(sock, ...)
+    |-tcp_set_state(sk, TCP_SYN_SENT)          // &#x8BBE;&#x7F6E;&#x72B6;&#x6001;&#x4E3A;SYN_SENT
+    |-inet_hash_connect(&amp;tcp_death_row, sk)    // &#x52A8;&#x6001;&#x9009;&#x62E9;&#x4E00;&#x4E2A;&#x7AEF;&#x53E3;
+    |-tcp_connect(sk)                          // &#x6784;&#x5EFA;SYN&#x62A5;&#x6587;
+      |-buff = sk_stream_alloc_skb(sk, 0, ...) // SYN&#x5305;
+      |-tcp_transmit_skb(sk, buff, 1, ...)     // &#x53D1;&#x9001;
+      |-inet_csk_reset_xmit_timer(sk, ...)     // &#x542F;&#x7528;&#x5B9A;&#x65F6;&#x5668;
+
+&#x670D;&#x52A1;&#x7AEF;&#x63A5;&#x6536;&#x5230;SYN&#x5305;&#xFF08;TCP&#x534F;&#x8BAE;&#x5C42;&#xFF09;
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, __tcp_hdrlen(th), th-&gt;source, th-&gt;dest)
+|-tcp_v4_do_rcv(sk, skb)
+  |-tcp_rcv_state_process(sk, skb)                          // &#x6839;&#x636E;socket&#x7684;&#x72B6;&#x6001;&#x8FDB;&#x884C;&#x4E0D;&#x540C;&#x7684;&#x5904;&#x7406; 
+    |-th = tcp_hdr(skb)
+    |-if (th-&gt;syn) icsk-&gt;icsk_af_ops-&gt;conn_request(sk, skb) // &#x5373;&#x662F;tcp_v4_conn_request
+      |-tcp_v4_conn_request(sk, skb)
+        |-tcp_conn_request(..., sk, skb)
+          |-inet_csk_reqsk_queue_hash_add(sk, req, ...)     // &#x5B58;&#x653E;&#x534A;&#x8FDE;&#x63A5;
+          |-af_ops-&gt;send_synack(sk, dst, &amp;fl, req, ...)     // &#x53D1;&#x9001;SYNACK&#x5305;&#xFF0C;&#x5373;&#x662F;tcp_v4_send_synack
+            |-tcp_v4_send_synack(sk, dst, &amp;fl, req, ...)
+              |-skb = tcp_make_synack(sk, dst, req, ...)
+              |-ip_build_and_send_pkt(skb, sk, ...)
+                |-ip_local_out(net, skb-&gt;sk, skb)
+
+&#x5BA2;&#x6237;&#x7AEF;&#x54CD;&#x5E94;SYNACK&#x5305;
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, __tcp_hdrlen(th), th-&gt;source, th-&gt;dest)
+|-tcp_v4_do_rcv(sk, skb)
+  |-tcp_rcv_state_process(sk, skb)                    // &#x6839;&#x636E;socket&#x7684;&#x72B6;&#x6001;&#x8FDB;&#x884C;&#x4E0D;&#x540C;&#x7684;&#x5904;&#x7406; 
+    |-case TCP_SYN_SENT: tcp_rcv_synsent_state_process(sk, skb, th)  
+      |-tcp_finish_connect(sk, skb)
+        |-tcp_set_state(sk, TCP_ESTABLISHED)          // &#x8BBE;&#x7F6E;&#x72B6;&#x6001;&#x4E3A;ESTABLISHED
+      |-tcp_send_ack(sk)                              // &#x53D1;&#x9001;ACK&#x5305;
+
+&#x670D;&#x52A1;&#x7AEF;&#x54CD;&#x5E94;ACK
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, ...)     // &#x8FD9;&#x91CC;&#x53D6;&#x5230;&#x7684;&#x662F;&#x534A;&#x8FDE;&#x63A5;&#x7684;sock
+|-if (sk-&gt;sk_state == TCP_NEW_SYN_RECV) {
+      req = inet_reqsk(sk)                            // &#x534A;&#x8FDE;&#x63A5;&#x7684;sock&#x8F6C;&#x6210;req
+      sk = req-&gt;rsk_listener                          // sk&#x662F;listener&#x7684;sock
+      nsk = tcp_check_req(sk, skb, req, false)        // nsk&#x662F;&#x65B0;&#x7684;socket
+      tcp_child_process(sk, nsk, skb)                 // &#x5524;&#x9192;listener&#x5BF9;&#x5E94;&#x7684;&#x8FDB;&#x7A0B;
+      sock_put(sk)                                    // &#x68C0;&#x67E5;&#x662F;&#x5426;&#x8981;&#x6E05;&#x7406;listener
+  }
+</code></pre><h4 id="&#x670D;&#x52A1;&#x7AEF;accept">&#x670D;&#x52A1;&#x7AEF;accept</h4>
+<pre><code>SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr, int __user *, upeer_addrlen, int, flags)
+|-sock-&gt;ops-&gt;accept(sock, newsock, sock-&gt;file-&gt;f_flags) // &#x5373;&#x662F;inet_accept
+  |-inet_accept(sock, newsock, flags)
+    |-sk1 = sock-&gt;sk
+    |-sk2 = sk1-&gt;sk_prot-&gt;accept(sk1, flags, &amp;err)      // &#x5373;&#x662F;inet_csk_accept
+      |-inet_csk_accept(sk1, flags, &amp;err)
+        |-queue = &amp;icsk-&gt;icsk_accept_queue              // queue&#x662F;&#x5168;&#x8FDE;&#x63A5;&#x94FE;&#x8868;
+        |-req = reqsk_queue_remove(queue, sk)           // &#x53D6;&#x51FA;&#x4E00;&#x4E2A;req&#x5BF9;&#x8C61;
+        |-newsk = req-&gt;sk                               // &#x5F97;&#x5230;&#x65B0;&#x7684;socket
+</code></pre><h4 id="&#x5F02;&#x5E38;tcp&#x8FDE;&#x63A5;&#x5EFA;&#x7ACB;&#x60C5;&#x51B5;">&#x5F02;&#x5E38;TCP&#x8FDE;&#x63A5;&#x5EFA;&#x7ACB;&#x60C5;&#x51B5;</h4>
+<ol>
+<li>&#x5BA2;&#x6237;&#x7AEF;connect&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x8017;cpu&#xFF1A;<ul>
+<li>&#x52A8;&#x6001;&#x9009;&#x62E9;&#x7AEF;&#x53E3;&#x7684;&#x65F6;&#x5019;&#xFF1A;inet_hash_connect(&amp;tcp_death_row, sk)</li>
+<li>&#x5982;&#x679C;&#x7AEF;&#x53E3;&#x5DF2;&#x7ECF;&#x5FEB;&#x7528;&#x5C3D;&#xFF0C;&#x5FAA;&#x73AF;&#x68C0;&#x67E5;&#x7AEF;&#x53E3;&#x7684;&#x8017;&#x65F6;&#x4F1A;&#x589E;&#x52A0;</li>
+</ul>
+</li>
+<li>&#x7B2C;&#x4E00;&#x6B21;&#x63E1;&#x624B;&#x4E22;&#x5305;&#x7684;&#x539F;&#x56E0;<ul>
+<li>&#x534A;&#x8FDE;&#x63A5;&#x6EE1;&#x4E86;&#xFF0C;&#x4E14;net.ipv4.tcp_syncookies = 0</li>
+<li>&#x5168;&#x8FDE;&#x63A5;&#x6EE1;&#x4E86;&#xFF0C;&#x4E14;&#x6709;&#x672A;&#x5B8C;&#x6210;&#x7684;&#x534A;&#x8FDE;&#x63A5;&#x8BF7;&#x6C42;</li>
+</ul>
+</li>
+<li>&#x7B2C;&#x4E09;&#x6B21;&#x63E1;&#x624B;&#x4E22;&#x5305;&#x7684;&#x539F;&#x56E0;<ul>
+<li>&#x5168;&#x8FDE;&#x63A5;&#x6EE1;&#x4E86;</li>
+</ul>
+</li>
+</ol>
+<h4 id="&#x5982;&#x4F55;&#x67E5;&#x770B;&#x662F;&#x5426;&#x6709;&#x8FDE;&#x63A5;&#x961F;&#x5217;&#x6EA2;&#x51FA;&#x53D1;&#x751F;">&#x5982;&#x4F55;&#x67E5;&#x770B;&#x662F;&#x5426;&#x6709;&#x8FDE;&#x63A5;&#x961F;&#x5217;&#x6EA2;&#x51FA;&#x53D1;&#x751F;</h4>
+<pre><code>&#x5168;&#x8FDE;&#x63A5;&#x6EE1;&#x4E86;&#x6267;&#x884C;&#xFF1A;
+watch &apos;netstat -s | grep overflowed&apos;
+&#x770B;&#x5230;xxx times&#x7684;&#x6570;&#x503C;&#x5728;&#x589E;&#x957F;
+
+&#x534A;&#x8FDE;&#x63A5;&#x4FDD;&#x8BC1;net.ipv4.tcp_syncookies&#x662F;1&#x5373;&#x53EF;&#xFF0C;&#x82E5;&#x662F;0&#xFF0C;&#x6267;&#x884C;&#xFF1A;
+netstat -antp | grep SYN_RECV | wc -l
+&#x7136;&#x540E;&#x8BA1;&#x7B97;&#x662F;&#x5426;&#x8FBE;&#x5230;&#x4E86;&#x6700;&#x5927;&#x503C;
+</code></pre>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="chapter-05.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 第5章-深度理解本机网络IO">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"第6章-深度理解TCP连接建立过程","level":"1.8","depth":1,"previous":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-06.md","mtime":"2022-10-05T12:39:16.832Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-05T12:39:46.336Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
