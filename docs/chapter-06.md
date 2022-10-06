@@ -81,7 +81,7 @@ tcp_v4_rcv(skb)
 
 服务端响应ACK
 tcp_v4_rcv(skb)
-|-sk = __inet_lookup_skb(&tcp_hashinfo, skb, ...)     // 这里取到的是半连接的sock
+|-sk = __inet_lookup_skb(&tcp_hashinfo, skb, ...)     // 这里取到的是半连接的sock，？？？
 |-if (sk->sk_state == TCP_NEW_SYN_RECV) {
       req = inet_reqsk(sk)                            // 半连接的sock转成req
       sk = req->rsk_listener                          // sk是listener的sock
