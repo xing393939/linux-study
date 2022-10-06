@@ -57,6 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="chapter-07.html" />
+    
     
     <link rel="prev" href="chapter-05.html" />
     
@@ -193,6 +195,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.9" data-path="chapter-07.html">
+            
+                <a href="chapter-07.html">
+            
+                    
+                    第7章-一条TCP连接消耗多大内存
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
 
@@ -311,7 +326,7 @@ tcp_v4_rcv(skb)
 
 &#x670D;&#x52A1;&#x7AEF;&#x54CD;&#x5E94;ACK
 tcp_v4_rcv(skb)
-|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, ...)     // &#x8FD9;&#x91CC;&#x53D6;&#x5230;&#x7684;&#x662F;&#x534A;&#x8FDE;&#x63A5;&#x7684;sock
+|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, ...)     // &#x8FD9;&#x91CC;&#x53D6;&#x5230;&#x7684;&#x662F;&#x534A;&#x8FDE;&#x63A5;&#x7684;sock&#xFF0C;&#xFF1F;&#xFF1F;&#xFF1F;
 |-if (sk-&gt;sk_state == TCP_NEW_SYN_RECV) {
       req = inet_reqsk(sk)                            // &#x534A;&#x8FDE;&#x63A5;&#x7684;sock&#x8F6C;&#x6210;req
       sk = req-&gt;rsk_listener                          // sk&#x662F;listener&#x7684;sock
@@ -392,10 +407,14 @@ netstat -antp | grep SYN_RECV | wc -l
 
             
                 
-                <a href="chapter-05.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 第5章-深度理解本机网络IO">
+                <a href="chapter-05.html" class="navigation navigation-prev " aria-label="Previous page: 第5章-深度理解本机网络IO">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
+                
+                <a href="chapter-07.html" class="navigation navigation-next " aria-label="Next page: 第7章-一条TCP连接消耗多大内存">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -404,7 +423,7 @@ netstat -antp | grep SYN_RECV | wc -l
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第6章-深度理解TCP连接建立过程","level":"1.8","depth":1,"previous":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-06.md","mtime":"2022-10-05T13:06:09.592Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-05T13:06:38.923Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第6章-深度理解TCP连接建立过程","level":"1.8","depth":1,"next":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.9","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"previous":{"title":"第5章-深度理解本机网络IO","level":"1.7","depth":1,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-06.md","mtime":"2022-10-06T09:52:03.313Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-06T09:52:25.342Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
