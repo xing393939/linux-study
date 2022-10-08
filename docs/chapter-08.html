@@ -266,6 +266,10 @@
                                 
                                 <h3 id="&#x4E00;&#x53F0;&#x673A;&#x5668;&#x6700;&#x591A;&#x80FD;&#x652F;&#x6301;&#x591A;&#x5C11;&#x6761;tcp&#x8FDE;&#x63A5;">&#x4E00;&#x53F0;&#x673A;&#x5668;&#x6700;&#x591A;&#x80FD;&#x652F;&#x6301;&#x591A;&#x5C11;&#x6761;TCP&#x8FDE;&#x63A5;</h3>
 <h4 id="&#x6700;&#x5927;&#x6253;&#x5F00;&#x6587;&#x4EF6;&#x6570;">&#x6700;&#x5927;&#x6253;&#x5F00;&#x6587;&#x4EF6;&#x6570;</h4>
+<ul>
+<li>fs.file-max&#x5BF9;root&#x7528;&#x6237;&#x65E0;&#x6548;</li>
+<li>nofile&#x4E00;&#x5B9A;&#x8981;&#x5C0F;&#x4E8E;nr_open</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -300,7 +304,16 @@
 </tr>
 </tbody>
 </table>
+<pre><code>100&#x4E07;&#x7684;&#x8BBE;&#x7F6E;&#xFF1A;
+sysctl -w net.ipv4.ip_local_port_range = 5000 65000
+sysctl -w fs.file-max = 1100000
+sysctl -w fs.nr_open = 1100000
+sysctl -p
 
+vim /etc/security/limits.conf
+* hard nofile 1000000
+* soft nofile 1000000
+</code></pre>
                                 
                                 </section>
                             
@@ -339,7 +352,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.10","depth":1,"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.9","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2022-10-08T02:54:39.833Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-08T02:55:13.734Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.10","depth":1,"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.9","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2022-10-08T06:43:23.628Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-08T06:43:46.588Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
