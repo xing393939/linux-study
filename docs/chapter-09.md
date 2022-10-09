@@ -28,7 +28,8 @@
 1. 推迟分片：ethtool -k eth0
   * generic-segmentation-offload：在网络设备子系统分包
   * tcp-segmentation-offload：在网卡进行分包，需网卡支持
-1. 多队列网卡XPS：for i in $(ls -1 /sys/class/net/eth0/queues/rx*/rps_*); do echo -n ${i}: && cat ${i}; done
+1. 多队列网卡XPS：
+  * `for i in $(ls -1 /sys/class/net/eth0/queues/rx*/rps_*); do echo -n ${i}: && cat ${i}; done`
   * rps_cpus：当前队列所绑定的cpu
   * rps_flow_cnt：当前队列发送的帧数
 1. 用ebpf绕开本机IO
