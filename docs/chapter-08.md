@@ -21,3 +21,33 @@ vim /etc/security/limits.conf
 * hard nofile 1000000
 * soft nofile 1000000
 ```
+
+#### UDP和TCP端口可以相同
+```
+TCP：10.0.2.0向10.0.2.2的22端口发送数据，每次收包后寻找socket的流程
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&tcp_hashinfo, skb, ...)  
+  |-__inet_lookup(dev_net(skb_dst(skb)->dev), hashinfo, skb, ...)
+    |-__inet_lookup_established(net, hashinfo, ...)
+      |-INET_MATCH(sk, net, acookie, saddr, daddr, ports, dif) // 比对saddr、sport、daddr、dport、网络设备
+
+UDP的客户端代码：
+sockfd = socket(AF_INET, SOCK_DGRAM, 0)
+servaddr.sin_port = 5000;
+servaddr.sin_addr.s_addr = "10.0.2.2";
+  sendto(sockfd, hello1, strlen(hello1), MSG_CONFIRM, &servaddr, sizeof(servaddr))
+recvfrom(sockfd, buffer, strlen(buffer), MSG_WAITALL, &servaddr, &len)
+
+UDP的服务端代码：
+sockfd = socket(AF_INET, SOCK_DGRAM, 0)
+servaddr.sin_addr.s_addr = INADDR_ANY;
+servaddr.sin_port = 5000;
+bind(sockfd, &servaddr, sizeof(servaddr))
+recvfrom(sockfd, buffer, strlen(buffer), MSG_WAITALL, &cliaddr, &len)
+  sendto(sockfd, hello1, strlen(hello1), MSG_CONFIRM, &cliaddr, len)
+
+UDP：10.0.2.0向10.0.2.2的5000端口发送数据，每次收包后寻找socket的流程
+udp_rcv(skb)
+|-__udp4_lib_rcv(skb, &udp_table, IPPROTO_UDP)
+  |-sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable)
+```
