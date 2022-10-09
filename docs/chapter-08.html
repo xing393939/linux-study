@@ -313,6 +313,33 @@ sysctl -p
 vim /etc/security/limits.conf
 * hard nofile 1000000
 * soft nofile 1000000
+</code></pre><h4 id="udp&#x548C;tcp&#x7AEF;&#x53E3;&#x53EF;&#x4EE5;&#x76F8;&#x540C;">UDP&#x548C;TCP&#x7AEF;&#x53E3;&#x53EF;&#x4EE5;&#x76F8;&#x540C;</h4>
+<pre><code>TCP&#xFF1A;10.0.2.0&#x5411;10.0.2.2&#x7684;22&#x7AEF;&#x53E3;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF0C;&#x6BCF;&#x6B21;&#x6536;&#x5305;&#x540E;&#x5BFB;&#x627E;socket&#x7684;&#x6D41;&#x7A0B;
+tcp_v4_rcv(skb)
+|-sk = __inet_lookup_skb(&amp;tcp_hashinfo, skb, ...)  
+  |-__inet_lookup(dev_net(skb_dst(skb)-&gt;dev), hashinfo, skb, ...)
+    |-__inet_lookup_established(net, hashinfo, ...)
+      |-INET_MATCH(sk, net, acookie, saddr, daddr, ports, dif) // &#x6BD4;&#x5BF9;saddr&#x3001;sport&#x3001;daddr&#x3001;dport&#x3001;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;
+
+UDP&#x7684;&#x5BA2;&#x6237;&#x7AEF;&#x4EE3;&#x7801;&#xFF1A;
+sockfd = socket(AF_INET, SOCK_DGRAM, 0)
+servaddr.sin_port = 5000;
+servaddr.sin_addr.s_addr = &quot;10.0.2.2&quot;;
+  sendto(sockfd, hello1, strlen(hello1), MSG_CONFIRM, &amp;servaddr, sizeof(servaddr))
+recvfrom(sockfd, buffer, strlen(buffer), MSG_WAITALL, &amp;servaddr, &amp;len)
+
+UDP&#x7684;&#x670D;&#x52A1;&#x7AEF;&#x4EE3;&#x7801;&#xFF1A;
+sockfd = socket(AF_INET, SOCK_DGRAM, 0)
+servaddr.sin_addr.s_addr = INADDR_ANY;
+servaddr.sin_port = 5000;
+bind(sockfd, &amp;servaddr, sizeof(servaddr))
+recvfrom(sockfd, buffer, strlen(buffer), MSG_WAITALL, &amp;cliaddr, &amp;len)
+  sendto(sockfd, hello1, strlen(hello1), MSG_CONFIRM, &amp;cliaddr, len)
+
+UDP&#xFF1A;10.0.2.0&#x5411;10.0.2.2&#x7684;5000&#x7AEF;&#x53E3;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF0C;&#x6BCF;&#x6B21;&#x6536;&#x5305;&#x540E;&#x5BFB;&#x627E;socket&#x7684;&#x6D41;&#x7A0B;
+udp_rcv(skb)
+|-__udp4_lib_rcv(skb, &amp;udp_table, IPPROTO_UDP)
+  |-sk = __udp4_lib_lookup_skb(skb, uh-&gt;source, uh-&gt;dest, udptable)
 </code></pre>
                                 
                                 </section>
@@ -352,7 +379,7 @@ vim /etc/security/limits.conf
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.10","depth":1,"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.9","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2022-10-08T06:43:23.628Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-08T06:43:46.588Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.10","depth":1,"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.9","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2022-10-09T02:13:24.987Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-09T02:13:58.257Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
