@@ -50,4 +50,5 @@ UDP：10.0.2.0向10.0.2.2的5000端口发送数据，每次收包后寻找socket
 udp_rcv(skb)
 |-__udp4_lib_rcv(skb, &udp_table, IPPROTO_UDP)
   |-sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable)
+    |-__udp4_lib_lookup(dev_net(skb_dst(skb)->dev), ...)       // 比对saddr、sport、daddr、dport、网络设备
 ```
