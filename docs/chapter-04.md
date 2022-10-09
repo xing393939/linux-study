@@ -125,6 +125,8 @@ dev_queue_xmit(skb)
       |-qdisc_restart(q, &packets)                   // 依次取包发送
         |-skb = dequeue_skb(q, &validate, packets)
         |-sch_direct_xmit(skb, q, dev, txq, ...)   
+          |-skb = validate_xmit_skb_list(skb, dev)   // 若开启GSO，则GSO分包
+            |-skb = validate_xmit_skb(skb, dev)
           |-dev_hard_start_xmit(skb, dev, txq, &ret) // 调用驱动程序来发送数据
       |-__netif_schedule(q)                          // 用户态的配额用尽，就触发一个软中断
 ```
