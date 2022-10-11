@@ -26,3 +26,8 @@
 ![img](../images/skb_forward.png)
 
 ![img](../images/skb_send.png)
+
+#### 家用路由器
+* 家用路由器可以看成一个路由器和一个交换机的组合，如下图所示
+
+![img](../images/home_router.png)
