@@ -95,6 +95,8 @@ e1000_intr(int irq, void *data)
       |-or_softirq_pending(1UL << nr)                 // 展开：this_cpu_or(irq_stat.__softirq_pending, (1 << nr))
 ```
 
+![img](../images/hardware_interrupt_and_ringbuffer.png)
+
 #### 软中断
 ```
 struct softirq_action softirq_vec[10] // 分别对应："HI", "TIMER", "NET_TX", "NET_RX", "BLOCK", "BLOCK_IOPOLL",
