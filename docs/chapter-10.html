@@ -318,6 +318,7 @@
                                 
                                 <h3 id="&#x5BB9;&#x5668;&#x7F51;&#x7EDC;&#x865A;&#x62DF;&#x5316;">&#x5BB9;&#x5668;&#x7F51;&#x7EDC;&#x865A;&#x62DF;&#x5316;</h3>
 <h4 id="veth&#x8BBE;&#x5907;&#x5BF9;">veth&#x8BBE;&#x5907;&#x5BF9;</h4>
+<p><img src="../images/veth_send.png" alt="img"></p>
 <pre><code>send&#x7CFB;&#x7EDF;&#x8C03;&#x7528;
 SyS_sendto(long fd, long buff, long len, long flags, long addr, long addr_len) (linux-4.6.2\net\socket.c:1616)
 |-SYSC_sendto(int fd, void * buff, size_t len, unsigned int flags, struct sockaddr * addr, int addr_len) (linux-4.6.2\net\socket.c:1648)
@@ -352,11 +353,24 @@ dev_queue_xmit(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3394)
     |-xmit_one(struct sk_buff * skb, struct net_device * dev, struct netdev_queue * txq, bool more) (linux-4.6.2\net\core\dev.c:2871)
       |-netdev_start_xmit() (linux-4.6.2\include\linux\netdevice.h:3937)
         |-__netdev_start_xmit() (linux-4.6.2\include\linux\netdevice.h:3928)
-          |-veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\net\veth.c:122)
-            |-dev_forward_skb(struct net_device * dev, struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:1803)
-              |-netif_rx_internal(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3768)
-                |-enqueue_to_backlog(struct sk_buff * skb, int cpu, unsigned int * qtail) (linux-4.6.2\net\core\dev.c:3725)
-                  |-____napi_schedule(struct softnet_data * sd, struct napi_struct * napi) (linux-4.6.2\net\core\dev.c:3419)
+          |-ops-&gt;ndo_start_xmit(skb, dev)                  // &#x5373;&#x662F;loopback_xmit
+
+&#x9A71;&#x52A8;&#x7A0B;&#x5E8F;
+struct net_device_ops veth_netdev_ops = {
+    .ndo_init            = veth_dev_init,
+    .ndo_open            = veth_open,
+    .ndo_stop            = veth_close,
+    .ndo_start_xmit      = veth_xmit,
+    .ndo_get_stats64     = veth_get_stats64,
+    .ndo_set_mac_address = eth_mac_addr,
+}
+veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\net\veth.c:122)
+|-dev_forward_skb(struct net_device * dev, struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:1803)
+  |-netif_rx_internal(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3768)
+    |-enqueue_to_backlog(struct sk_buff * skb, int cpu, unsigned int * qtail) (linux-4.6.2\net\core\dev.c:3725)
+      |-____napi_schedule(struct softnet_data * sd, struct napi_struct * napi) (linux-4.6.2\net\core\dev.c:3419)
+
+&#x8F6F;&#x4E2D;&#x65AD;-&gt;&#x9A71;&#x52A8;&#x7A0B;&#x5E8F;-&gt;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;-&gt;&#x534F;&#x8BAE;&#x6808;-&gt;&#x8FDB;&#x7A0B;&#x8C03;&#x5EA6;&#x548C;lo&#x8BBE;&#x5907;&#x5B8C;&#x5168;&#x4E00;&#x6837;&#xFF0C;&#x7701;&#x7565;&#x3002;&#x3002;&#x3002;
 </code></pre><h4 id="&#x7F51;&#x7EDC;&#x547D;&#x540D;&#x7A7A;&#x95F4;">&#x7F51;&#x7EDC;&#x547D;&#x540D;&#x7A7A;&#x95F4;</h4>
 <h4 id="&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;bridge">&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;Bridge</h4>
 <h4 id="&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;">&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;</h4>
@@ -399,7 +413,7 @@ dev_queue_xmit(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3394)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-13T03:28:30.352Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-13T03:28:53.735Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-13T03:46:41.143Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-13T03:47:06.533Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
