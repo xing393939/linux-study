@@ -372,7 +372,33 @@ veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\ne
 
 &#x8F6F;&#x4E2D;&#x65AD;-&gt;&#x9A71;&#x52A8;&#x7A0B;&#x5E8F;-&gt;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5B50;&#x7CFB;&#x7EDF;-&gt;&#x534F;&#x8BAE;&#x6808;-&gt;&#x8FDB;&#x7A0B;&#x8C03;&#x5EA6;&#x548C;lo&#x8BBE;&#x5907;&#x5B8C;&#x5168;&#x4E00;&#x6837;&#xFF0C;&#x7701;&#x7565;&#x3002;&#x3002;&#x3002;
 </code></pre><h4 id="&#x7F51;&#x7EDC;&#x547D;&#x540D;&#x7A7A;&#x95F4;">&#x7F51;&#x7EDC;&#x547D;&#x540D;&#x7A7A;&#x95F4;</h4>
-<h4 id="&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;bridge">&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;Bridge</h4>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/lscMpc5BWAEzjgYw6H0wBw" target="_blank">&#x5F7B;&#x5E95;&#x5F04;&#x61C2; Linux &#x7F51;&#x7EDC;&#x547D;&#x540D;&#x7A7A;&#x95F4;</a></li>
+<li>&#x7F51;&#x7EDC;namespace&#xFF0C;&#x7B80;&#x79F0;netns&#x3002;&#x4ECE;&#x903B;&#x8F91;&#x4E0A;&#x63D0;&#x4F9B;&#x72EC;&#x7ACB;&#x7684;&#x7F51;&#x7EDC;&#x534F;&#x8BAE;&#x6808;&#xFF0C;&#x5305;&#x62EC;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x3001;&#x8DEF;&#x7531;&#x8868;&#x3001;arp&#x8868;&#x3001;iptables&#x3001;socket&#x7B49;</li>
+<li>Linux&#x4E0A;&#x5176;&#x5B83;&#x6240;&#x6709;&#x8FDB;&#x7A0B;&#x90FD;&#x662F;&#x7531;1&#x53F7;&#x8FDB;&#x7A0B;&#x6D3E;&#x751F;&#x51FA;&#x6765;&#x7684;&#xFF0C;1&#x53F7;&#x8FDB;&#x7A0B;&#x4F7F;&#x7528;&#x9ED8;&#x8BA4;&#x7684;netns</li>
+<li>&#x521B;&#x5EFA;&#x8FDB;&#x7A0B;&#x65F6;&#x6307;&#x5B9A;&#x4E86;CLONE_NEWNET&#x6807;&#x8BB0;&#x4F4D;&#xFF0C;&#x90A3;&#x4E48;&#x8BE5;&#x8FDB;&#x7A0B;&#x5C06;&#x4F1A;&#x521B;&#x5EFA;&#x5E76;&#x4F7F;&#x7528;&#x65B0;&#x7684;netns</li>
+<li>&#x5185;&#x6838;&#x63D0;&#x4F9B;&#x4E86;&#x4E09;&#x79CD;&#x64CD;&#x4F5C;&#x547D;&#x540D;&#x7A7A;&#x95F4;&#x7684;&#x65B9;&#x5F0F;&#xFF1A;clone&#x3001;setns&#x3001;unshare<ul>
+<li>ip netns add &#x547D;&#x4EE4;&#x4F7F;&#x7528;&#x7684;&#x662F;unshare</li>
+<li><a href="https://www.cnblogs.com/mysky007/p/12331200.html" target="_blank">fork vfork clone&#x5B66;&#x4E60;</a></li>
+<li>fork&#x3001;pthread_creat&#x3001;vfork&#x7684;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x5206;&#x522B;&#x662F;sys_fork&#x3001;sys_clone&#x3001;sys_vfork&#x3001;&#x5B83;&#x4EEC;&#x7684;&#x5E95;&#x5C42;&#x90FD;&#x7528;&#x7684;&#x662F;do_fork</li>
+<li>fork()&#x662F;&#x5168;&#x90E8;&#x590D;&#x5236;</li>
+<li>vfork()&#x662F;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#xFF0C;&#x65B9;&#x4FBF;&#x8C03;&#x7528;exec&#x6267;&#x884C;&#x5176;&#x4ED6;&#x7A0B;&#x5E8F;&#xFF0C;&#x73B0;&#x5728;&#x5F88;&#x5C11;&#x7528;</li>
+<li>clone()&#x662F;&#x5219;&#x53EF;&#x4EE5;&#x5C06;&#x7236;&#x8FDB;&#x7A0B;&#x8D44;&#x6E90;&#x6709;&#x9009;&#x62E9;&#x5730;&#x590D;&#x5236;&#x7ED9;&#x5B50;&#x8FDB;&#x7A0B;</li>
+</ul>
+</li>
+</ul>
+<p><img src="../images/struct_task_struct.png" alt="img"></p>
+<pre><code>clone&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#xFF0C;&#x5E76;&#x521B;&#x5EFA;&#x547D;&#x540D;&#x7A7A;&#x95F4;
+SyS_clone(long clone_flags, long newsp, long parent_tidptr, long child_tidptr, long tls) (linux-4.6.2\kernel\fork.c:1834)
+|-SYSC_clone() (linux-4.6.2\kernel\fork.c:1840)
+  |-_do_fork(unsigned long clone_flags, unsigned long stack_start, unsigned long stack_size, int * parent_tidptr, int * child_tidptr, unsigned long tls) (linux-4.6.2\kernel\fork.c:1731)
+    |-copy_process(unsigned long clone_flags, unsigned long stack_start, unsigned long stack_size, int * child_tidptr, struct pid * pid, int trace, unsigned long tls) (linux-4.6.2\kernel\fork.c:1459)
+      |-copy_namespaces(unsigned long flags, struct task_struct * tsk) (linux-4.6.2\kernel\nsproxy.c:164)
+        |-create_new_namespaces(unsigned long flags, struct task_struct * tsk, struct user_namespace * user_ns, struct fs_struct * new_fs) (linux-4.6.2\kernel\nsproxy.c:106)
+          |-copy_net_ns(unsigned long flags, struct user_namespace * user_ns, struct net * old_net) (linux-4.6.2\net\core\net_namespace.c:360)
+            |-if !(flags &amp; CLONE_NEWNET) return get_net(old_net)  // &#x5982;&#x679C;&#x6CA1;&#x6709;CLONE_NEWNET&#xFF0C;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;&#x7236;&#x8FDB;&#x7A0B;&#x7684;netns
+            |-setup_net(net, user_ns)                             // &#x8BBE;&#x7F6E;&#x65B0;&#x7684;netns
+</code></pre><h4 id="&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;bridge">&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;Bridge</h4>
 <h4 id="&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;">&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;</h4>
 
                                 
@@ -413,7 +439,7 @@ veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\ne
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-13T03:46:41.143Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-13T03:47:06.533Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-13T08:27:32.058Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-13T08:27:57.948Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
