@@ -59,6 +59,32 @@ veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\ne
 ```
 
 #### 网络命名空间
+* [彻底弄懂 Linux 网络命名空间](https://mp.weixin.qq.com/s/lscMpc5BWAEzjgYw6H0wBw)
+* 网络namespace，简称netns。从逻辑上提供独立的网络协议栈，包括网络设备、路由表、arp表、iptables、socket等
+* Linux上其它所有进程都是由1号进程派生出来的，1号进程使用默认的netns
+* 创建进程时指定了CLONE_NEWNET标记位，那么该进程将会创建并使用新的netns
+* 内核提供了三种操作命名空间的方式：clone、setns、unshare
+  * ip netns add 命令使用的是unshare
+  * [fork vfork clone学习](https://www.cnblogs.com/mysky007/p/12331200.html)
+  * fork、pthread_creat、vfork的系统调用分别是sys_fork、sys_clone、sys_vfork、它们的底层都用的是do_fork
+  * fork()是全部复制
+  * vfork()是共享内存，方便调用exec执行其他程序，现在很少用
+  * clone()是则可以将父进程资源有选择地复制给子进程
+
+![img](../images/struct_task_struct.png)
+
+```
+clone系统调用，并创建命名空间
+SyS_clone(long clone_flags, long newsp, long parent_tidptr, long child_tidptr, long tls) (linux-4.6.2\kernel\fork.c:1834)
+|-SYSC_clone() (linux-4.6.2\kernel\fork.c:1840)
+  |-_do_fork(unsigned long clone_flags, unsigned long stack_start, unsigned long stack_size, int * parent_tidptr, int * child_tidptr, unsigned long tls) (linux-4.6.2\kernel\fork.c:1731)
+    |-copy_process(unsigned long clone_flags, unsigned long stack_start, unsigned long stack_size, int * child_tidptr, struct pid * pid, int trace, unsigned long tls) (linux-4.6.2\kernel\fork.c:1459)
+      |-copy_namespaces(unsigned long flags, struct task_struct * tsk) (linux-4.6.2\kernel\nsproxy.c:164)
+        |-create_new_namespaces(unsigned long flags, struct task_struct * tsk, struct user_namespace * user_ns, struct fs_struct * new_fs) (linux-4.6.2\kernel\nsproxy.c:106)
+          |-copy_net_ns(unsigned long flags, struct user_namespace * user_ns, struct net * old_net) (linux-4.6.2\net\core\net_namespace.c:360)
+            |-if !(flags & CLONE_NEWNET) return get_net(old_net)  // 如果没有CLONE_NEWNET，直接返回父进程的netns
+            |-setup_net(net, user_ns)                             // 设置新的netns
+```
 
 #### 虚拟交换机Bridge
 

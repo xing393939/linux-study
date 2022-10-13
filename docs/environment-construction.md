@@ -75,4 +75,7 @@ qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -initrd initramfs-busybox-x64
   * ctrl-a c 切换monitor和console
   * ctrl-a x 退出qemu
   * ctrl-a h 查看帮助
+  
+#### gdb相关
+* []
 
