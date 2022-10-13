@@ -1,6 +1,8 @@
 ### 容器网络虚拟化
 
 #### veth设备对
+![img](../images/veth_send.png)
+
 ```
 send系统调用
 SyS_sendto(long fd, long buff, long len, long flags, long addr, long addr_len) (linux-4.6.2\net\socket.c:1616)
@@ -36,13 +38,24 @@ dev_queue_xmit(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3394)
     |-xmit_one(struct sk_buff * skb, struct net_device * dev, struct netdev_queue * txq, bool more) (linux-4.6.2\net\core\dev.c:2871)
       |-netdev_start_xmit() (linux-4.6.2\include\linux\netdevice.h:3937)
         |-__netdev_start_xmit() (linux-4.6.2\include\linux\netdevice.h:3928)
-          |-veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\net\veth.c:122)
-            |-dev_forward_skb(struct net_device * dev, struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:1803)
-              |-netif_rx_internal(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3768)
-                |-enqueue_to_backlog(struct sk_buff * skb, int cpu, unsigned int * qtail) (linux-4.6.2\net\core\dev.c:3725)
-                  |-____napi_schedule(struct softnet_data * sd, struct napi_struct * napi) (linux-4.6.2\net\core\dev.c:3419)
+          |-ops->ndo_start_xmit(skb, dev)                  // 即是loopback_xmit
 
+驱动程序
+struct net_device_ops veth_netdev_ops = {
+	.ndo_init            = veth_dev_init,
+	.ndo_open            = veth_open,
+	.ndo_stop            = veth_close,
+	.ndo_start_xmit      = veth_xmit,
+	.ndo_get_stats64     = veth_get_stats64,
+	.ndo_set_mac_address = eth_mac_addr,
+}
+veth_xmit(struct sk_buff * skb, struct net_device * dev) (linux-4.6.2\drivers\net\veth.c:122)
+|-dev_forward_skb(struct net_device * dev, struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:1803)
+  |-netif_rx_internal(struct sk_buff * skb) (linux-4.6.2\net\core\dev.c:3768)
+    |-enqueue_to_backlog(struct sk_buff * skb, int cpu, unsigned int * qtail) (linux-4.6.2\net\core\dev.c:3725)
+      |-____napi_schedule(struct softnet_data * sd, struct napi_struct * napi) (linux-4.6.2\net\core\dev.c:3419)
 
+软中断->驱动程序->网络设备子系统->协议栈->进程调度和lo设备完全一样，省略。。。
 ```
 
 #### 网络命名空间
