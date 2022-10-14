@@ -1,9 +1,18 @@
 ### 容器网络虚拟化
 
-#### veth设备对
+#### veth设备对(veth1->veth2)
 ![img](../images/veth_send.png)
 
 ```
+配置命令：
+ip netns add net1
+ip link add veth1 type veth peer name veth2
+ip link set veth1 netns net1
+ip netns exec net1 ip addr add 192.168.0.101/24 dev veth1
+ip netns exec net1 ip link set veth1 up
+ip addr add 192.168.0.102/24 dev veth2
+ip link set veth2 up
+
 send系统调用
 SyS_sendto(long fd, long buff, long len, long flags, long addr, long addr_len) (linux-4.6.2\net\socket.c:1616)
 |-SYSC_sendto(int fd, void * buff, size_t len, unsigned int flags, struct sockaddr * addr, int addr_len) (linux-4.6.2\net\socket.c:1648)
@@ -86,7 +95,56 @@ SyS_clone(long clone_flags, long newsp, long parent_tidptr, long child_tidptr, l
             |-setup_net(net, user_ns)                             // 设置新的netns
 ```
 
-#### 虚拟交换机Bridge
+#### 虚拟交换机Bridge(veth1->br1->veth2)
+
+![img](../images/bridge_veth1_veth2.png)
+
+```
+配置命令：
+ip netns add net1
+ip link add veth1 type veth peer name veth1_p
+ip link set veth1 netns net1
+ip netns exec net1 ip addr add 192.168.0.101/24 dev veth1
+ip netns exec net1 ip link set veth1 up
+
+ip netns add net2
+ip link add veth2 type veth peer name veth2_p
+ip link set veth2 netns net2
+ip netns exec net2 ip addr add 192.168.0.102/24 dev veth2
+ip netns exec net2 ip link set veth2 up
+
+brctl addbr br0
+ip link set dev veth1_p master br0
+ip link set dev veth2_p master br0
+ip addr add 192.168.0.100/24 dev br0
+ip link set veth1_p up
+ip link set veth2_p up
+ip link set br0 up
+
+veth1->br1->veth2，前半部分(系统调用->协议栈->邻居子系统->网络设备层)和veth1->veth2一样，区别在于veth1_p处理软中断
+
+软中断
+net_rx_action(struct softirq_action *h)
+|-n = list_first_entry(&list, struct napi_struct, poll_list)
+|-napi_poll(n, &repoll)
+  |-n->poll(n, weight)       // 调用NAPI机制的poll函数process_backlog
+
+process_backlog(napi, quota)
+|-__netif_receive_skb(skb)
+  |-__netif_receive_skb_core(skb, false)
+    |-rx_handler = rcu_dereference(skb->dev->rx_handler) // 这里br1在添加veth1_p时，设置了rx_handler
+    |-rx_handler(&skb)                                   // 即是br_handle_frame
+      |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_PRE_ROUTING, dev_net(skb->dev), NULL, skb, skb->dev, NULL, br_handle_frame_finish)
+        |-br_handle_frame_finish(net, sk, skb)
+          |-br_forward(dst->dst, skb, skb2)
+            |-__br_forward(to, skb)
+              |-skb->dev = to->dev                       // 把skb的dev从veth1_p改成veth2_p
+              |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_FORWARD, dev_net(indev), NULL, skb, indev, skb->dev, br_forward_finish)
+                |-br_forward_finish(net, sk, skb)
+                  |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING, net, sk, skb, NULL, skb->dev, br_dev_queue_push_xmit)
+                    |-br_dev_queue_push_xmit(net, sk, skb)
+                      |-dev_queue_xmit(skb)              // 向上层传递
+```
 
 #### 外部网络通信
 
