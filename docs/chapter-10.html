@@ -317,9 +317,18 @@
                                 <section class="normal markdown-section">
                                 
                                 <h3 id="&#x5BB9;&#x5668;&#x7F51;&#x7EDC;&#x865A;&#x62DF;&#x5316;">&#x5BB9;&#x5668;&#x7F51;&#x7EDC;&#x865A;&#x62DF;&#x5316;</h3>
-<h4 id="veth&#x8BBE;&#x5907;&#x5BF9;">veth&#x8BBE;&#x5907;&#x5BF9;</h4>
+<h4 id="veth&#x8BBE;&#x5907;&#x5BF9;veth1-veth2">veth&#x8BBE;&#x5907;&#x5BF9;(veth1-&gt;veth2)</h4>
 <p><img src="../images/veth_send.png" alt="img"></p>
-<pre><code>send&#x7CFB;&#x7EDF;&#x8C03;&#x7528;
+<pre><code>&#x914D;&#x7F6E;&#x547D;&#x4EE4;&#xFF1A;
+ip netns add net1
+ip link add veth1 type veth peer name veth2
+ip link set veth1 netns net1
+ip netns exec net1 ip addr add 192.168.0.101/24 dev veth1
+ip netns exec net1 ip link set veth1 up
+ip addr add 192.168.0.102/24 dev veth2
+ip link set veth2 up
+
+send&#x7CFB;&#x7EDF;&#x8C03;&#x7528;
 SyS_sendto(long fd, long buff, long len, long flags, long addr, long addr_len) (linux-4.6.2\net\socket.c:1616)
 |-SYSC_sendto(int fd, void * buff, size_t len, unsigned int flags, struct sockaddr * addr, int addr_len) (linux-4.6.2\net\socket.c:1648)
   |-sock_sendmsg(struct socket * sock, struct msghdr * msg) (linux-4.6.2\net\socket.c:622)
@@ -398,8 +407,53 @@ SyS_clone(long clone_flags, long newsp, long parent_tidptr, long child_tidptr, l
           |-copy_net_ns(unsigned long flags, struct user_namespace * user_ns, struct net * old_net) (linux-4.6.2\net\core\net_namespace.c:360)
             |-if !(flags &amp; CLONE_NEWNET) return get_net(old_net)  // &#x5982;&#x679C;&#x6CA1;&#x6709;CLONE_NEWNET&#xFF0C;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;&#x7236;&#x8FDB;&#x7A0B;&#x7684;netns
             |-setup_net(net, user_ns)                             // &#x8BBE;&#x7F6E;&#x65B0;&#x7684;netns
-</code></pre><h4 id="&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;bridge">&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;Bridge</h4>
-<h4 id="&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;">&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;</h4>
+</code></pre><h4 id="&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;bridgeveth1-br1-veth2">&#x865A;&#x62DF;&#x4EA4;&#x6362;&#x673A;Bridge(veth1-&gt;br1-&gt;veth2)</h4>
+<p><img src="../images/bridge_veth1_veth2.png" alt="img"></p>
+<pre><code>&#x914D;&#x7F6E;&#x547D;&#x4EE4;&#xFF1A;
+ip netns add net1
+ip link add veth1 type veth peer name veth1_p
+ip link set veth1 netns net1
+ip netns exec net1 ip addr add 192.168.0.101/24 dev veth1
+ip netns exec net1 ip link set veth1 up
+
+ip netns add net2
+ip link add veth2 type veth peer name veth2_p
+ip link set veth2 netns net2
+ip netns exec net2 ip addr add 192.168.0.102/24 dev veth2
+ip netns exec net2 ip link set veth2 up
+
+brctl addbr br0
+ip link set dev veth1_p master br0
+ip link set dev veth2_p master br0
+ip addr add 192.168.0.100/24 dev br0
+ip link set veth1_p up
+ip link set veth2_p up
+ip link set br0 up
+
+veth1-&gt;br1-&gt;veth2&#xFF0C;&#x524D;&#x534A;&#x90E8;&#x5206;(&#x7CFB;&#x7EDF;&#x8C03;&#x7528;-&gt;&#x534F;&#x8BAE;&#x6808;-&gt;&#x90BB;&#x5C45;&#x5B50;&#x7CFB;&#x7EDF;-&gt;&#x7F51;&#x7EDC;&#x8BBE;&#x5907;&#x5C42;)&#x548C;veth1-&gt;veth2&#x4E00;&#x6837;&#xFF0C;&#x533A;&#x522B;&#x5728;&#x4E8E;veth1_p&#x5904;&#x7406;&#x8F6F;&#x4E2D;&#x65AD;
+
+&#x8F6F;&#x4E2D;&#x65AD;
+net_rx_action(struct softirq_action *h)
+|-n = list_first_entry(&amp;list, struct napi_struct, poll_list)
+|-napi_poll(n, &amp;repoll)
+  |-n-&gt;poll(n, weight)       // &#x8C03;&#x7528;NAPI&#x673A;&#x5236;&#x7684;poll&#x51FD;&#x6570;process_backlog
+
+process_backlog(napi, quota)
+|-__netif_receive_skb(skb)
+  |-__netif_receive_skb_core(skb, false)
+    |-rx_handler = rcu_dereference(skb-&gt;dev-&gt;rx_handler) // &#x8FD9;&#x91CC;br1&#x5728;&#x6DFB;&#x52A0;veth1_p&#x65F6;&#xFF0C;&#x8BBE;&#x7F6E;&#x4E86;rx_handler
+    |-rx_handler(&amp;skb)                                   // &#x5373;&#x662F;br_handle_frame
+      |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_PRE_ROUTING, dev_net(skb-&gt;dev), NULL, skb, skb-&gt;dev, NULL, br_handle_frame_finish)
+        |-br_handle_frame_finish(net, sk, skb)
+          |-br_forward(dst-&gt;dst, skb, skb2)
+            |-__br_forward(to, skb)
+              |-skb-&gt;dev = to-&gt;dev                       // &#x628A;skb&#x7684;dev&#x4ECE;veth1_p&#x6539;&#x6210;veth2_p
+              |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_FORWARD, dev_net(indev), NULL, skb, indev, skb-&gt;dev, br_forward_finish)
+                |-br_forward_finish(net, sk, skb)
+                  |-NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING, net, sk, skb, NULL, skb-&gt;dev, br_dev_queue_push_xmit)
+                    |-br_dev_queue_push_xmit(net, sk, skb)
+                      |-dev_queue_xmit(skb)              // &#x5411;&#x4E0A;&#x5C42;&#x4F20;&#x9012;
+</code></pre><h4 id="&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;">&#x5916;&#x90E8;&#x7F51;&#x7EDC;&#x901A;&#x4FE1;</h4>
 
                                 
                                 </section>
@@ -439,7 +493,7 @@ SyS_clone(long clone_flags, long newsp, long parent_tidptr, long child_tidptr, l
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-13T08:27:32.058Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-13T08:27:57.948Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第10章-容器网络虚拟化","level":"1.14","depth":1,"previous":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-10.md","mtime":"2022-10-14T08:51:57.581Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-10-14T08:52:22.497Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
