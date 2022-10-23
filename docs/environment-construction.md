@@ -76,6 +76,7 @@ qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -initrd initramfs-busybox-x64
   * ctrl-a x 退出qemu
   * ctrl-a h 查看帮助
   
-#### gdb相关
-* []
+#### busybox镜像制作
+* [QEMU 启动 linux 内核和自制根文件系统](https://www.frytea.com/technology/unix-like/qemu-launch-linux-kernel-and-homemade-rootfs/)
+* 也可以用buildboot制作
 
