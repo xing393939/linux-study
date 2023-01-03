@@ -15,19 +15,23 @@
 sysctl -w net.ipv4.ip_local_port_range="5000 65000"
 sysctl -w fs.file-max=1100000
 sysctl -w fs.nr_open=1100000
+sysctl -w net.ipv4.tcp_max_orphans=1000000
+sysctl -w net.ipv4.tcp_max_syn_backlog=4096
+sysctl -w net.ipv4.tcp_mem="600000 800000 1000000"
+sysctl -w net.ipv4.tcp_rmem="4096 4096 6291456"
+sysctl -w net.ipv4.tcp_wmem="4096 4096 6291456"
 sysctl -p
+
+ulimit -n 1000000 
 
 vim /etc/security/limits.conf
 * hard nofile 1000000
 * soft nofile 1000000
 在新的终端生效
 
-sysctl -w net.ipv4.tcp_max_orphans=990000
-sysctl -w net.ipv4.tcp_max_syn_backlog=4096
-sysctl -w net.ipv4.tcp_mem="600000 800000 1000000"
-sysctl -w net.ipv4.tcp_rmem="4096 4096 6291456"
-sysctl -w net.ipv4.tcp_wmem="4096 4096 6291456"
-sysctl -p
+sysctl net.ipv4.ip_local_port_range fs.file-max fs.nr_open \
+net.ipv4.tcp_max_orphans net.ipv4.tcp_max_syn_backlog \
+net.ipv4.tcp_mem net.ipv4.tcp_rmem net.ipv4.tcp_wmem
 
 换c6i.large
 ```
