@@ -362,19 +362,23 @@
 sysctl -w net.ipv4.ip_local_port_range=&quot;5000 65000&quot;
 sysctl -w fs.file-max=1100000
 sysctl -w fs.nr_open=1100000
+sysctl -w net.ipv4.tcp_max_orphans=1000000
+sysctl -w net.ipv4.tcp_max_syn_backlog=4096
+sysctl -w net.ipv4.tcp_mem=&quot;600000 800000 1000000&quot;
+sysctl -w net.ipv4.tcp_rmem=&quot;4096 4096 6291456&quot;
+sysctl -w net.ipv4.tcp_wmem=&quot;4096 4096 6291456&quot;
 sysctl -p
+
+ulimit -n 1000000 
 
 vim /etc/security/limits.conf
 * hard nofile 1000000
 * soft nofile 1000000
 &#x5728;&#x65B0;&#x7684;&#x7EC8;&#x7AEF;&#x751F;&#x6548;
 
-sysctl -w net.ipv4.tcp_max_orphans=990000
-sysctl -w net.ipv4.tcp_max_syn_backlog=4096
-sysctl -w net.ipv4.tcp_mem=&quot;600000 800000 1000000&quot;
-sysctl -w net.ipv4.tcp_rmem=&quot;4096 4096 6291456&quot;
-sysctl -w net.ipv4.tcp_wmem=&quot;4096 4096 6291456&quot;
-sysctl -p
+sysctl net.ipv4.ip_local_port_range fs.file-max fs.nr_open \
+net.ipv4.tcp_max_orphans net.ipv4.tcp_max_syn_backlog \
+net.ipv4.tcp_mem net.ipv4.tcp_rmem net.ipv4.tcp_wmem
 
 &#x6362;c6i.large
 </code></pre><h4 id="udp&#x548C;tcp&#x7AEF;&#x53E3;&#x53EF;&#x4EE5;&#x76F8;&#x540C;">UDP&#x548C;TCP&#x7AEF;&#x53E3;&#x53EF;&#x4EE5;&#x76F8;&#x540C;</h4>
@@ -448,7 +452,7 @@ udp_rcv(skb)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.12","depth":1,"next":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.11","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2022-12-30T08:22:59.807Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-12-30T08:23:32.039Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.12","depth":1,"next":{"title":"第9章-网络性能优化建议","level":"1.13","depth":1,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.11","depth":1,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2023-01-03T08:32:18.023Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-01-03T08:32:48.424Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
