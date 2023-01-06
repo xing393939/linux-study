@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         if(conFd > 0)
         {
             sockets[i++] = conFd;
-            printf("%s %d accept success:%d\n", ip, port, i);
+            //printf("%s %d accept success:%d\n", ip, port, i);
         }
     }
 }
