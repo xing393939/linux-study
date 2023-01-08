@@ -15,6 +15,8 @@
 sysctl -w net.ipv4.ip_local_port_range="5000 65000"
 sysctl -w fs.file-max=1100000
 sysctl -w fs.nr_open=1100000
+sysctl -w net.core.somaxconn=4096
+sysctl -w net.ipv4.tcp_syncookies=1
 sysctl -w net.ipv4.tcp_max_orphans=1000000
 sysctl -w net.ipv4.tcp_max_syn_backlog=4096
 sysctl -w net.ipv4.tcp_mem="600000 800000 1000000"
@@ -31,7 +33,8 @@ vim /etc/security/limits.conf
 
 sysctl net.ipv4.ip_local_port_range fs.file-max fs.nr_open \
 net.ipv4.tcp_max_orphans net.ipv4.tcp_max_syn_backlog \
-net.ipv4.tcp_mem net.ipv4.tcp_rmem net.ipv4.tcp_wmem
+net.ipv4.tcp_mem net.ipv4.tcp_rmem net.ipv4.tcp_wmem \
+net.core.somaxconn net.ipv4.tcp_syncookies
 
 换c6i.large
 ```
