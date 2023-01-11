@@ -59,11 +59,9 @@ int main(int argc, char *argv[])
         if(fd > 0)
         {
             sockets[i-1] = fd;
-        }else{
-            return 1;
         }
     }
-    sleep(300);
+    sleep(3600);
 
     //3. 释放所有的连接
     printf("关闭所有的连接...\n");
