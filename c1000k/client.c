@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h> 
-
+#include <errno.h>
 
 #define MAX_CONNECTION_NUM 50000
 
@@ -23,7 +23,7 @@ int buildConnect(const char *sIp, int sPort)
     srvAddr.sin_port = htons(sPort); 
     if(connect(skFd, (struct sockaddr *)&srvAddr, sizeof(srvAddr)) < 0)
     {
-       printf("\n Error : Connect Failed \n");
+       printf("\n Error : Connect Failed %s\n", strerror(errno));
        return 0;
     } 
 
