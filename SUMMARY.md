@@ -2,6 +2,7 @@
 
 ### 目录
 * [环境搭建](docs/environment-construction.md)
+* [ftrace](docs/ftrace.md)
 * [核心数据结构](docs/core-data-structure.md)
 * [socket协议簇](docs/protocol-suite.md)
 * [OSI七层和Netfilter](docs/osi_and_netfilter.md)
