@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>OSI七层和Netfilter · GitBook</title>
+        <title>Linux 性能优化实战 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="linux-combat.html" />
     
-    
-    <link rel="prev" href="protocol-suite.html" />
+    <link rel="prev" href="osi_and_netfilter.html" />
     
 
     </head>
@@ -156,7 +154,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.6" data-path="osi_and_netfilter.html">
+        <li class="chapter " data-level="1.6" data-path="osi_and_netfilter.html">
             
                 <a href="osi_and_netfilter.html">
             
@@ -169,7 +167,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="linux-combat.html">
+        <li class="chapter active" data-level="1.7" data-path="linux-combat.html">
             
                 <a href="linux-combat.html">
             
@@ -348,7 +346,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >OSI七层和Netfilter</a>
+        <a href=".." >Linux 性能优化实战</a>
     </h1>
 </div>
 
@@ -363,44 +361,26 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h3 id="osi&#x4E03;&#x5C42;&#x548C;netfilter">OSI&#x4E03;&#x5C42;&#x548C;Netfilter</h3>
-<h4 id="osi&#x4E03;&#x5C42;&#x6A21;&#x578B;">OSI&#x4E03;&#x5C42;&#x6A21;&#x578B;</h4>
-<ul>
-<li><a href="https://juejin.cn/post/7088967250413092872" target="_blank">veth pair&#x548C;Linux bridge</a></li>
-<li>&#x5728;Linux&#x5185;&#x6838;&#x5B9E;&#x73B0;&#x4E2D;&#xFF0C;&#x94FE;&#x8DEF;&#x5C42;&#x534F;&#x8BAE;&#x9760;&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x6765;&#x5B9E;&#x73B0;&#xFF1B;</li>
-<li>&#x5185;&#x6838;&#x534F;&#x8BAE;&#x6808;&#x6765;&#x5B9E;&#x73B0;&#x7F51;&#x7EDC;&#x5C42;&#x548C;&#x4F20;&#x8F93;&#x5C42;&#xFF0C;&#x6240;&#x4EE5;&#x5F88;&#x591A;&#x8D44;&#x6599;&#x4E2D;&#x5C06;&#x7F51;&#x7EDC;&#x5C42;&#x548C;&#x4F20;&#x8F93;&#x5C42;&#x7EDF;&#x79F0;&#x4E3A;Linux&#x7F51;&#x7EDC;&#x534F;&#x8BAE;&#x6808;&#x3002;</li>
-</ul>
-<p><img src="../images/osi7.png" alt="img"></p>
-<h4 id="netfilter-hook">Netfilter Hook</h4>
-<ul>
-<li>Netfilter&#x5B50;&#x7CFB;&#x7EDF;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x5E73;&#x65F6;&#x6240;&#x8BF4;&#x7684;&#x9632;&#x706B;&#x5899;&#xFF0C;&#x901A;&#x5E38;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x7BA1;&#x7406;&#x5DE5;&#x5177;iptables&#x6765;&#x914D;&#x7F6E;Netfilter Hook</li>
-<li>&#x672C;&#x673A;&#x63A5;&#x6536;&#x6570;&#x636E;&#x5305;&#x548C;&#x8F6C;&#x53D1;&#x6570;&#x636E;&#x5305;<ul>
-<li>&#x6536;&#x5230;skb&#xFF0C;&#x82E5;mac&#x5730;&#x5740;&#x4E0D;&#x662F;&#x8BE5;&#x7F51;&#x5361;&#x4E14;&#x6CA1;&#x6709;&#x5F00;&#x542F;&#x6DF7;&#x6742;&#x6A21;&#x5F0F;&#xFF0C;&#x76F4;&#x63A5;&#x4E22;&#x5F03;</li>
-<li>&#x7ECF;&#x8FC7;RREROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x76EE;&#x7684;&#x5730;&#x5740;&#x4FEE;&#x6539;(DNAT)</li>
-<li>&#x8DEF;&#x7531;&#x51B3;&#x7B56;&#xFF1A;&#x51B3;&#x5B9A;&#x662F;&#x53D1;&#x7ED9;&#x672C;&#x5730;&#x8FDB;&#x7A0B;&#x8FD8;&#x662F;&#x8F6C;&#x53D1;&#x7ED9;&#x5176;&#x4ED6;&#x673A;&#x5668;<ul>
-<li>&#x53D1;&#x7ED9;&#x672C;&#x5730;&#xFF1A;&#x7ECF;&#x8FC7;INPUT&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x8FDB;&#x7A0B;</li>
-<li>&#x53D1;&#x7ED9;&#x522B;&#x4EBA;(&#x6216;&#x5176;&#x4ED6;network namespace)&#xFF1A;&#x7ECF;&#x8FC7;FORWARD&#xFF0C;&#x7136;&#x540E;POSTROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x6E90;&#x5730;&#x5740;&#x8F6C;&#x6362;(SNAT)&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x7F51;&#x5361;&#x9A71;&#x52A8;</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>&#x672C;&#x673A;&#x53D1;&#x9001;&#x6570;&#x636E;&#x5305;<ul>
-<li>&#x7F51;&#x7EDC;&#x5C42;&#x6536;&#x5230;&#x4F20;&#x8F93;&#x5C42;&#x7684;skb</li>
-<li>&#x7ECF;&#x8FC7;OUTPUT</li>
-<li>&#x8DEF;&#x7531;&#x51B3;&#x7B56;&#xFF1A;&#x7528;&#x54EA;&#x4E2A;&#x7F51;&#x5361;&#xFF0C;&#x76EE;&#x6807;mac&#x5730;&#x5740;&#x662F;&#x591A;&#x5C11;</li>
-<li>&#x7ECF;&#x8FC7;POSTROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x6E90;&#x5730;&#x5740;&#x8F6C;&#x6362;(SNAT)&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x7F51;&#x5361;&#x9A71;&#x52A8;</li>
-</ul>
-</li>
-</ul>
-<p><img src="../images/skb_receive.png" alt="img"></p>
-<p><img src="../images/skb_forward.png" alt="img"></p>
-<p><img src="../images/skb_send.png" alt="img"></p>
-<h4 id="&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;">&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;</h4>
-<ul>
-<li>&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;&#x53EF;&#x4EE5;&#x770B;&#x6210;&#x4E00;&#x4E2A;&#x8DEF;&#x7531;&#x5668;&#x548C;&#x4E00;&#x4E2A;&#x4EA4;&#x6362;&#x673A;&#x7684;&#x7EC4;&#x5408;&#xFF0C;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;</li>
-</ul>
-<p><img src="../images/home_router.png" alt="img"></p>
+                                <h3 id="linux-&#x6027;&#x80FD;&#x4F18;&#x5316;&#x5B9E;&#x6218;">Linux &#x6027;&#x80FD;&#x4F18;&#x5316;&#x5B9E;&#x6218;</h3>
+<h4 id="cpu&#x7BC7;">CPU&#x7BC7;</h4>
+<pre><code># 1.1 &#x6A21;&#x62DF;&#x4E00;&#x4E2A;cpu&#x4F7F;&#x7528;&#x7387;100%&#x7684;&#x573A;&#x666F;&#xFF0C;cpu&#x8D1F;&#x8F7D;&#x4F1A;&#x8FBE;&#x5230;1
+stress --cpu 1 --timeout 600
 
+# 1.2 -P ALL &#x8868;&#x793A;&#x76D1;&#x63A7;&#x6240;&#x6709;CPU&#xFF0C;&#x540E;&#x9762;&#x6570;&#x5B57;5&#x8868;&#x793A;&#x95F4;&#x9694;5&#x79D2;&#x540E;&#x8F93;&#x51FA;&#x4E00;&#x7EC4;&#x6570;&#x636E;
+mpstat -P ALL 5 // &#x53EF;&#x4EE5;&#x770B;&#x5230;&#x5176;&#x4E2D;&#x4E00;&#x4E2A;cpu&#x7684;%usr&#x662F;100%
+
+# 1.3 &#x6BCF;5&#x79D2;&#x8F93;&#x51FA;&#x4E00;&#x6B21;&#xFF0C;-u&#x8868;&#x793A;&#x8F93;&#x51FA;cpu&#x6307;&#x6807;
+pidstat -u 5    // &#x53EF;&#x4EE5;&#x627E;&#x5230;&#x662F;&#x90A3;&#x4E2A;&#x8FDB;&#x7A0B;&#x5360;cpu
+
+# 2.1 &#x6A21;&#x62DF;IO&#x538B;&#x529B;&#xFF0C;cpu&#x8D1F;&#x8F7D;&#x4F1A;&#x8FBE;&#x5230;1
+stress -i 1 --timeout 600
+
+# 2.2 &#x53EF;&#x4EE5;&#x770B;&#x5230;&#x4E00;&#x4E2A;cpu&#x7684;%sys&#x662F;24%&#xFF0C;%iowait&#x662F;68%
+mpstat -P ALL 5 1
+
+# 2.3 &#x53EF;&#x4EE5;&#x627E;&#x5230;%CPU&#x9AD8;&#x7684;&#x90A3;&#x4E2A;&#x8FDB;&#x7A0B;
+pidstat -u 5
+</code></pre>
                                 
                                 </section>
                             
@@ -427,14 +407,10 @@
 
             
                 
-                <a href="protocol-suite.html" class="navigation navigation-prev " aria-label="Previous page: socket协议簇">
+                <a href="osi_and_netfilter.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: OSI七层和Netfilter">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
-                
-                <a href="linux-combat.html" class="navigation navigation-next " aria-label="Next page: Linux 性能优化实战">
-                    <i class="fa fa-angle-right"></i>
-                </a>
                 
             
         
@@ -443,7 +419,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"next":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"path":"docs/linux-combat.md","ref":"docs/linux-combat.md","articles":[]},"previous":{"title":"socket协议簇","level":"1.5","depth":1,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/osi_and_netfilter.md","mtime":"2023-03-27T02:35:37.159Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-27T02:36:07.433Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"next":{"title":"深入理解Linux网络","level":"1.8","depth":1,"ref":"","articles":[{"title":"第2章-内核是如何接收网络包的","level":"1.8.1","depth":2,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},{"title":"第3章-内核是如何与用户进程协作的","level":"1.8.2","depth":2,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},{"title":"第4章-内核是如何发送网络包的","level":"1.8.3","depth":2,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},{"title":"第5章-深度理解本机网络IO","level":"1.8.4","depth":2,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},{"title":"第6章-深度理解TCP连接建立过程","level":"1.8.5","depth":2,"path":"docs/chapter-06.md","ref":"docs/chapter-06.md","articles":[]},{"title":"第7章-一条TCP连接消耗多大内存","level":"1.8.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.8.7","depth":2,"path":"docs/chapter-08.md","ref":"docs/chapter-08.md","articles":[]},{"title":"第9章-网络性能优化建议","level":"1.8.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},{"title":"第10章-容器网络虚拟化","level":"1.8.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]}]},"previous":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-03-27T02:35:37.155Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-03-27T02:36:07.433Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
