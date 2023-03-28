@@ -44,6 +44,9 @@
   * %guest 宿主运行虚拟机的CPU时间 
   * %gnice 以低优先级运行虚拟机的时间  
   * %idle 空闲cpu
+* perf分析调用链
+  * perf record -g -p 3087
+  * perf report -f
 
 ```
 # 1.1 模拟一个cpu使用率100%的场景，cpu负载会达到1
