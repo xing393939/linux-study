@@ -24,6 +24,26 @@
   * 自愿上下文切换变多了，说明进程都在等待资源，有可能发生了I/O等问题；
   * 非自愿上下文切换变多了，说明进程都在被强制调度，说明CPU成了瓶颈；
   * 中断次数变多了，说明CPU被中断处理程序占用，通过查看/proc/interrupts确定中断类型。
+* top命令查看cpu信息：
+  * us 用户cpu
+  * sy 内核cpu
+  * ni nice cpu，代表低优先级用户态CPU时间 
+  * id 空闲cpu，不包含iowait
+  * wa iowait，等待IO的cpu时间
+  * hi irq，硬中断
+  * si softirq，软中断
+  * st steal，其他虚拟机占用的CPU时间
+* mpstat -P ALL查看cpu信息：
+  * %usr 用户cpu   
+  * %nice nice cpu   
+  * %sys 内核cpu
+  * %iowait 等待IO的cpu时间   
+  * %irq 硬中断   
+  * %soft 软中断 
+  * %steal 其他虚拟机占用的CPU时间  
+  * %guest 宿主运行虚拟机的CPU时间 
+  * %gnice 以低优先级运行虚拟机的时间  
+  * %idle 空闲cpu
 
 ```
 # 1.1 模拟一个cpu使用率100%的场景，cpu负载会达到1
