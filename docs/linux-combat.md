@@ -3,6 +3,7 @@
 #### CPU篇
 * 平均负载与cpu使用率
   * 平均负载：单位时间内，系统中处于可运行状态和不可中断状态的平均进程数
+  * 平均负载：top命令查看S列，R=可运行，D=不可中断，S=睡眠，Z=僵尸
   * cpu使用率：%usr + %sys
   * 情况1：CPU密集型进程，CPU使用率和平均负载基本一致
   * 情况2：IO密集型进程，平均负载升高，CPU使用率不一定升高
@@ -47,6 +48,32 @@
 * perf分析调用链
   * perf record -g -p 3087
   * perf report -f
+* 案例1：top查看cpu使用率很高，但是pidstat却看不到具体进程
+  * 使用perf命令；使用execsnoop命令查看是否有短命进程不断被创建
+* 案例2：top查看iowait很高，zombies数量不断增加
+  * pidstat -d 1，查看磁盘io高的进程
+  * 使用perf查看占用cpu高的地方
+  * pstree -aps 3084，-a输出命令行，-p指定进程号，-s输出父进程
+* 中断
+  * 软中断：cat /proc/softirqs
+  * 硬中断：cat /proc/interrupts
+
+
+|性能指标|工具|说明|
+|---|---|---|
+|平均负载        |top|1分钟、5分钟、15分钟|
+|系统整体CPU使用率|vmstat 1<br>mpstat -P ALL 1<br>sar -u 1| |
+|进程CPU使用率   |top<br>pidstat -u 1| |
+|系统上下文切换   |vmstat 1      |cs=上下文切换数|
+|进程上下文切换   |pidstat -w 1  |cswch=自愿上下文切换 nvcswch=非自愿上下文切换|
+|软中断         |top<br>mpstat -P ALL 1|si=软中断<br>soft=软中断|
+|硬中断         |vmstat 1              |in=硬中断|
+|网络           |dstat 1<br>sar -n DEV 1| |
+|I/O           |dstat 1<br>sar -d 1     | |
+|CPU个数        |lscpu| |
+|事件剖析        |perf<br>execsnoop| |
+
+![img](../images/linux-combat/cpu-analysis.png)
 
 ```
 # 1.1 模拟一个cpu使用率100%的场景，cpu负载会达到1
@@ -80,7 +107,7 @@ sysbench --threads=10 --max-time=300 threads run
 vmstat 1
 
 # 4.3 -w参数表示输出进程切换指标，而-u参数则表示输出CPU使用指标
-pidstat -w -u 1 // cpu已经是100%
+pidstat -w 1 // cpu已经是100%
 
 # 4.4 -t参数表示连同线程也一起输出
 pidstat -w -t 1
