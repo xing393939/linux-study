@@ -62,7 +62,7 @@
 |性能指标|工具|说明|
 |---|---|---|
 |平均负载        |top|1分钟、5分钟、15分钟|
-|系统整体CPU使用率|vmstat 1<br>mpstat -P ALL 1<br>sar -u 1| |
+|系统整体CPU使用率|vmstat 1<br>mpstat -P ALL 1<br>sar -P ALL 1|us sy id wa st<br>%usr %nice %sys %iowait %steal %guest %gnice %idle<br>%user %nice %system %iowait %steal %idle |
 |进程CPU使用率   |top<br>pidstat -u 1| |
 |系统上下文切换   |vmstat 1      |cs=上下文切换数|
 |进程上下文切换   |pidstat -w 1  |cswch=自愿上下文切换 nvcswch=非自愿上下文切换|
