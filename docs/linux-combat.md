@@ -71,7 +71,7 @@
 |网络           |dstat 1<br>sar -n DEV 1|net列<br>pck/s=帧数/秒 kB/s=KB/秒 |
 |I/O           |dstat 1<br>sar -dp 1     |dsk列<br>rkB/s和wkB/s |
 |CPU个数        |lscpu| CPU(s)列 |
-|事件剖析        |perf<br>execsnoop| |
+|事件剖析        |perf<br>execsnoop| (无) |
 
 ![img](../images/linux-combat/cpu-analysis.png)
 
