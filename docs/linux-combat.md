@@ -62,15 +62,15 @@
 |性能指标|工具|说明|
 |---|---|---|
 |平均负载        |top|1分钟、5分钟、15分钟|
-|系统整体CPU使用率|vmstat 1<br>mpstat -P ALL 1<br>sar -P ALL 1|us sy id wa st<br>%usr %nice %sys %iowait %steal %guest %gnice %idle<br>%user %nice %system %iowait %steal %idle |
-|进程CPU使用率   |top<br>pidstat -u 1| |
+|系统整体CPU使用率|vmstat 1<br>mpstat -P ALL 1<br>sar -P ALL 1|us sy id wa st<br>%usr %nice %sys %iowait %steal %guest %gnice %idle<br>%usr %nice %sys %iowait %steal %idle |
+|进程CPU使用率   |top<br>pidstat -u 1|%CPU<br>%usr %sys %guest %wait %CPU CPU |
 |系统上下文切换   |vmstat 1      |cs=上下文切换数|
 |进程上下文切换   |pidstat -w 1  |cswch=自愿上下文切换 nvcswch=非自愿上下文切换|
 |软中断         |top<br>mpstat -P ALL 1|si=软中断<br>soft=软中断|
 |硬中断         |vmstat 1              |in=硬中断|
-|网络           |dstat 1<br>sar -n DEV 1| |
-|I/O           |dstat 1<br>sar -d 1     | |
-|CPU个数        |lscpu| |
+|网络           |dstat 1<br>sar -n DEV 1|net列<br>pck/s=帧数/秒 kB/s=KB/秒 |
+|I/O           |dstat 1<br>sar -dp 1     |dsk列<br>rkB/s和wkB/s |
+|CPU个数        |lscpu| CPU(s)列 |
 |事件剖析        |perf<br>execsnoop| |
 
 ![img](../images/linux-combat/cpu-analysis.png)
