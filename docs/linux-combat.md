@@ -67,7 +67,7 @@
 |系统上下文切换   |vmstat 1      |cs=上下文切换数|
 |进程上下文切换   |pidstat -w 1  |cswch=自愿上下文切换 nvcswch=非自愿上下文切换|
 |软中断         |top<br>mpstat -P ALL 1|si=软中断<br>soft=软中断|
-|硬中断         |vmstat 1              |in=硬中断|
+|硬中断         |top<br>mpstat -P ALL 1|hi=硬中断<br>irq=硬中断|
 |网络           |dstat 1<br>sar -n DEV 1|net列<br>pck/s=帧数/秒 kB/s=KB/秒 |
 |I/O           |dstat 1<br>sar -dp 1     |dsk列<br>rkB/s和wkB/s |
 |CPU个数        |lscpu| CPU(s)列 |
