@@ -57,7 +57,11 @@
 * 中断
   * 软中断：cat /proc/softirqs
   * 硬中断：cat /proc/interrupts
-
+* 答疑：
+  * 模拟iowait高：stress-ng -i 1 --hdd 1 --timeout 600
+  * pidstat中， %wait表示进程等待CPU的时间百分比。CPU状态是R
+  * top中，iowait%则表示等待I/O的CPU时间百分比。CPU状态是D
+  
 
 |性能指标|工具|说明|
 |---|---|---|
