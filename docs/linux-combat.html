@@ -553,6 +553,7 @@ pidstat -w 1 // cpu&#x5DF2;&#x7ECF;&#x662F;100%
 pidstat -w -t 1
 </code></pre><h4 id="&#x5185;&#x5B58;&#x7BC7;">&#x5185;&#x5B58;&#x7BC7;</h4>
 <ul>
+<li><a href="https://blog.holbertonschool.com/hack-the-virtual-memory-malloc-the-heap-the-program-break/" target="_blank">Hack the Virtual Memory: malloc, the heap &amp; the program break</a></li>
 <li>free&#x547D;&#x4EE4;&#x7684;&#x89E3;&#x91CA;<ul>
 <li>&#x7B2C;&#x4E00;&#x5217;&#xFF0C;total &#x662F;&#x603B;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#xFF1B;</li>
 <li>&#x7B2C;&#x4E8C;&#x5217;&#xFF0C;used &#x662F;&#x5DF2;&#x4F7F;&#x7528;&#x5185;&#x5B58;&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x5305;&#x542B;&#x4E86;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#xFF1B;</li>
@@ -567,6 +568,33 @@ pidstat -w -t 1
 <li>RES &#x662F;&#x5E38;&#x9A7B;&#x5185;&#x5B58;&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x5373;&#x7269;&#x7406;&#x5185;&#x5B58;&#xFF0C;&#x4E0D;&#x5305;&#x62EC; Swap &#x548C;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#x3002;</li>
 <li>SHR &#x662F;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x6BD4;&#x5982;&#x4E0E;&#x5176;&#x4ED6;&#x8FDB;&#x7A0B;&#x5171;&#x540C;&#x4F7F;&#x7528;&#x7684;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#x3001;&#x52A0;&#x8F7D;&#x7684;&#x52A8;&#x6001;&#x94FE;&#x63A5;&#x5E93;&#x4EE5;&#x53CA;&#x7A0B;&#x5E8F;&#x7684;&#x4EE3;&#x7801;&#x6BB5;&#x7B49;&#x3002;</li>
 <li>%MEM &#x662F;&#x8FDB;&#x7A0B;&#x4F7F;&#x7528;&#x7269;&#x7406;&#x5185;&#x5B58;&#x5360;&#x7CFB;&#x7EDF;&#x603B;&#x5185;&#x5B58;&#x7684;&#x767E;&#x5206;&#x6BD4;&#x3002;</li>
+</ul>
+</li>
+<li><a href="https://www.jianshu.com/p/3bab26d25d2e" target="_blank">&#x5185;&#x5B58;&#x8017;&#x7528;&#xFF1A;VSS/RSS/PSS/USS &#x7684;&#x4ECB;&#x7ECD;</a></li>
+<li><a href="https://www.sobyte.net/post/2022-04/pss-uss-rss/" target="_blank">&#x7528;go&#x67E5;&#x8BE2;/proc/pid/status&#x548C;/proc/pid/smaps</a></li>
+<li><a href="https://liam.page/2020/07/17/memory-stat-in-TOP/" target="_blank">top&#x547D;&#x4EE4;&#x4E2D; CODE + DATA != RES &#x7684;&#x539F;&#x56E0;</a></li>
+<li><a href="https://unix.stackexchange.com/questions/56469/rssresident-set-size-is-differ-when-use-pmap-and-ps-command" target="_blank">top&#x547D;&#x4EE4;&#x4E2D;&#x7684;RES=ps&#x547D;&#x4EE4;&#x7684;RSS&#xFF0C;&#x4F46;&#x662F;!=smem&#x7684;RSS</a><ul>
+<li>RSS = PrivateMem + SharedMem</li>
+<li>PSS = PrivateMem + (SharedMem / SharedProcessNum)</li>
+<li>USS = PrivateMem</li>
+</ul>
+</li>
+<li>free&#x547D;&#x4EE4;&#x7684;buff/cache&#xFF0C;&#x53EF;&#x4EE5;&#x7528;<code>vmstat 1</code>&#x67E5;&#x770B;<ul>
+<li>Block Buffer&#xFF1A;&#x5757;&#x8BBE;&#x5907;&#x7684;&#x8BFB;&#x5199;&#x7F13;&#x5B58;&#x3002;&#x8BFB;&#x5199;&#x8BBE;&#x5907;&#xFF0C;&#x4F1A;&#x8DF3;&#x8FC7;&#x6587;&#x4EF6;&#x7CFB;&#x7EDF;</li>
+<li>Page Cache&#xFF1A;&#x6587;&#x4EF6;&#x7684;&#x8BFB;&#x5199;&#x7F13;&#x5B58;&#x3002;&#x8BFB;&#x5199;&#x6587;&#x4EF6;&#xFF0C;&#x5148;&#x7ECF;&#x8FC7;&#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#xFF0C;&#x518D;&#x5230;&#x8BBE;&#x5907;</li>
+</ul>
+</li>
+<li><a href="https://www.howtouselinux.com/post/linux-file-system-raw-io-and-direct-io" target="_blank">Difference Between RAW IO and Direct IO</a><ul>
+<li>&#x88F8; I/O&#xFF08;Raw I/O&#xFF09;&#x7ED5;&#x8FC7;&#xFF08;bypass&#xFF09;&#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#xFF0C;&#x76F4;&#x63A5;&#x5199;&#x5230;&#x8BBE;&#x5907;&#x4E0A;</li>
+<li>&#x88F8; I/O&#xFF08;Raw I/O&#xFF09;&#xFF1A;&#x8FD8;&#x662F;&#x6709;Block Buffer&#x7684;</li>
+<li>&#x76F4;&#x63A5; I/O&#xFF08;Direct I/O&#xFF09;&#x4ECD;&#x7136;&#x4F7F;&#x7528;&#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#xFF0C;&#x4F46;&#x7ED5;&#x8FC7;&#xFF08;bypass&#xFF09;&#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#x7F13;&#x5B58;</li>
+<li>&#x76F4;&#x63A5; I/O&#xFF08;Direct I/O&#xFF09;&#xFF1A;&#x8DF3;&#x8FC7;Block Buffer</li>
+</ul>
+</li>
+<li>&#x6848;&#x4F8B;1&#x7684;&#x4E09;&#x4E2A;&#x5DE5;&#x5177;&#xFF1A;<ul>
+<li>cachestat&#xFF1A;&#x6574;&#x4E2A;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x7F13;&#x5B58;&#x7684;&#x8BFB;&#x5199;&#x547D;&#x4E2D;&#x60C5;&#x51B5;&#x3002;</li>
+<li>cachetop&#xFF1A;&#x6BCF;&#x4E2A;&#x8FDB;&#x7A0B;&#x7684;&#x7F13;&#x5B58;&#x547D;&#x4E2D;&#x60C5;&#x51B5;&#x3002;</li>
+<li>pcstat&#xFF1A;&#x6587;&#x4EF6;&#x5728;Page Cache&#x4E2D;&#x7684;&#x7EDF;&#x8BA1;&#x4FE1;&#x606F;</li>
 </ul>
 </li>
 </ul>
@@ -609,7 +637,7 @@ pidstat -w -t 1
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"next":{"title":"深入理解Linux网络","level":"1.8","depth":1,"ref":"","articles":[{"title":"第2章-内核是如何接收网络包的","level":"1.8.1","depth":2,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},{"title":"第3章-内核是如何与用户进程协作的","level":"1.8.2","depth":2,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},{"title":"第4章-内核是如何发送网络包的","level":"1.8.3","depth":2,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},{"title":"第5章-深度理解本机网络IO","level":"1.8.4","depth":2,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},{"title":"第6章-深度理解TCP连接建立过程","level":"1.8.5","depth":2,"path":"docs/chapter-06.md","ref":"docs/chapter-06.md","articles":[]},{"title":"第7章-一条TCP连接消耗多大内存","level":"1.8.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.8.7","depth":2,"path":"docs/chapter-08.md","ref":"docs/chapter-08.md","articles":[]},{"title":"第9章-网络性能优化建议","level":"1.8.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},{"title":"第10章-容器网络虚拟化","level":"1.8.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]}]},"previous":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-04-04T04:02:25.539Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-04-04T04:02:53.672Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"next":{"title":"深入理解Linux网络","level":"1.8","depth":1,"ref":"","articles":[{"title":"第2章-内核是如何接收网络包的","level":"1.8.1","depth":2,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},{"title":"第3章-内核是如何与用户进程协作的","level":"1.8.2","depth":2,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},{"title":"第4章-内核是如何发送网络包的","level":"1.8.3","depth":2,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},{"title":"第5章-深度理解本机网络IO","level":"1.8.4","depth":2,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},{"title":"第6章-深度理解TCP连接建立过程","level":"1.8.5","depth":2,"path":"docs/chapter-06.md","ref":"docs/chapter-06.md","articles":[]},{"title":"第7章-一条TCP连接消耗多大内存","level":"1.8.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.8.7","depth":2,"path":"docs/chapter-08.md","ref":"docs/chapter-08.md","articles":[]},{"title":"第9章-网络性能优化建议","level":"1.8.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},{"title":"第10章-容器网络虚拟化","level":"1.8.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]}]},"previous":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-04-06T03:49:46.612Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-04-06T03:50:12.075Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
