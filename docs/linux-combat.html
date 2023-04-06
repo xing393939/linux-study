@@ -591,16 +591,27 @@ pidstat -w -t 1
 <li>&#x76F4;&#x63A5; I/O&#xFF08;Direct I/O&#xFF09;&#xFF1A;&#x8DF3;&#x8FC7;Block Buffer</li>
 </ul>
 </li>
-<li>&#x6848;&#x4F8B;1&#x7684;&#x4E09;&#x4E2A;&#x5DE5;&#x5177;&#xFF1A;<ul>
+<li>17&#x5C0F;&#x8282;-&#x6848;&#x4F8B;1&#x7684;&#x4E09;&#x4E2A;&#x5DE5;&#x5177;&#xFF1A;<ul>
 <li>cachestat&#xFF1A;&#x6574;&#x4E2A;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x7F13;&#x5B58;&#x7684;&#x8BFB;&#x5199;&#x547D;&#x4E2D;&#x60C5;&#x51B5;&#x3002;</li>
 <li>cachetop&#xFF1A;&#x6BCF;&#x4E2A;&#x8FDB;&#x7A0B;&#x7684;&#x7F13;&#x5B58;&#x547D;&#x4E2D;&#x60C5;&#x51B5;&#x3002;</li>
 <li>pcstat&#xFF1A;&#x6587;&#x4EF6;&#x5728;Page Cache&#x4E2D;&#x7684;&#x7EDF;&#x8BA1;&#x4FE1;&#x606F;</li>
 </ul>
 </li>
-<li>&#x6848;&#x4F8B;2&#xFF1A;<ul>
+<li>17&#x5C0F;&#x8282;-&#x6848;&#x4F8B;2&#xFF1A;<ul>
 <li>cachetop&#x7684;HITS&#x5217;&#x8868;&#x793A;&#x547D;&#x4E2D;&#x6B21;&#x6570;&#xFF0C;&#x4E00;&#x6B21;&#x662F;&#x4E00;&#x4E2A;&#x5185;&#x5B58;&#x9875;(4K)</li>
 <li>&#x7528;strace&#x5DE5;&#x5177;&#x5224;&#x65AD;&#x662F;&#x4E0D;&#x662F;&#x4F7F;&#x7528;&#x4E86;&#x76F4;&#x63A5;IO</li>
 <li>&#x76F4;&#x63A5;IO&#xFF0C;&#x6587;&#x4EF6;&#x7684;&#x6570;&#x636E;&#x4E0D;&#x4F1A;&#x7528;&#x7F13;&#x5B58;&#xFF0C;&#x4F46;&#x662F;&#x6587;&#x4EF6;&#x7684;&#x5143;&#x6570;&#x636E;&#x4F1A;&#x7528;&#x7F13;&#x5B58;</li>
+</ul>
+</li>
+<li>18&#x5C0F;&#x8282;-&#x6848;&#x4F8B;<ul>
+<li>&#x7CFB;&#x7EDF;&#x7EA7;&#x522B;&#x67E5;&#x770B;&#x5185;&#x5B58;&#x5360;&#x7528;&#xFF1A;<code>vmstat 1</code></li>
+<li>&#x8FDB;&#x7A0B;&#x7EA7;&#x522B;&#x67E5;&#x770B;&#x5185;&#x5B58;&#x5360;&#x7528;&#xFF1A;<ul>
+<li><code>top -p 2315</code></li>
+<li><code>smem |grep -v grep |grep 2315</code></li>
+<li><code>ps -eo pid,comm,rss |grep 2315</code></li>
+</ul>
+</li>
+<li>&#x67E5;&#x770B;&#x5185;&#x5B58;&#x6CC4;&#x6F0F;&#x70B9;&#xFF1A;<code>memleak -a -p $(pidof app)</code></li>
 </ul>
 </li>
 </ul>
@@ -643,7 +654,7 @@ pidstat -w -t 1
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"next":{"title":"深入理解Linux网络","level":"1.8","depth":1,"ref":"","articles":[{"title":"第2章-内核是如何接收网络包的","level":"1.8.1","depth":2,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},{"title":"第3章-内核是如何与用户进程协作的","level":"1.8.2","depth":2,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},{"title":"第4章-内核是如何发送网络包的","level":"1.8.3","depth":2,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},{"title":"第5章-深度理解本机网络IO","level":"1.8.4","depth":2,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},{"title":"第6章-深度理解TCP连接建立过程","level":"1.8.5","depth":2,"path":"docs/chapter-06.md","ref":"docs/chapter-06.md","articles":[]},{"title":"第7章-一条TCP连接消耗多大内存","level":"1.8.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.8.7","depth":2,"path":"docs/chapter-08.md","ref":"docs/chapter-08.md","articles":[]},{"title":"第9章-网络性能优化建议","level":"1.8.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},{"title":"第10章-容器网络虚拟化","level":"1.8.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]}]},"previous":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-04-06T07:08:00.812Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-04-06T07:08:30.580Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.7","depth":1,"next":{"title":"深入理解Linux网络","level":"1.8","depth":1,"ref":"","articles":[{"title":"第2章-内核是如何接收网络包的","level":"1.8.1","depth":2,"path":"docs/chapter-02.md","ref":"docs/chapter-02.md","articles":[]},{"title":"第3章-内核是如何与用户进程协作的","level":"1.8.2","depth":2,"path":"docs/chapter-03.md","ref":"docs/chapter-03.md","articles":[]},{"title":"第4章-内核是如何发送网络包的","level":"1.8.3","depth":2,"path":"docs/chapter-04.md","ref":"docs/chapter-04.md","articles":[]},{"title":"第5章-深度理解本机网络IO","level":"1.8.4","depth":2,"path":"docs/chapter-05.md","ref":"docs/chapter-05.md","articles":[]},{"title":"第6章-深度理解TCP连接建立过程","level":"1.8.5","depth":2,"path":"docs/chapter-06.md","ref":"docs/chapter-06.md","articles":[]},{"title":"第7章-一条TCP连接消耗多大内存","level":"1.8.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.8.7","depth":2,"path":"docs/chapter-08.md","ref":"docs/chapter-08.md","articles":[]},{"title":"第9章-网络性能优化建议","level":"1.8.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},{"title":"第10章-容器网络虚拟化","level":"1.8.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]}]},"previous":{"title":"OSI七层和Netfilter","level":"1.6","depth":1,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-04-06T10:23:58.652Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-04-06T10:24:22.316Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
