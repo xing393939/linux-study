@@ -150,6 +150,10 @@ pidstat -w -t 1
   * cachestat：整个操作系统缓存的读写命中情况。
   * cachetop：每个进程的缓存命中情况。
   * pcstat：文件在Page Cache中的统计信息
+* 案例2：
+  * cachetop的HITS列表示命中次数，一次是一个内存页(4K)
+  * 用strace工具判断是不是使用了直接IO
+  * 直接IO，文件的数据不会用缓存，但是文件的元数据会用缓存
 
 
 
