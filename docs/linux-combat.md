@@ -118,6 +118,7 @@ pidstat -w -t 1
 ```
 
 #### 内存篇
+* [Hack the Virtual Memory: malloc, the heap & the program break](https://blog.holbertonschool.com/hack-the-virtual-memory-malloc-the-heap-the-program-break/)
 * free命令的解释
   * 第一列，total 是总内存大小；
   * 第二列，used 是已使用内存的大小，包含了共享内存；
@@ -130,4 +131,32 @@ pidstat -w -t 1
   * RES 是常驻内存的大小，即物理内存，不包括 Swap 和共享内存。
   * SHR 是共享内存的大小，比如与其他进程共同使用的共享内存、加载的动态链接库以及程序的代码段等。
   * %MEM 是进程使用物理内存占系统总内存的百分比。
+* [内存耗用：VSS/RSS/PSS/USS 的介绍](https://www.jianshu.com/p/3bab26d25d2e)
+* [用go查询/proc/pid/status和/proc/pid/smaps](https://www.sobyte.net/post/2022-04/pss-uss-rss/)
+* [top命令中 CODE + DATA != RES 的原因](https://liam.page/2020/07/17/memory-stat-in-TOP/)
+* [top命令中的RES=ps命令的RSS，但是!=smem的RSS](https://unix.stackexchange.com/questions/56469/rssresident-set-size-is-differ-when-use-pmap-and-ps-command)
+  * RSS = PrivateMem + SharedMem
+  * PSS = PrivateMem + (SharedMem / SharedProcessNum)
+  * USS = PrivateMem
+* free命令的buff/cache，可以用`vmstat 1`查看
+  * Block Buffer：块设备的读写缓存。读写设备，会跳过文件系统
+  * Page Cache：文件的读写缓存。读写文件，先经过文件系统，再到设备
+* [Difference Between RAW IO and Direct IO](https://www.howtouselinux.com/post/linux-file-system-raw-io-and-direct-io)
+  * 裸 I/O（Raw I/O）绕过（bypass）文件系统，直接写到设备上
+  * 裸 I/O（Raw I/O）：还是有Block Buffer的
+  * 直接 I/O（Direct I/O）仍然使用文件系统，但绕过（bypass）文件系统缓存
+  * 直接 I/O（Direct I/O）：跳过Block Buffer
+* 案例1的三个工具：
+  * cachestat：整个操作系统缓存的读写命中情况。
+  * cachetop：每个进程的缓存命中情况。
+  * pcstat：文件在Page Cache中的统计信息
+
+
+
+
+
+
+
+
+
 
