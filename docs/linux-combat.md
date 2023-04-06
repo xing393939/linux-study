@@ -146,14 +146,21 @@ pidstat -w -t 1
   * 裸 I/O（Raw I/O）：还是有Block Buffer的
   * 直接 I/O（Direct I/O）仍然使用文件系统，但绕过（bypass）文件系统缓存
   * 直接 I/O（Direct I/O）：跳过Block Buffer
-* 案例1的三个工具：
+* 17小节-案例1的三个工具：
   * cachestat：整个操作系统缓存的读写命中情况。
   * cachetop：每个进程的缓存命中情况。
   * pcstat：文件在Page Cache中的统计信息
-* 案例2：
+* 17小节-案例2：
   * cachetop的HITS列表示命中次数，一次是一个内存页(4K)
   * 用strace工具判断是不是使用了直接IO
   * 直接IO，文件的数据不会用缓存，但是文件的元数据会用缓存
+* 18小节-案例
+  * 系统级别查看内存占用：`vmstat 1`
+  * 进程级别查看内存占用：
+    * `top -p 2315`
+    * `smem |grep -v grep |grep 2315`
+    * `ps -eo pid,comm,rss |grep 2315`
+  * 查看内存泄漏点：`memleak -a -p $(pidof app)`
 
 
 
