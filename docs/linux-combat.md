@@ -161,7 +161,15 @@ pidstat -w -t 1
     * `smem |grep -v grep |grep 2315`
     * `ps -eo pid,comm,rss |grep 2315`
   * 查看内存泄漏点：`memleak -a -p $(pidof app)`
-
+* 20小节-案例
+  * /proc/sys/vm/swappiness：0表示尽量避免用swap分区；100表示积极使用swap
+  * 配置swap：可以配置swap分区或者swap文件
+  * 系统级别查看swap的使用：sar -r -S --human 1
+    * %commit，表示当前系统负载需要的内存，对需要内存的估计值。
+    * kbactive，表示活跃内存，也就是最近使用过的内存，一般不会被系统回收。
+    * kbinact，表示非活跃内存，也就是不常访问的内存，有可能会被系统回收。
+  * 进程级别查看swap的使用：smem -rs swap | head
+    * Swap，被交换到swap分区的部分
 
 
 
