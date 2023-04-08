@@ -170,9 +170,14 @@ pidstat -w -t 1
     * kbinact，表示非活跃内存，也就是不常访问的内存，有可能会被系统回收。
   * 进程级别查看swap的使用：smem -rs swap | head
     * Swap，被交换到swap分区的部分
-
-
-
+* 文件页（File-backed Page）
+  * Block Buffer、Page Cache、Memory-Mapped File
+  * 其中脏页需要写入磁盘后才能回收
+* 匿名页（Anonymous Page）：应用程序动态分配的堆内存 
+* 缺页异常：
+  * 次缺页异常：可以直接从物理内存中分配时
+  * 主缺页异常：需要磁盘 I/O 介入（比如 Swap）时
+  * top命令可以查看进程的这两个指标，需按f键设置显示
 
 
 
