@@ -179,8 +179,17 @@ pidstat -w -t 1
   * 主缺页异常：需要磁盘 I/O 介入（比如 Swap）时
   * top命令可以查看进程的这两个指标，需按f键设置显示
 
+#### IO篇
+* Linux 文件系统的四大基本要素
+  * 目录项：由内核维护的缓存。
+  * 超级块，保存在磁盘，存储整个文件系统的状态。
+  * 索引节点：保存在磁盘，存储文件大小、访问权限、修改日期、数据的位置等。
+  * 数据块区：保存在磁盘，存储文件数据。
+* 查看磁盘索引节点总数：`df -i /dev/sda1`，查看Inodes列 
+* 查看页缓存和slab缓存
+  * `cat /proc/meminfo`，Cached行是Page Cache；SReclaimable行是可回收Slab缓存
+  * `cat /proc/slabinfo | grep -E '^#|dentry|inode'`，dentry行是目录项缓存；inode_cache行是VFS索引节点缓存；其余是各种文件系统的索引节点缓存。
+  * `slabtop`，查看内存占用最多的slab缓存
 
-
-
-
+![img](../images/linux-combat/vfs.png)
 
