@@ -180,7 +180,7 @@ pidstat -w -t 1
   * top命令可以查看进程的这两个指标，需按f键设置显示
 
 #### IO篇
-* Linux 文件系统的四大基本要素
+* Linux文件系统的四大基本要素
   * 目录项：由内核维护的缓存。
   * 超级块，保存在磁盘，存储整个文件系统的状态。
   * 索引节点：保存在磁盘，存储文件大小、访问权限、修改日期、数据的位置等。
@@ -190,6 +190,11 @@ pidstat -w -t 1
   * `cat /proc/meminfo`，Cached行是Page Cache；SReclaimable行是可回收Slab缓存
   * `cat /proc/slabinfo | grep -E '^#|dentry|inode'`，dentry行是目录项缓存；inode_cache行是VFS索引节点缓存；其余是各种文件系统的索引节点缓存。
   * `slabtop`，查看内存占用最多的slab缓存
+* Linux文件系统的[层级](../images/linux-combat/file-system.png)：
+  * 文件系统层，包括虚拟文件系统和其他各种文件系统的具体实现。
+  * 通用块层，包括块设备I/O队列和I/O调度器。
+  * 设备层，包括存储设备和相应的驱动程序，负责最终物理设备的I/O操作。
+
 
 ![img](../images/linux-combat/vfs.png)
 
