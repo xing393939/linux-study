@@ -194,7 +194,13 @@ pidstat -w -t 1
   * 文件系统层，包括虚拟文件系统和其他各种文件系统的具体实现。
   * 通用块层，包括块设备I/O队列和I/O调度器。
   * 设备层，包括存储设备和相应的驱动程序，负责最终物理设备的I/O操作。
-
+* 磁盘I/O观测：iostat -d -x 1
+  * %util，就是我们前面提到的磁盘I/O使用率；
+  * r/s + w/s，就是IOPS；
+  * rkB/s + wkB/s，就是吞吐量；
+  * r_await + w_await，就是响应时间。
+* 进程I/O观测：pidstat -d 1
+* 进程I/O观测：iotop
 
 ![img](../images/linux-combat/vfs.png)
 
