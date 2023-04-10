@@ -201,6 +201,17 @@ pidstat -w -t 1
   * r_await + w_await，就是响应时间。
 * 进程I/O观测：pidstat -d 1
 * 进程I/O观测：iotop
+* 26小节-案例：
+  * top：系统的sys占用3%，iowait是30%；python进程的cpu是3%
+  * iostat -x -d 1：wkB/s列约是120M/s
+  * strace -p 18940：往fd=3的文件写300M的数据
+  * lsof -p 18940：查fd=3的文件是/tmp/logtest.txt
+* 27小节-案例：
+  * top：系统的iowait是90%
+  * pidstat -d 1：找到读写频繁的进程
+  * strace -p 18940：查不到write调用，需要加-f参数
+  * filetop -C：查看读写频繁的进程（包含文件名）
+
 
 ![img](../images/linux-combat/vfs.png)
 
