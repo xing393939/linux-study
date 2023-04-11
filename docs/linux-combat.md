@@ -195,7 +195,7 @@ pidstat -w -t 1
   * 通用块层，包括块设备I/O队列和I/O调度器。
   * 设备层，包括存储设备和相应的驱动程序，负责最终物理设备的I/O操作。
 * 磁盘I/O观测：iostat -d -x 1
-  * %util，就是我们前面提到的磁盘I/O使用率；
+  * %util，就是磁盘I/O使用率；
   * r/s + w/s，就是IOPS；
   * rkB/s + wkB/s，就是吞吐量；
   * r_await + w_await，就是响应时间。
@@ -211,7 +211,16 @@ pidstat -w -t 1
   * pidstat -d 1：找到读写频繁的进程
   * strace -p 18940：查不到write调用，需要加-f参数
   * filetop -C：查看读写频繁的进程（包含文件名）
-
+* 28小节-案例：
+  * top：系统的iowait是60%，但是sys才1%
+  * iostat -d -x 1：rkB/s列约是32M/s，unit是97%
+  * pidstat -d 1：定位到问题进程mysql
+  * strace -f -p 27458：定位到问题线程28014在read大量数据，fd=38
+  * lsof -p 28014：查看不到此线程打开了哪些文件
+  * pstree -t -a -p 27458：找到此线程的父进程
+  * lsof -p 27458：找到fd=38的文件，进而知道是哪个mysql表
+  * show full processlist：找到慢sql，佐证是不是那张表
+  * 优化表的索引
 
 ![img](../images/linux-combat/vfs.png)
 
