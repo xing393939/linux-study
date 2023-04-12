@@ -221,6 +221,12 @@ pidstat -w -t 1
   * lsof -p 27458：找到fd=38的文件，进而知道是哪个mysql表
   * show full processlist：找到慢sql，佐证是不是那张表
   * 优化表的索引
+* 29小节-案例：
+  * top：系统的iowait是84%，但是sys才6%
+  * iostat -d -x 1：wkB/s列约是2M/s，unit是0%
+  * pidstat -d 1：定位到问题进程是redis
+  * strace -f -T -tt -p 9085：-f表示跟踪子进程和子线程，-T表示显示系统调用的时长，-tt表示显示跟踪时间
+  * strace -f -T -tt -p 9085 -e fdatasync：只抓取fdatasync系统调用
 
 ![img](../images/linux-combat/vfs.png)
 
