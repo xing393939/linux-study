@@ -230,3 +230,25 @@ pidstat -w -t 1
 
 ![img](../images/linux-combat/vfs.png)
 
+#### 网络篇
+* ifconfig命令RX和TX部分：
+  * errors 表示发生错误的数据包数，比如校验错误、帧同步错误等；
+  * dropped 表示丢弃的数据包数，即数据包已经收到了RingBuffer，但因为内存不足等原因丢包；
+  * overruns 表示超限数据包数，即网络I/O速度过快，导致RingBuffer满了而导致的丢包；
+  * carrier 表示发生传输错误的数据包数，比如双工模式不匹配、物理电缆出现问题等；
+  * collisions 表示碰撞数据包数。
+* sar -n DEV 1：
+  * rxpck/s和txpck/s 分别是接收和发送的PPS，单位为包/秒。
+  * rxkB/s和txkB/s 分别是接收和发送的吞吐量，单位是KB/秒。
+  * rxcmp/s和txcmp/s 分别是接收和发送的压缩数据包数，单位是包/秒。
+  * %ifutil 是网络接口的使用率，即半双工模式下为 (rxkB/s+txkB/s)/Bandwidth，而全双工模式下为 max(rxkB/s,txkB/s)/Bandwidth。
+
+
+
+
+
+
+
+
+
+
