@@ -242,10 +242,13 @@ pidstat -w -t 1
   * rxkB/s和txkB/s 分别是接收和发送的吞吐量，单位是KB/秒。
   * rxcmp/s和txcmp/s 分别是接收和发送的压缩数据包数，单位是包/秒。
   * %ifutil 是网络接口的使用率，即半双工模式下为 (rxkB/s+txkB/s)/Bandwidth，而全双工模式下为 max(rxkB/s,txkB/s)/Bandwidth。
-
-
-
-
+* C10K IO模型优化
+  * 水平触发LT：有事件就触发，epoll默认的，实现简单，redis的方案
+  * 边缘触发ET：只触发一次，性能好维护麻烦，nginx的方案
+* C10K 工作模型
+  * 主进程bind+listen，子进程们accept+epoll_wait
+  * 同上，但子进程们开启了SO_REUSEPORT，由内核确保只有一个进程被唤醒
+* C10M的应对方案：DPDK或者XRP
 
 
 
