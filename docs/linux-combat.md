@@ -249,8 +249,12 @@ pidstat -w -t 1
   * 主进程bind+listen，子进程们accept+epoll_wait
   * 同上，但子进程们开启了SO_REUSEPORT，由内核确保只有一个进程被唤醒
 * C10M的应对方案：DPDK或者XRP
-
-
+* 36小节-套路篇
+  * hping3 作为一个 SYN 攻击的工具
+  * pktgen [只支持UDP发包(端口9)](https://cloud.tencent.com/developer/article/2133237)
+  * pktgen 可测试网卡的pps和吞吐量
+  * iperf3 测试tcp/udp性能
+  * wrk 测试http的性能
 
 
 
