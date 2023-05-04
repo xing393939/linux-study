@@ -252,8 +252,8 @@ pidstat -w -t 1
 * 36小节-套路篇
   * hping3 作为一个 SYN 攻击的工具
   * pktgen [只支持UDP发包(端口9)](https://cloud.tencent.com/developer/article/2133237)
-  * pktgen 可测试网卡的pps和吞吐量
-  * iperf3 测试tcp/udp性能
+  * pktgen 可测试网卡发包时的pps和吞吐量
+  * iperf3 测试tcp/udp性能，可测试发包和收包的带宽极限
   * wrk 测试http的性能
 
 
