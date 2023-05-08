@@ -12,9 +12,10 @@
   * [第8章-一台机器最多能支持多少条TCP连接](docs/chapter-08.md)
   * [第9章-网络性能优化建议](docs/chapter-09.md)
   * [第10章-容器网络虚拟化](docs/chapter-10.md)
+* [Linux 性能优化实战](docs/linux-combat.md)
+* [《操作系统导论》](https://xing393939.github.io/ostep-study/)
 * 杂项
   * [ftrace](docs/ftrace.md)
   * [linux核心数据结构](docs/core-data-structure.md)
   * [socket协议簇](docs/protocol-suite.md)
   * [OSI七层和Netfilter](docs/osi_and_netfilter.md)
-  * [Linux 性能优化实战](docs/linux-combat.md)
