@@ -449,11 +449,8 @@ sysctl -w net.ipv4.tcp_wmem=&quot;4096 4096 6291456&quot;
 sysctl -p
 
 ulimit -n 1000000 
-
-vim /etc/security/limits.conf
-* hard nofile 1000000
-* soft nofile 1000000
-&#x5728;&#x65B0;&#x7684;&#x7EC8;&#x7AEF;&#x751F;&#x6548;
+echo -e &quot;* hard nofile 1000000\n* soft nofile 1000000&quot; &gt;&gt; /etc/security/limits.conf
+(&#x524D;&#x8005;&#x5728;&#x5F53;&#x524D;&#x7EC8;&#x7AEF;&#x751F;&#x6548;&#xFF0C;&#x540E;&#x8005;&#x5728;&#x65B0;&#x7684;&#x7EC8;&#x7AEF;&#x751F;&#x6548;)
 
 sysctl net.ipv4.ip_local_port_range fs.file-max fs.nr_open \
 net.ipv4.tcp_max_orphans net.ipv4.tcp_max_syn_backlog \
@@ -532,7 +529,7 @@ udp_rcv(skb)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.3.7","depth":2,"next":{"title":"第9章-网络性能优化建议","level":"1.3.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.3.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2023-05-09T00:37:25.149Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-09T00:37:49.983Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"第8章-一台机器最多能支持多少条TCP连接","level":"1.3.7","depth":2,"next":{"title":"第9章-网络性能优化建议","level":"1.3.8","depth":2,"path":"docs/chapter-09.md","ref":"docs/chapter-09.md","articles":[]},"previous":{"title":"第7章-一条TCP连接消耗多大内存","level":"1.3.6","depth":2,"path":"docs/chapter-07.md","ref":"docs/chapter-07.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/chapter-08.md","mtime":"2023-05-09T07:56:33.020Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-09T07:57:00.851Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
