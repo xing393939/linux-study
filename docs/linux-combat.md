@@ -264,3 +264,8 @@ pidstat -w -t 1
     * 只做SNAT，即多个内网IP共享一个外网IP来访问外网
     * 只做DNAT，例如外网IP:801对应内网A的80端口，外网IP:802对应内网B的80端口
     * 双向地址转换，即外网IP与内网IP是一对一映射关系
+* 41小节-NAT案例
+  * ab -c 5000 -n 5000发现qps需要0.5s
+  * sudo nettrace --drop可以观察丢包现象，最多的是nf_hook_slow
+  * 用perf来得到调用nf_hook_slow最多的三个地方：ipv4_conntrack_in、br_nf_pre_routing、iptable_nat_ipv4_in
+  * 优化net.netfilter.nf_conntrack_max和net.netfilter.nf_conntrack_buckets
