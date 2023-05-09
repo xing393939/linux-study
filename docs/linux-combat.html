@@ -792,6 +792,13 @@ pidstat -w -t 1
 </li>
 </ul>
 </li>
+<li>41&#x5C0F;&#x8282;-NAT&#x6848;&#x4F8B;<ul>
+<li>ab -c 5000 -n 5000&#x53D1;&#x73B0;qps&#x9700;&#x8981;0.5s</li>
+<li>sudo nettrace --drop&#x53EF;&#x4EE5;&#x89C2;&#x5BDF;&#x4E22;&#x5305;&#x73B0;&#x8C61;&#xFF0C;&#x6700;&#x591A;&#x7684;&#x662F;nf_hook_slow</li>
+<li>&#x7528;perf&#x6765;&#x5F97;&#x5230;&#x8C03;&#x7528;nf_hook_slow&#x6700;&#x591A;&#x7684;&#x4E09;&#x4E2A;&#x5730;&#x65B9;&#xFF1A;ipv4_conntrack_in&#x3001;br_nf_pre_routing&#x3001;iptable_nat_ipv4_in</li>
+<li>&#x4F18;&#x5316;net.netfilter.nf_conntrack_max&#x548C;net.netfilter.nf_conntrack_buckets</li>
+</ul>
+</li>
 </ul>
 
                                 
@@ -832,7 +839,7 @@ pidstat -w -t 1
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.4","depth":1,"next":{"title":"《操作系统导论》","level":"1.5","depth":1,"url":"https://xing393939.github.io/ostep-study/","ref":"https://xing393939.github.io/ostep-study/","articles":[]},"previous":{"title":"第10章-容器网络虚拟化","level":"1.3.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-05-08T10:02:15.073Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-08T10:02:43.437Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.4","depth":1,"next":{"title":"《操作系统导论》","level":"1.5","depth":1,"url":"https://xing393939.github.io/ostep-study/","ref":"https://xing393939.github.io/ostep-study/","articles":[]},"previous":{"title":"第10章-容器网络虚拟化","level":"1.3.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-05-09T00:37:25.149Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-09T00:37:49.983Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
