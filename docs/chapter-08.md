@@ -25,11 +25,8 @@ sysctl -w net.ipv4.tcp_wmem="4096 4096 6291456"
 sysctl -p
 
 ulimit -n 1000000 
-
-vim /etc/security/limits.conf
-* hard nofile 1000000
-* soft nofile 1000000
-在新的终端生效
+echo -e "* hard nofile 1000000\n* soft nofile 1000000" >> /etc/security/limits.conf
+(前者在当前终端生效，后者在新的终端生效)
 
 sysctl net.ipv4.ip_local_port_range fs.file-max fs.nr_open \
 net.ipv4.tcp_max_orphans net.ipv4.tcp_max_syn_backlog \
