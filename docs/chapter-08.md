@@ -6,9 +6,9 @@
 
 | 级别    | 配置文件 | 查看 | 临时修改 | 永久修改 |
 | --     | ----    | --  | ----    | ----   |
-| 系统级别 | /etc/sysctl.conf           | sysctl -a | echo 9 > /proc/sys/fs/file-max | sysctl -w fs.file-max = 9 <br/>sysctl -p |
-| 用户进程 | /etc/security/limits.conf  | ulimit -a | ulimit -n 1024                 | 修改配置文件：<br/>\* hard nofile 65536<br/>\* soft nofile 65536 |
-| 进程级别 | /etc/sysctl.conf           | sysctl -a | echo 9 > /proc/sys/fs/nr_open  | sysctl -w fs.nr_open = 9 <br/>sysctl -p |
+| 系统级别 | /etc/sysctl.conf           | sysctl -a | sysctl -w fs.file-max = 9 | 修改配置文件 <br/>sysctl -p |
+| 用户进程 | /etc/security/limits.conf  | ulimit -a | ulimit -n 1024            | 修改配置文件：<br/>\* hard nofile 65536<br/>\* soft nofile 65536 |
+| 进程级别 | /etc/sysctl.conf           | sysctl -a | sysctl -w fs.nr_open = 9  | 修改配置文件 <br/>sysctl -p |
 
 ```
 100万的设置：
@@ -22,7 +22,6 @@ sysctl -w net.ipv4.tcp_max_syn_backlog=4096
 sysctl -w net.ipv4.tcp_mem="600000 800000 1000000"
 sysctl -w net.ipv4.tcp_rmem="4096 4096 6291456"
 sysctl -w net.ipv4.tcp_wmem="4096 4096 6291456"
-sysctl -p
 
 ulimit -n 1000000 
 echo -e "* hard nofile 1000000\n* soft nofile 1000000" >> /etc/security/limits.conf
