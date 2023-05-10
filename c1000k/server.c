@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <errno.h>
 #define MAX_CONNECTION_NUM 1100000
 
 int main(int argc, char *argv[])
@@ -50,6 +50,9 @@ int main(int argc, char *argv[])
         {
             sockets[i++] = conFd;
             //printf("%s %d accept success:%d\n", ip, port, i);
+        } else {
+            printf("\n Error : Accept Failed %s\n", strerror(errno));
+            return 0;
         }
     }
 }
