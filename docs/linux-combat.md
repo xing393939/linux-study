@@ -269,3 +269,39 @@ pidstat -w -t 1
   * sudo nettrace --drop可以观察丢包现象，最多的是nf_hook_slow
   * 用perf来得到调用nf_hook_slow最多的三个地方：ipv4_conntrack_in、br_nf_pre_routing、iptable_nat_ipv4_in
   * 优化net.netfilter.nf_conntrack_max和net.netfilter.nf_conntrack_buckets
+* 42小节
+  * 链路层和网络层：基准测试用pktgen
+  * 传输层：iperf3，用不同大小的包测试
+  * 应用层：ab、ark
+  
+|性能指标|工具|说明|
+|---|---|---|
+|吞吐量   | sar -n DEV | |
+|网卡PPS  | sar -n DEV | |
+|tcp所有连接 | ss -anot<br>netstat -anot |  |
+|tcp连接统计 | ss -s<br>`netstat -anot|awk '{print $6}'|sort|uniq -c|sort -nr`| |
+|系统上下文切换   |vmstat 1      |cs=上下文切换数|
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
