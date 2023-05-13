@@ -279,7 +279,7 @@ pidstat -w -t 1
 |吞吐量   | sar -n DEV | |
 |网卡PPS  | sar -n DEV | |
 |tcp所有连接 | ss -anot<br>netstat -anot |  |
-|tcp连接统计 | ss -s<br>netstat -anot\|awk '{print $6}'\|sort\|uniq -c\|sort -nr| |
+|tcp连接统计 | ss -s<br>netstat -anot &#x7C; awk '{print $6}' &#x7C; sort &#x7C; uniq -c &#x7C; sort -nr| |
 |系统上下文切换   |vmstat 1      |cs=上下文切换数|
 
 
