@@ -799,7 +799,53 @@ pidstat -w -t 1
 <li>&#x4F18;&#x5316;net.netfilter.nf_conntrack_max&#x548C;net.netfilter.nf_conntrack_buckets</li>
 </ul>
 </li>
+<li>42&#x5C0F;&#x8282;<ul>
+<li>&#x94FE;&#x8DEF;&#x5C42;&#x548C;&#x7F51;&#x7EDC;&#x5C42;&#xFF1A;&#x57FA;&#x51C6;&#x6D4B;&#x8BD5;&#x7528;pktgen</li>
+<li>&#x4F20;&#x8F93;&#x5C42;&#xFF1A;iperf3&#xFF0C;&#x7528;&#x4E0D;&#x540C;&#x5927;&#x5C0F;&#x7684;&#x5305;&#x6D4B;&#x8BD5;</li>
+<li>&#x5E94;&#x7528;&#x5C42;&#xFF1A;ab&#x3001;ark</li>
 </ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>&#x6027;&#x80FD;&#x6307;&#x6807;</th>
+<th>&#x5DE5;&#x5177;</th>
+<th>&#x8BF4;&#x660E;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&#x541E;&#x5410;&#x91CF;</td>
+<td>sar -n DEV</td>
+<td></td>
+</tr>
+<tr>
+<td>&#x7F51;&#x5361;PPS</td>
+<td>sar -n DEV</td>
+<td></td>
+</tr>
+<tr>
+<td>tcp&#x6240;&#x6709;&#x8FDE;&#x63A5;</td>
+<td>ss -anot<br>netstat -anot</td>
+<td></td>
+</tr>
+<tr>
+<td>tcp&#x8FDE;&#x63A5;&#x7EDF;&#x8BA1;</td>
+<td>ss -s<br>`netstat -anot</td>
+<td>awk &apos;{print $6}&apos;</td>
+<td>sort</td>
+<td>uniq -c</td>
+<td>sort -nr`</td>
+<td></td>
+</tr>
+<tr>
+<td>&#x7CFB;&#x7EDF;&#x4E0A;&#x4E0B;&#x6587;&#x5207;&#x6362;</td>
+<td>vmstat 1</td>
+<td>cs=&#x4E0A;&#x4E0B;&#x6587;&#x5207;&#x6362;&#x6570;</td>
+</tr>
+</tbody>
+</table>
 
                                 
                                 </section>
@@ -839,7 +885,7 @@ pidstat -w -t 1
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.4","depth":1,"next":{"title":"《操作系统导论》","level":"1.5","depth":1,"url":"https://xing393939.github.io/ostep-study/","ref":"https://xing393939.github.io/ostep-study/","articles":[]},"previous":{"title":"第10章-容器网络虚拟化","level":"1.3.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-05-12T02:16:42.937Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-12T02:17:13.058Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Linux 性能优化实战","level":"1.4","depth":1,"next":{"title":"《操作系统导论》","level":"1.5","depth":1,"url":"https://xing393939.github.io/ostep-study/","ref":"https://xing393939.github.io/ostep-study/","articles":[]},"previous":{"title":"第10章-容器网络虚拟化","level":"1.3.9","depth":2,"path":"docs/chapter-10.md","ref":"docs/chapter-10.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/linux-combat.md","mtime":"2023-05-13T02:30:27.918Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-13T02:30:57.215Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
