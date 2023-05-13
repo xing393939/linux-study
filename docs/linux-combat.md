@@ -273,6 +273,10 @@ pidstat -w -t 1
   * 链路层和网络层：基准测试用pktgen
   * 传输层：iperf3，用不同大小的包测试
   * 应用层：ab、ark
+  * 优化网络I/O：使用epoll、使用AIO
+  * 优化工作模型：主进程listen子进程处理；多进程SO_REUSEPORT共同监听
+
+![img](../images/linux-combat/kernel_socket.png)
   
 |性能指标|工具|说明|
 |---|---|---|
@@ -285,6 +289,8 @@ pidstat -w -t 1
 |NAT跟踪工具 | conntrack   |  |
 |网络链路检查| mtr 8.8.8.8<br>traceroute 8.8.8.8 |  |
 |DNS         | nslookup g.cn<br>dig +short AAAA api.mch.weixin.qq.com | |
+|进程网络情况| nethogs | |
+|IP网络情况  | nettop  | |
 
   
   
