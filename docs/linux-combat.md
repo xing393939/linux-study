@@ -280,8 +280,11 @@ pidstat -w -t 1
 |网卡PPS  | sar -n DEV | |
 |tcp所有连接 | ss -anot<br>netstat -anot |  |
 |tcp连接统计 | ss -s<br>netstat -anot &#x7C; awk '{print $6}' &#x7C; sort &#x7C; uniq -c &#x7C; sort -nr| |
-|系统上下文切换   |vmstat 1      |cs=上下文切换数|
-
+|测试ICMP    | ping      | |
+|测试TCP连接 | hping3      | |
+|NAT跟踪工具 | conntrack   |  |
+|网络链路检查| mtr 8.8.8.8<br>traceroute 8.8.8.8 |  |
+|DNS         | nslookup g.cn<br>dig +short AAAA api.mch.weixin.qq.com | |
 
   
   
