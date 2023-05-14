@@ -279,6 +279,14 @@ pidstat -w -t 1
   * 服务器端开启Nagle算法，而客户端开启延迟确认机制，就很容易导致网络延迟增大
   * 开启net.ipv4.tcp_tw_recycle容易导致连接失败，内核4.1已经废弃此参数
   * 设置设置net.ipv4.icmp_echo_ignore_all=1，禁用ICMP协议，即禁ping
+  * 开启RPS(Receive Packet Steering)和RFS(Receive Flow Steering)，将应用程序和软中断的处理，调度到相同CPU，增加缓存命中率
+  * 卸载到网卡（原本软件处理的部分放到硬件处理），如下：
+  * 1，TSO（TCP Segmentation Offload）和 UFO（UDP Fragmentation Offload）：TCP 包的分段（按照 MSS 分段）和 UDP 的分片（按照 MTU 分片）功能，由网卡来完成 。
+  * 2，GSO（Generic Segmentation Offload）：在网卡不支持 TSO/UFO 时，将 TCP/UDP 包的分段，延迟到进入网卡前再执行。这样，不仅可以减少 CPU 的消耗，还可以在发生丢包时只重传分段后的包。
+  * 3，LRO（Large Receive Offload）：在接收 TCP 分段包时，由网卡将其组装合并后，再交给上层网络处理。不过要注意，在需要 IP 转发的情况下，不能开启 LRO。
+  * 4，GRO（Generic Receive Offload）：GRO 修复了 LRO 的缺陷，并且更为通用，同时支持 TCP 和 UDP。
+  * 5，RSS（Receive Side Scaling）：也称为多队列接收，它基于硬件的多个接收队列，来分配网络接收进程，这样可以让多个 CPU 来处理接收到的网络包。
+  * 6，VXLAN 卸载：也就是让网卡来完成 VXLAN 的组包功能。
 
 ![img](../images/linux-combat/kernel_socket.png)
   
