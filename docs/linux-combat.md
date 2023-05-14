@@ -275,6 +275,10 @@ pidstat -w -t 1
   * 应用层：ab、ark
   * 优化网络I/O：使用epoll、使用AIO
   * 优化工作模型：主进程listen子进程处理；多进程SO_REUSEPORT共同监听
+* 44小节
+  * 服务器端开启Nagle算法，而客户端开启延迟确认机制，就很容易导致网络延迟增大
+  * 开启net.ipv4.tcp_tw_recycle容易导致连接失败，内核4.1已经废弃此参数
+  * 设置设置net.ipv4.icmp_echo_ignore_all=1，禁用ICMP协议，即禁ping
 
 ![img](../images/linux-combat/kernel_socket.png)
   
