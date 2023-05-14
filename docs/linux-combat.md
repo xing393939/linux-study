@@ -278,7 +278,9 @@ pidstat -w -t 1
 * 44小节
   * 服务器端开启Nagle算法，而客户端开启延迟确认机制，就很容易导致网络延迟增大
   * 开启net.ipv4.tcp_tw_recycle容易导致连接失败，内核4.1已经废弃此参数
-  * 设置设置net.ipv4.icmp_echo_ignore_all=1，禁用ICMP协议，即禁ping
+  * 设置net.ipv4.icmp_echo_ignore_all=1，禁用ICMP协议，即禁ping
+  * 设置net.ipv4.tcp_fin_timeout，确定从TIME_WAIT_2到TIME_WAIT的超时时间
+  * 2MSL即两倍的Maximum Segment Lifetime，linux中硬编码成60s
   * 开启RPS(Receive Packet Steering)和RFS(Receive Flow Steering)，将应用程序和软中断的处理，调度到相同CPU，增加缓存命中率
   * 卸载到网卡（原本软件处理的部分放到硬件处理），如下：
   * 1，TSO（TCP Segmentation Offload）和 UFO（UDP Fragmentation Offload）：TCP 包的分段（按照 MSS 分段）和 UDP 的分片（按照 MTU 分片）功能，由网卡来完成 。
