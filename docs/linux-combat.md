@@ -315,9 +315,17 @@ pidstat -w -t 1
 * docker进程启动慢
   * pidstat -t -p $容器pid 1 看到docker启动阶段的%cpu=10%，%wait=97%
   * 原因是docker的cpu软限制是10%，增加cpu的软限制即可
-
+* 整个网络协议栈的丢包场景
+  * 在两台 VM 连接之间，可能会发生传输失败的错误，比如网络拥塞、线路错误等；
+  * 在网卡收包后，环形缓冲区可能会因为溢出而丢包；
+  * 在链路层，可能会因为网络帧校验失败、[QoS](https://blog.csdn.net/meihualing/article/details/130475877) 等而丢包；
+  * 在网络层，可能会因为路由失败、组包大小超过 MTU 等而丢包；
+  * 在传输层，可能会因为端口未监听、资源占用超过内核限制等而丢包；
+  * 在套接字层，可能会因为套接字缓冲区溢出而丢包；
+  * 在应用层，可能会因为应用程序异常而丢包；
+  * 如果配置了 iptables 规则，这些网络包也可能因为 iptables 过滤规则而丢包。
   
-  
+![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
   
   
