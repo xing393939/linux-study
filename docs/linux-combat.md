@@ -306,8 +306,16 @@ pidstat -w -t 1
 |进程网络情况| nethogs | |
 |IP网络情况  | nettop  | |
 
-  
-  
+#### 综合篇
+* docker进程OOM
+  * docker inspect tomcat -f '{{json .State}}' | jq 看到容器的OOMKilled是true，ExitCode是137
+  * dmesg 看到total-vm:4613208kB, anon-rss:517316kB, file-rss:20168kB, shmem-rss:0kB
+  * anon+file的内存超过了软限制512M
+  * 解决办法是docker命令增加`-e JAVA_OPTS='-Xmx512m -Xms512m'`参数，限定java初始内存
+* docker进程启动慢
+  * pidstat -t -p $容器pid 1 看到docker启动阶段的%cpu=10%，%wait=97%
+  * 原因是docker的cpu软限制是10%，增加cpu的软限制即可
+
   
   
   
