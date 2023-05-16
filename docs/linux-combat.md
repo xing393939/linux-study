@@ -329,6 +329,11 @@ pidstat -w -t 1
   * tc qdisc add dev eth0 root pfifo，pfifo机制，先进先出
   * tc qdisc add dev eth0 root fq_codel，[fq_codel机制](https://www.jianshu.com/p/3b2e701f61ea)
   * tc -s qdisc show dev eth0，查看tc的规则
+* 49小节-Linux在启动过程中，有三个特殊的进程
+  * 0 号进程为 idle 进程，这也是系统创建的第一个进程，它在初始化 1 号和 2 号进程后，演变为空闲任务。当 CPU 上没有其他任务执行时，就会运行它。
+  * 1 号进程为 init 进程，通常是 systemd 进程，在用户态运行，用来管理其他用户态进程。
+  * 2 号进程为 kthreadd 进程，在内核态运行，用来管理内核线程。查看它的子孙：`ps -f --ppid 2 -p 2`
+    
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
