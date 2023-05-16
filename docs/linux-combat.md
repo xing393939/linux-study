@@ -324,7 +324,12 @@ pidstat -w -t 1
   * 在套接字层，可能会因为套接字缓冲区溢出而丢包；
   * 在应用层，可能会因为应用程序异常而丢包；
   * 如果配置了 iptables 规则，这些网络包也可能因为 iptables 过滤规则而丢包。
-  
+* 在网卡配置QoS(tc规则)
+  * tc qdisc add dev eth0 root netem loss 20%，netem机制，模拟丢20%包
+  * tc qdisc add dev eth0 root pfifo，pfifo机制，先进先出
+  * tc qdisc add dev eth0 root fq_codel，[fq_codel机制](https://www.jianshu.com/p/3b2e701f61ea)
+  * tc -s qdisc show dev eth0，查看tc的规则
+
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
   
