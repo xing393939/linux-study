@@ -20,9 +20,6 @@ sysctl -w net.ipv4.tcp_syncookies=1
 sysctl -w net.ipv4.tcp_max_orphans=1000000
 sysctl -w net.ipv4.tcp_max_syn_backlog=40960
 sysctl -w net.ipv4.tcp_mem="600000 800000 1000000"
-sysctl -w net.ipv4.tcp_rmem="4096 4096 6291456"
-sysctl -w net.ipv4.tcp_wmem="4096 4096 6291456"
-
 sysctl -w net.netfilter.nf_conntrack_max=6553600
 
 ulimit -n 1000000 
