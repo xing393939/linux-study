@@ -15,6 +15,7 @@
 * [Linux 性能优化实战](docs/linux-combat.md)
 * [《操作系统导论》](https://xing393939.github.io/ostep-study/)
 * 杂项
+  * [内核调试秘籍](docs/kernel-debug.md)
   * [ftrace](docs/ftrace.md)
   * [linux核心数据结构](docs/core-data-structure.md)
   * [socket协议簇](docs/protocol-suite.md)
