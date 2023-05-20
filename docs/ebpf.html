@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>linux核心数据结构 · GitBook</title>
+        <title>ebpf · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="protocol-suite.html" />
+    <link rel="next" href="ftrace.html" />
     
     
-    <link rel="prev" href="ftrace.html" />
+    <link rel="prev" href="kernel-debug.html" />
     
 
     </head>
@@ -306,7 +306,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.2" data-path="ebpf.html">
+        <li class="chapter active" data-level="1.6.2" data-path="ebpf.html">
             
                 <a href="ebpf.html">
             
@@ -332,7 +332,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.6.4" data-path="core-data-structure.html">
+        <li class="chapter " data-level="1.6.4" data-path="core-data-structure.html">
             
                 <a href="core-data-structure.html">
             
@@ -406,7 +406,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >linux核心数据结构</a>
+        <a href=".." >ebpf</a>
     </h1>
 </div>
 
@@ -421,28 +421,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h3 id="linux&#x6838;&#x5FC3;&#x6570;&#x636E;&#x7ED3;&#x6784;">linux&#x6838;&#x5FC3;&#x6570;&#x636E;&#x7ED3;&#x6784;</h3>
-<h4 id="struct-skbuff">struct sk_buff</h4>
+                                <h3 id="ftrace">ftrace</h3>
+<h4 id="&#x53C2;&#x8003;&#x8D44;&#x6599;">&#x53C2;&#x8003;&#x8D44;&#x6599;</h4>
 <ul>
-<li><a href="https://www.jianshu.com/p/3738da62f5f6" target="_blank">Linux&#x5185;&#x6838;&#x4E2D;sk_buff&#x7ED3;&#x6784;&#x8BE6;&#x89E3;</a></li>
-<li><a href="https://olegkutkov.me/2019/10/17/printing-sk_buff-data" target="_blank">Printing sk_buff data</a></li>
-<li>&#x5728;include/linux/skbuff.h&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x6253;&#x5370;&#x51FD;&#x6570;pkt_hex_dump&#xFF0C;&#x7136;&#x540E;<a href="https://hpd.gasmi.net/" target="_blank">Hex Packet Decoder</a></li>
-<li>&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF1A;head - end&#x3002;</li>
-<li>&#x5B9E;&#x9645;&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF1A;data - tail&#xFF0C;&#x5373;ip&#x5305;&#x3002;</li>
-<li>skb-&gt;data_len: skb&#x4E2D;&#x7684;&#x5206;&#x7247;&#x6570;&#x636E;&#xFF08;&#x975E;&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF09;&#x7684;&#x957F;&#x5EA6;&#x3002;</li>
-<li>skb-&gt;len: skb&#x4E2D;&#x7684;&#x6570;&#x636E;&#x5757;&#x7684;&#x603B;&#x957F;&#x5EA6;&#x3002;&#x5176;&#x4E2D;&#xFF1A;skb-&gt;len = (data - tail) + skb-&gt;data_len</li>
+<li><a href="https://docs.cilium.io/en/stable/bpf/" target="_blank">BPF and XDP Reference Guide</a></li>
 </ul>
-<h4 id="struct-socket">struct socket</h4>
-<pre><code>struct socket {
-    socket_state           state; // socket state (SS_CONNECTED, etc)
-    short                  type;  // socket type (SOCK_STREAM, etc)
-    unsigned long          flags; // socket flags (SOCK_NOSPACE, etc)
-    struct socket_wq       *wq;   // wait queue for several uses
-    struct file            *file; // File back pointer for gc
-    struct sock            *sk;   // internal networking protocol agnostic socket representation
-    const struct proto_ops *ops;  // protocol specific socket operations
-};
-</code></pre>
+
                                 
                                 </section>
                             
@@ -469,12 +453,12 @@
 
             
                 
-                <a href="ftrace.html" class="navigation navigation-prev " aria-label="Previous page: ftrace">
+                <a href="kernel-debug.html" class="navigation navigation-prev " aria-label="Previous page: 内核调试秘籍">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="protocol-suite.html" class="navigation navigation-next " aria-label="Next page: socket协议簇">
+                <a href="ftrace.html" class="navigation navigation-next " aria-label="Next page: ftrace">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -485,7 +469,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.4","depth":2,"next":{"title":"socket协议簇","level":"1.6.5","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.3","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-20T01:39:40.885Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-20T01:40:16.736Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"ebpf","level":"1.6.2","depth":2,"next":{"title":"ftrace","level":"1.6.3","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"previous":{"title":"内核调试秘籍","level":"1.6.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/ebpf.md","mtime":"2023-05-20T01:39:40.885Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-20T01:40:16.736Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
