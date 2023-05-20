@@ -351,7 +351,7 @@ pidstat -w -t 1
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
-  
+![img](../images/linux-combat/system-monitor.png)
 
   
   
