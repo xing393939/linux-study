@@ -338,10 +338,21 @@ pidstat -w -t 1
   * ptrace 需要借助 SIGSTOP 信号挂起目标进程。这种信号控制和进程挂起，会影响目标进程的行为。
 * 51小节-sysdig是随着容器技术的普及而诞生的，主要用于容器的动态追踪  
   * sysdig = strace + tcpdump + htop + iftop + lsof + docker inspect
+* 52小节-案例
+  * ss -s看到estab只有5，而closed和timewait有1000多，查dmesg日志
+  * nginx日志有大量499，怀疑是php超时，查看php-fpm日志
+  * 用netstat -s看得有大量的socket overflowed和sockets dropped
+    * ss -nlpt可以看到nginx和php的recv-q快满了
+    * 增加nginx和php的backlog传参
+  * nginx日志报错Cannot assign requested address，调net.ipv4.ip_local_port_range
+  * wrk出现Socket read errors，nginx和php的cpu达到30%
+    * 用perf采集火焰图看到inet_hash_connect和__init_check_established占比很高
+    * ss -s看到大量的timewait，调tcp_tw_reuse
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
   
+
   
   
   
