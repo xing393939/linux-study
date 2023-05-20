@@ -336,6 +336,8 @@ pidstat -w -t 1
 * 51小节-strace基于系统调用ptrace实现，它有两个问题：
   * 由于 ptrace 是系统调用，就需要在内核态和用户态切换。当事件数量比较多时，繁忙的切换必然会影响原有服务的性能；
   * ptrace 需要借助 SIGSTOP 信号挂起目标进程。这种信号控制和进程挂起，会影响目标进程的行为。
+* 51小节-sysdig是随着容器技术的普及而诞生的，主要用于容器的动态追踪  
+  * sysdig = strace + tcpdump + htop + iftop + lsof + docker inspect
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
