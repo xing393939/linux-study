@@ -348,6 +348,13 @@ pidstat -w -t 1
   * wrk出现Socket read errors，nginx和php的cpu达到30%
     * 用perf采集火焰图看到inet_hash_connect和__init_check_established占比很高
     * ss -s看到大量的timewait，调tcp_tw_reuse
+* 54小节-分析问题的一般步骤
+  * cpu`top`，进程cpu`pidstat -u 1`，进程上下文切换`pidstat -w 1`
+  * 内存`free -h`，进程内存`pidstat -r 1`
+  * 磁盘`sar -d 1`，进程磁盘`pidstat -d 1`
+  * 网络：链路层、网络层、传输层、应用层
+ * 57小节-[四大模块的性能指标和基准测试](https://time.geekbang.org/column/article/89306)
+
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
