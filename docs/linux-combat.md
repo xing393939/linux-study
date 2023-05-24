@@ -336,10 +336,30 @@ pidstat -w -t 1
 * 51小节-strace基于系统调用ptrace实现，它有两个问题：
   * 由于 ptrace 是系统调用，就需要在内核态和用户态切换。当事件数量比较多时，繁忙的切换必然会影响原有服务的性能；
   * ptrace 需要借助 SIGSTOP 信号挂起目标进程。这种信号控制和进程挂起，会影响目标进程的行为。
+* 51小节-sysdig是随着容器技术的普及而诞生的，主要用于容器的动态追踪  
+  * sysdig = strace + tcpdump + htop + iftop + lsof + docker inspect
+* 52小节-案例
+  * ss -s看到estab只有5，而closed和timewait有1000多，查dmesg日志
+  * nginx日志有大量499，怀疑是php超时，查看php-fpm日志
+  * 用netstat -s看得有大量的socket overflowed和sockets dropped
+    * ss -nlpt可以看到nginx和php的recv-q快满了
+    * 增加nginx和php的backlog传参
+  * nginx日志报错Cannot assign requested address，调net.ipv4.ip_local_port_range
+  * wrk出现Socket read errors，nginx和php的cpu达到30%
+    * 用perf采集火焰图看到inet_hash_connect和__init_check_established占比很高
+    * ss -s看到大量的timewait，调tcp_tw_reuse
+* 54小节-分析问题的一般步骤
+  * cpu`top`，进程cpu`pidstat -u 1`，进程上下文切换`pidstat -w 1`
+  * 内存`free -h`，进程内存`pidstat -r 1`
+  * 磁盘`sar -d 1`，进程磁盘`pidstat -d 1`
+  * 网络：链路层、网络层、传输层、应用层
+ * 57小节-[四大模块的性能指标和基准测试](https://time.geekbang.org/column/article/89306)
+
 
 ![img](../images/linux-combat/tcp_layers_drop_pkt.jpg)
   
-  
+![img](../images/linux-combat/system-monitor.png)
+
   
   
   

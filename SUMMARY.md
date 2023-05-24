@@ -16,6 +16,7 @@
 * [《操作系统导论》](https://xing393939.github.io/ostep-study/)
 * 杂项
   * [内核调试秘籍](docs/kernel-debug.md)
+  * [ebpf](docs/ebpf.md)
   * [ftrace](docs/ftrace.md)
   * [linux核心数据结构](docs/core-data-structure.md)
   * [socket协议簇](docs/protocol-suite.md)
