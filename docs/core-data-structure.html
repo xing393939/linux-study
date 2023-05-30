@@ -455,6 +455,31 @@
     struct sock            *sk;   // internal networking protocol agnostic socket representation
     const struct proto_ops *ops;  // protocol specific socket operations
 };
+
+typedef enum {
+    SS_FREE = 0,            /* not allocated        */
+    SS_UNCONNECTED,         /* unconnected to any socket    */
+    SS_CONNECTING,          /* in process of connecting    */
+    SS_CONNECTED,           /* connected to socket        */
+    SS_DISCONNECTING        /* in process of disconnecting    */
+} socket_state;
+
+enum sock_type {
+    SOCK_STREAM    = 1,     /* tcp */
+    SOCK_DGRAM     = 2,     /* udp */
+    SOCK_RAW       = 3,
+    SOCK_RDM       = 4,
+    SOCK_SEQPACKET = 5,
+    SOCK_DCCP      = 6,
+    SOCK_PACKET    = 10,
+};
+
+// flags
+#define SOCKWQ_ASYNC_NOSPACE    0
+#define SOCKWQ_ASYNC_WAITDATA    1
+#define SOCK_NOSPACE        2
+#define SOCK_PASSCRED        3
+#define SOCK_PASSSEC        4
 </code></pre>
                                 
                                 </section>
@@ -498,7 +523,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-28T08:47:18.125Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-28T08:47:53.146Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-30T06:12:59.964Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-30T06:13:25.126Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
