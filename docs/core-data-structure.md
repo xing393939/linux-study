@@ -4,10 +4,9 @@
 * [Linux内核中sk_buff结构详解](https://www.jianshu.com/p/3738da62f5f6)
 * [Printing sk_buff data](https://olegkutkov.me/2019/10/17/printing-sk_buff-data)
 * 在include/linux/skbuff.h定义了一个打印函数pkt_hex_dump，然后[Hex Packet Decoder](https://hpd.gasmi.net/)
-* 线性数据：head - end。
-* 实际线性数据：data - tail，即ip包。
-* skb->data_len: skb中的分片数据（非线性数据）的长度。
-* skb->len: skb中的数据块的总长度。其中：skb->len = (data - tail) + skb->data_len
+* 发送报文时，[traversing the stack from the TCP layer down to the link layer](http://www.embeddedlinux.org.cn/linux_net/0596002556/understandlni-CHP-2-SECT-1.html)
+
+![img](../images/struct-skb-buff.jpg)
 
 #### struct socket
 ```
@@ -21,6 +20,7 @@ struct socket {
     const struct proto_ops *ops;  // protocol specific socket operations
 };
 
+// state
 typedef enum {
 	SS_FREE = 0,            /* not allocated		*/
 	SS_UNCONNECTED,         /* unconnected to any socket	*/
@@ -29,6 +29,7 @@ typedef enum {
 	SS_DISCONNECTING        /* in process of disconnecting	*/
 } socket_state;
 
+// type
 enum sock_type {
 	SOCK_STREAM    = 1,     /* tcp */
 	SOCK_DGRAM     = 2,     /* udp */
@@ -50,7 +51,6 @@ enum sock_type {
 #### struct sock
 ![img](../images/struct_sock.jpg)
 ```
-// [include/linux/sock.h]
 struct sock {
     int                 sk_rcvbuf;          // theorical "max" size of the receive buffer
     int                 sk_sndbuf;          // theorical "max" size of the send buffer
@@ -59,6 +59,27 @@ struct sock {
     struct sk_buff_head sk_receive_queue;   // head of doubly-linked list，sk_buf缓冲区
     struct sk_buff_head sk_write_queue;     // head of doubly-linked list
     struct socket       *sk_socket;
+    #define sk_family   __sk_common.skc_family
+    u16                 sk_type;
+    u16                 sk_protocol;
 }
+
+// sk_family
+#define AF_UNIX     1   /* Unix domain sockets 		*/
+#define AF_LOCAL    1   /* POSIX name for AF_UNIX	*/
+#define AF_INET     2   /* Internet IP Protocol 	*/
+#define AF_INET6    10  /* IP version 6			*/
+#define AF_NETLINK  16  /* Kernel user interface device */
+
+// sk_protocol
+enum {
+    IPPROTO_IP = 0,    /* Dummy protocol for TCP		*/
+    IPPROTO_ICMP = 1,  /* Internet Control Message Protocol	*/
+    IPPROTO_IGMP = 2,  /* Internet Group Management Protocol	*/
+    IPPROTO_IPIP = 4,  /* IPIP tunnels (older KA9Q tunnels use 94) */
+    IPPROTO_TCP = 6,   /* Transmission Control Protocol	*/
+    IPPROTO_UDP = 17,  /* User Datagram Protocol		*/
+    IPPROTO_RAW = 255, /* Raw IP packets			*/
+};
 ```
 
