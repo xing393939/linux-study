@@ -20,5 +20,30 @@ struct socket {
     struct sock            *sk;   // internal networking protocol agnostic socket representation
     const struct proto_ops *ops;  // protocol specific socket operations
 };
+
+typedef enum {
+	SS_FREE = 0,            /* not allocated		*/
+	SS_UNCONNECTED,         /* unconnected to any socket	*/
+	SS_CONNECTING,          /* in process of connecting	*/
+	SS_CONNECTED,           /* connected to socket		*/
+	SS_DISCONNECTING        /* in process of disconnecting	*/
+} socket_state;
+
+enum sock_type {
+	SOCK_STREAM    = 1,     /* tcp */
+	SOCK_DGRAM     = 2,     /* udp */
+	SOCK_RAW       = 3,
+	SOCK_RDM       = 4,
+	SOCK_SEQPACKET = 5,
+	SOCK_DCCP      = 6,
+	SOCK_PACKET    = 10,
+};
+
+// flags
+#define SOCKWQ_ASYNC_NOSPACE	0
+#define SOCKWQ_ASYNC_WAITDATA	1
+#define SOCK_NOSPACE		2
+#define SOCK_PASSCRED		3
+#define SOCK_PASSSEC		4
 ```
 
