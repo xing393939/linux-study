@@ -40,10 +40,25 @@ enum sock_type {
 };
 
 // flags
-#define SOCKWQ_ASYNC_NOSPACE	0
-#define SOCKWQ_ASYNC_WAITDATA	1
-#define SOCK_NOSPACE		2
-#define SOCK_PASSCRED		3
-#define SOCK_PASSSEC		4
+#define SOCKWQ_ASYNC_NOSPACE   0
+#define SOCKWQ_ASYNC_WAITDATA  1
+#define SOCK_NOSPACE           2
+#define SOCK_PASSCRED          3
+#define SOCK_PASSSEC           4
+```
+
+#### struct sock
+![img](../images/struct_sock.jpg)
+```
+// [include/linux/sock.h]
+struct sock {
+    int                 sk_rcvbuf;          // theorical "max" size of the receive buffer
+    int                 sk_sndbuf;          // theorical "max" size of the send buffer
+    atomic_t            sk_rmem_alloc;      // "current" size of the receive buffer
+    atomic_t            sk_wmem_alloc;      // "current" size of the send buffer
+    struct sk_buff_head sk_receive_queue;   // head of doubly-linked list，sk_buf缓冲区
+    struct sk_buff_head sk_write_queue;     // head of doubly-linked list
+    struct socket       *sk_socket;
+}
 ```
 
