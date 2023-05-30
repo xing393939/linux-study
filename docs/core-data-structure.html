@@ -440,11 +440,9 @@
 <li><a href="https://www.jianshu.com/p/3738da62f5f6" target="_blank">Linux&#x5185;&#x6838;&#x4E2D;sk_buff&#x7ED3;&#x6784;&#x8BE6;&#x89E3;</a></li>
 <li><a href="https://olegkutkov.me/2019/10/17/printing-sk_buff-data" target="_blank">Printing sk_buff data</a></li>
 <li>&#x5728;include/linux/skbuff.h&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x6253;&#x5370;&#x51FD;&#x6570;pkt_hex_dump&#xFF0C;&#x7136;&#x540E;<a href="https://hpd.gasmi.net/" target="_blank">Hex Packet Decoder</a></li>
-<li>&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF1A;head - end&#x3002;</li>
-<li>&#x5B9E;&#x9645;&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF1A;data - tail&#xFF0C;&#x5373;ip&#x5305;&#x3002;</li>
-<li>skb-&gt;data_len: skb&#x4E2D;&#x7684;&#x5206;&#x7247;&#x6570;&#x636E;&#xFF08;&#x975E;&#x7EBF;&#x6027;&#x6570;&#x636E;&#xFF09;&#x7684;&#x957F;&#x5EA6;&#x3002;</li>
-<li>skb-&gt;len: skb&#x4E2D;&#x7684;&#x6570;&#x636E;&#x5757;&#x7684;&#x603B;&#x957F;&#x5EA6;&#x3002;&#x5176;&#x4E2D;&#xFF1A;skb-&gt;len = (data - tail) + skb-&gt;data_len</li>
+<li>&#x53D1;&#x9001;&#x62A5;&#x6587;&#x65F6;&#xFF0C;<a href="http://www.embeddedlinux.org.cn/linux_net/0596002556/understandlni-CHP-2-SECT-1.html" target="_blank">traversing the stack from the TCP layer down to the link layer</a></li>
 </ul>
+<p><img src="../images/struct-skb-buff.jpg" alt="img"></p>
 <h4 id="struct-socket">struct socket</h4>
 <pre><code>struct socket {
     socket_state           state; // socket state (SS_CONNECTED, etc)
@@ -456,6 +454,7 @@
     const struct proto_ops *ops;  // protocol specific socket operations
 };
 
+// state
 typedef enum {
     SS_FREE = 0,            /* not allocated        */
     SS_UNCONNECTED,         /* unconnected to any socket    */
@@ -464,6 +463,7 @@ typedef enum {
     SS_DISCONNECTING        /* in process of disconnecting    */
 } socket_state;
 
+// type
 enum sock_type {
     SOCK_STREAM    = 1,     /* tcp */
     SOCK_DGRAM     = 2,     /* udp */
@@ -482,8 +482,7 @@ enum sock_type {
 #define SOCK_PASSSEC           4
 </code></pre><h4 id="struct-sock">struct sock</h4>
 <p><img src="../images/struct_sock.jpg" alt="img"></p>
-<pre><code>// [include/linux/sock.h]
-struct sock {
+<pre><code>struct sock {
     int                 sk_rcvbuf;          // theorical &quot;max&quot; size of the receive buffer
     int                 sk_sndbuf;          // theorical &quot;max&quot; size of the send buffer
     atomic_t            sk_rmem_alloc;      // &quot;current&quot; size of the receive buffer
@@ -491,7 +490,28 @@ struct sock {
     struct sk_buff_head sk_receive_queue;   // head of doubly-linked list&#xFF0C;sk_buf&#x7F13;&#x51B2;&#x533A;
     struct sk_buff_head sk_write_queue;     // head of doubly-linked list
     struct socket       *sk_socket;
+    #define sk_family   __sk_common.skc_family
+    u16                 sk_type;
+    u16                 sk_protocol;
 }
+
+// sk_family
+#define AF_UNIX     1   /* Unix domain sockets         */
+#define AF_LOCAL    1   /* POSIX name for AF_UNIX    */
+#define AF_INET     2   /* Internet IP Protocol     */
+#define AF_INET6    10  /* IP version 6            */
+#define AF_NETLINK  16  /* Kernel user interface device */
+
+// sk_protocol
+enum {
+    IPPROTO_IP = 0,    /* Dummy protocol for TCP        */
+    IPPROTO_ICMP = 1,  /* Internet Control Message Protocol    */
+    IPPROTO_IGMP = 2,  /* Internet Group Management Protocol    */
+    IPPROTO_IPIP = 4,  /* IPIP tunnels (older KA9Q tunnels use 94) */
+    IPPROTO_TCP = 6,   /* Transmission Control Protocol    */
+    IPPROTO_UDP = 17,  /* User Datagram Protocol        */
+    IPPROTO_RAW = 255, /* Raw IP packets            */
+};
 </code></pre>
                                 
                                 </section>
@@ -535,7 +555,7 @@ struct sock {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-30T07:17:49.783Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-30T07:18:15.375Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-30T08:48:55.875Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-30T08:49:20.681Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
