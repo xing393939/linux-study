@@ -83,3 +83,7 @@ enum {
 };
 ```
 
+#### 总体关系图
+* [struct sock对象通常称为sk，而struct socket对象通常称为sock](https://blog.csdn.net/panhewu9919/article/details/113920290)
+
+![img](../images/tast_struct-skb_buff.png)
