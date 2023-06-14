@@ -491,6 +491,7 @@ enum sock_type {
     struct sk_buff_head sk_write_queue;     // head of doubly-linked list
     struct socket       *sk_socket;
     #define sk_family   __sk_common.skc_family
+    #define sk_state    __sk_common.skc_state
     u16                 sk_type;
     u16                 sk_protocol;
 }
@@ -501,6 +502,20 @@ enum sock_type {
 #define AF_INET     2   /* Internet IP Protocol     */
 #define AF_INET6    10  /* IP version 6            */
 #define AF_NETLINK  16  /* Kernel user interface device */
+
+// sk_state
+    TCP_ESTABLISHED = 1,
+    TCP_SYN_SENT    = 2,
+    TCP_SYN_RECV    = 3,
+    TCP_FIN_WAIT1   = 4,
+    TCP_FIN_WAIT2   = 5,
+    TCP_TIME_WAIT   = 6,
+    TCP_CLOSE       = 7,
+    TCP_CLOSE_WAIT  = 8,
+    TCP_LAST_ACK    = 9,
+    TCP_LISTEN      = 10,
+    TCP_CLOSING     = 11,
+    TCP_NEW_SYN_RECV= 12,
 
 // sk_protocol
 enum {
@@ -560,7 +575,7 @@ enum {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-05-30T08:52:28.662Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-05-30T08:53:03.194Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"linux核心数据结构","level":"1.6.5","depth":2,"next":{"title":"socket协议簇","level":"1.6.6","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"previous":{"title":"ftrace","level":"1.6.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/core-data-structure.md","mtime":"2023-06-14T08:58:08.589Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-06-14T08:58:35.289Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
