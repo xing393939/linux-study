@@ -60,6 +60,7 @@ struct sock {
     struct sk_buff_head sk_write_queue;     // head of doubly-linked list
     struct socket       *sk_socket;
     #define sk_family   __sk_common.skc_family
+    #define sk_state    __sk_common.skc_state
     u16                 sk_type;
     u16                 sk_protocol;
 }
@@ -70,6 +71,20 @@ struct sock {
 #define AF_INET     2   /* Internet IP Protocol 	*/
 #define AF_INET6    10  /* IP version 6			*/
 #define AF_NETLINK  16  /* Kernel user interface device */
+
+// sk_state
+	TCP_ESTABLISHED = 1,
+	TCP_SYN_SENT    = 2,
+	TCP_SYN_RECV    = 3,
+	TCP_FIN_WAIT1   = 4,
+	TCP_FIN_WAIT2   = 5,
+	TCP_TIME_WAIT   = 6,
+	TCP_CLOSE       = 7,
+	TCP_CLOSE_WAIT  = 8,
+	TCP_LAST_ACK    = 9,
+	TCP_LISTEN      = 10,
+	TCP_CLOSING     = 11,
+	TCP_NEW_SYN_RECV= 12,
 
 // sk_protocol
 enum {
