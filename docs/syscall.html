@@ -479,22 +479,23 @@ tatic <span class="hljs-keyword">const</span> __initconst <span class="hljs-keyw
 SYM_CODE_END(entry_SYSCALL_64)
 </code></pre>
 <p>do_syscall_64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
-<pre><code>__visible noinstr void do_syscall_64(struct pt_regs *regs, int nr)
-{
+<pre><code class="lang-c">__<span class="hljs-function">visible noinstr <span class="hljs-keyword">void</span> <span class="hljs-title">do_syscall_64</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> pt_regs *regs, <span class="hljs-keyword">int</span> nr)</span>
+</span>{
     add_random_kstack_offset();
     nr = syscall_enter_from_user_mode(regs, nr);
 
     instrumentation_begin();
 
-    if (!do_syscall_x64(regs, nr) &amp;&amp; !do_syscall_x32(regs, nr) &amp;&amp; nr != -1) {
-        /* Invalid system call, but still a system call. */
+    <span class="hljs-keyword">if</span> (!do_syscall_x64(regs, nr) &amp;&amp; !do_syscall_x32(regs, nr) &amp;&amp; nr != <span class="hljs-number">-1</span>) {
+        <span class="hljs-comment">/* Invalid system call, but still a system call. */</span>
         regs-&gt;ax = __x64_sys_ni_syscall(regs);
     }
 
     instrumentation_end();
     syscall_exit_to_user_mode(regs);
 }
-</code></pre><p>do_syscall_x64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+</code></pre>
+<p>do_syscall_x64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
 <pre><code class="lang-c"><span class="hljs-keyword">static</span> __<span class="hljs-function">always_inline <span class="hljs-keyword">bool</span> <span class="hljs-title">do_syscall_x64</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> pt_regs *regs, <span class="hljs-keyword">int</span> nr)</span>
 </span>{
     <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> unr = nr;
@@ -514,21 +515,22 @@ __SYSCALL(2, sys_open)   // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_open
 __SYSCALL(3, sys_close)  // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_close
 ...
 </code></pre><p>&#x5047;&#x8BBE;&#x73B0;&#x5728;&#x8981;&#x770B;__x64_sys_close&#x7684;&#x4EE3;&#x7801;&#x5B9A;&#x4E49;&#xFF0C;&#x9700;&#x8981;&#x641C;&#x7D22;<code>SYSCALL_DEFINE1(close</code>&#x5F97;&#x5230;</p>
-<pre><code>// &#x8FD9;&#x91CC;&#x5B8F;&#x5C55;&#x5F00;&#x540E;&#x5373;&#x662F;__x64_sys_close&#x7684;&#x51FD;&#x6570;&#x5B9A;&#x4E49;
-SYSCALL_DEFINE1(close, unsigned int, fd)
+<pre><code class="lang-c"><span class="hljs-comment">// &#x8FD9;&#x91CC;&#x5B8F;&#x5C55;&#x5F00;&#x540E;&#x5373;&#x662F;__x64_sys_close&#x7684;&#x51FD;&#x6570;&#x5B9A;&#x4E49;</span>
+SYSCALL_DEFINE1(close, <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>, fd)
 {
-    int retval = close_fd(fd);
+    <span class="hljs-keyword">int</span> retval = close_fd(fd);
 
-    /* can&apos;t restart close syscall because file table entry was cleared */
-    if (unlikely(retval == -ERESTARTSYS ||
+    <span class="hljs-comment">/* can&apos;t restart close syscall because file table entry was cleared */</span>
+    <span class="hljs-keyword">if</span> (unlikely(retval == -ERESTARTSYS ||
              retval == -ERESTARTNOINTR ||
              retval == -ERESTARTNOHAND ||
              retval == -ERESTART_RESTARTBLOCK))
         retval = -EINTR;
 
-    return retval;
+    <span class="hljs-keyword">return</span> retval;
 }
 </code></pre>
+
                                 
                                 </section>
                             
@@ -571,7 +573,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"系统调用入口","level":"1.6.2","depth":2,"next":{"title":"系统调用之getpid","level":"1.6.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},"previous":{"title":"内核调试秘籍","level":"1.6.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/syscall.md","mtime":"2023-06-16T07:27:18.692Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-06-16T07:27:44.822Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"系统调用入口","level":"1.6.2","depth":2,"next":{"title":"系统调用之getpid","level":"1.6.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},"previous":{"title":"内核调试秘籍","level":"1.6.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/syscall.md","mtime":"2023-06-16T07:36:49.393Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-06-16T07:37:28.307Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
