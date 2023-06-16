@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>OSI七层和Netfilter · GitBook</title>
+        <title>系统调用入口 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="getpid.html" />
     
-    <link rel="prev" href="protocol-suite.html" />
+    
+    <link rel="prev" href="kernel-debug.html" />
     
 
     </head>
@@ -304,7 +306,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.2" data-path="syscall.html">
+        <li class="chapter active" data-level="1.6.2" data-path="syscall.html">
             
                 <a href="syscall.html">
             
@@ -382,7 +384,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.6.8" data-path="osi_and_netfilter.html">
+        <li class="chapter " data-level="1.6.8" data-path="osi_and_netfilter.html">
             
                 <a href="osi_and_netfilter.html">
             
@@ -430,7 +432,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >OSI七层和Netfilter</a>
+        <a href=".." >系统调用入口</a>
     </h1>
 </div>
 
@@ -445,44 +447,88 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h3 id="osi&#x4E03;&#x5C42;&#x548C;netfilter">OSI&#x4E03;&#x5C42;&#x548C;Netfilter</h3>
-<h4 id="osi&#x4E03;&#x5C42;&#x6A21;&#x578B;">OSI&#x4E03;&#x5C42;&#x6A21;&#x578B;</h4>
+                                <h3 id="&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x5165;&#x53E3;">&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x5165;&#x53E3;</h3>
+<h4 id="&#x53C2;&#x8003;&#x8D44;&#x6599;">&#x53C2;&#x8003;&#x8D44;&#x6599;</h4>
 <ul>
-<li><a href="https://juejin.cn/post/7088967250413092872" target="_blank">veth pair&#x548C;Linux bridge</a></li>
-<li>&#x5728;Linux&#x5185;&#x6838;&#x5B9E;&#x73B0;&#x4E2D;&#xFF0C;&#x94FE;&#x8DEF;&#x5C42;&#x534F;&#x8BAE;&#x9760;&#x7F51;&#x5361;&#x9A71;&#x52A8;&#x6765;&#x5B9E;&#x73B0;&#xFF1B;</li>
-<li>&#x5185;&#x6838;&#x534F;&#x8BAE;&#x6808;&#x6765;&#x5B9E;&#x73B0;&#x7F51;&#x7EDC;&#x5C42;&#x548C;&#x4F20;&#x8F93;&#x5C42;&#xFF0C;&#x6240;&#x4EE5;&#x5F88;&#x591A;&#x8D44;&#x6599;&#x4E2D;&#x5C06;&#x7F51;&#x7EDC;&#x5C42;&#x548C;&#x4F20;&#x8F93;&#x5C42;&#x7EDF;&#x79F0;&#x4E3A;Linux&#x7F51;&#x7EDC;&#x534F;&#x8BAE;&#x6808;&#x3002;</li>
+<li>&#x5185;&#x6838;&#x7248;&#x672C;&#xFF1A;5.19.0</li>
+<li><a href="https://heapdump.cn/article/4424650" target="_blank">&#x6DF1;&#x5165;&#x7406;&#x89E3;Linux&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x4E0E;API</a></li>
 </ul>
-<p><img src="../images/osi7.png" alt="img"></p>
-<h4 id="netfilter-hook">Netfilter Hook</h4>
-<ul>
-<li>Netfilter&#x5B50;&#x7CFB;&#x7EDF;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x5E73;&#x65F6;&#x6240;&#x8BF4;&#x7684;&#x9632;&#x706B;&#x5899;&#xFF0C;&#x901A;&#x5E38;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x7BA1;&#x7406;&#x5DE5;&#x5177;iptables&#x6765;&#x914D;&#x7F6E;Netfilter Hook</li>
-<li>&#x672C;&#x673A;&#x63A5;&#x6536;&#x6570;&#x636E;&#x5305;&#x548C;&#x8F6C;&#x53D1;&#x6570;&#x636E;&#x5305;<ul>
-<li>&#x6536;&#x5230;skb&#xFF0C;&#x82E5;mac&#x5730;&#x5740;&#x4E0D;&#x662F;&#x8BE5;&#x7F51;&#x5361;&#x4E14;&#x6CA1;&#x6709;&#x5F00;&#x542F;&#x6DF7;&#x6742;&#x6A21;&#x5F0F;&#xFF0C;&#x76F4;&#x63A5;&#x4E22;&#x5F03;</li>
-<li>&#x7ECF;&#x8FC7;RREROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x76EE;&#x7684;&#x5730;&#x5740;&#x4FEE;&#x6539;(DNAT)</li>
-<li>&#x8DEF;&#x7531;&#x51B3;&#x7B56;&#xFF1A;&#x51B3;&#x5B9A;&#x662F;&#x53D1;&#x7ED9;&#x672C;&#x5730;&#x8FDB;&#x7A0B;&#x8FD8;&#x662F;&#x8F6C;&#x53D1;&#x7ED9;&#x5176;&#x4ED6;&#x673A;&#x5668;<ul>
-<li>&#x53D1;&#x7ED9;&#x672C;&#x5730;&#xFF1A;&#x7ECF;&#x8FC7;INPUT&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x8FDB;&#x7A0B;</li>
-<li>&#x53D1;&#x7ED9;&#x522B;&#x4EBA;(&#x6216;&#x5176;&#x4ED6;network namespace)&#xFF1A;&#x7ECF;&#x8FC7;FORWARD&#xFF0C;&#x7136;&#x540E;POSTROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x6E90;&#x5730;&#x5740;&#x8F6C;&#x6362;(SNAT)&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x7F51;&#x5361;&#x9A71;&#x52A8;</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>&#x672C;&#x673A;&#x53D1;&#x9001;&#x6570;&#x636E;&#x5305;<ul>
-<li>&#x7F51;&#x7EDC;&#x5C42;&#x6536;&#x5230;&#x4F20;&#x8F93;&#x5C42;&#x7684;skb</li>
-<li>&#x7ECF;&#x8FC7;OUTPUT</li>
-<li>&#x8DEF;&#x7531;&#x51B3;&#x7B56;&#xFF1A;&#x7528;&#x54EA;&#x4E2A;&#x7F51;&#x5361;&#xFF0C;&#x76EE;&#x6807;mac&#x5730;&#x5740;&#x662F;&#x591A;&#x5C11;</li>
-<li>&#x7ECF;&#x8FC7;POSTROUTING&#xFF0C;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x6E90;&#x5730;&#x5740;&#x8F6C;&#x6362;(SNAT)&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x7ED9;&#x7F51;&#x5361;&#x9A71;&#x52A8;</li>
-</ul>
-</li>
-</ul>
-<p><img src="../images/skb_receive.png" alt="img"></p>
-<p><img src="../images/skb_forward.png" alt="img"></p>
-<p><img src="../images/skb_send.png" alt="img"></p>
-<h4 id="&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;">&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;</h4>
-<ul>
-<li>&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;&#x53EF;&#x4EE5;&#x770B;&#x6210;&#x4E00;&#x4E2A;&#x8DEF;&#x7531;&#x5668;&#x548C;&#x4E00;&#x4E2A;&#x4EA4;&#x6362;&#x673A;&#x7684;&#x7EC4;&#x5408;&#xFF0C;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;</li>
-</ul>
-<p><img src="../images/home_router.png" alt="img"></p>
+<p>&#x5BF9;&#x4E8E;64&#x4F4D;&#x8FDB;&#x7A0B;&#x6C47;&#x7F16;&#x6307;&#x4EE4;&#x662F;syscall&#xFF0C;&#x5BF9;&#x4E8E;32&#x4F4D;&#x53EF;&#x80FD;&#x662F;int 80&#x3001;syscall(32)&#x3001;sysenter</p>
+<pre><code class="lang-c"><span class="hljs-comment">// &#x5BF9;&#x4E8E;syscall&#x3001;syscall(32)&#x3001;sysenter&#xFF0C;&#x5728;syscall_init&#x521D;&#x59CB;&#x5316;</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">syscall_init</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+  wrmsrl(MSR_LSTAR, (<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>)entry_SYSCALL_64);
+  wrmsrl(MSR_CSTAR, (<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>)entry_SYSCALL_compat);
+  wrmsrl_safe(MSR_IA32_SYSENTER_EIP, (u64)entry_SYSENTER_compat);
+}
+<span class="hljs-comment">// &#x5BF9;&#x4E8E;int 80&#xFF0C;&#x9700;&#x8981;&#x5728;&#x4E2D;&#x65AD;&#x5411;&#x91CF;&#x8868;&#x91CC;&#x9762;&#x6DFB;&#x52A0;&#x5904;&#x7406;&#x51FD;&#x6570;</span>
+tatic <span class="hljs-keyword">const</span> __initconst <span class="hljs-keyword">struct</span> idt_data def_idts[] = {
+  SYSG(IA32_SYSCALL_VECTOR,  entry_INT80_compat),
+}
+</code></pre>
+<p>entry_SYSCALL_64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-c">SYM_CODE_START(entry_SYSCALL_64)
+  pushq  $__USER_DS                         /* pt_regs-&gt;ss */
+  pushq  PER_CPU_VAR(cpu_tss_rw + TSS_sp2)  /* pt_regs-&gt;sp */
+  pushq  %r11                               /* pt_regs-&gt;flags */
+  pushq  $__USER_CS                         /* pt_regs-&gt;cs */
+  pushq  %rcx                               /* pt_regs-&gt;ip */
+  pushq  %rax                               /* pt_regs-&gt;orig_ax */
+  call  do_syscall_64                       /* returns with IRQs disabled */
+  sysretq
+SYM_CODE_END(entry_SYSCALL_64)
+</code></pre>
+<p>do_syscall_64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>__visible noinstr void do_syscall_64(struct pt_regs *regs, int nr)
+{
+    add_random_kstack_offset();
+    nr = syscall_enter_from_user_mode(regs, nr);
 
+    instrumentation_begin();
+
+    if (!do_syscall_x64(regs, nr) &amp;&amp; !do_syscall_x32(regs, nr) &amp;&amp; nr != -1) {
+        /* Invalid system call, but still a system call. */
+        regs-&gt;ax = __x64_sys_ni_syscall(regs);
+    }
+
+    instrumentation_end();
+    syscall_exit_to_user_mode(regs);
+}
+</code></pre><p>do_syscall_x64&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<pre><code class="lang-c"><span class="hljs-keyword">static</span> __<span class="hljs-function">always_inline <span class="hljs-keyword">bool</span> <span class="hljs-title">do_syscall_x64</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> pt_regs *regs, <span class="hljs-keyword">int</span> nr)</span>
+</span>{
+    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> unr = nr;
+
+    <span class="hljs-keyword">if</span> (likely(unr &lt; NR_syscalls)) {
+        unr = array_index_nospec(unr, NR_syscalls);
+        regs-&gt;ax = sys_call_table[unr](regs);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+}
+</code></pre>
+<p>sys_call_table&#x662F;&#x4E00;&#x4E2A;&#x5168;&#x5C40;&#x53D8;&#x91CF;&#xFF0C;/arch/x86/include/generated/asm/syscalls_64.h&#x5B9A;&#x4E49;&#xFF1A;</p>
+<pre><code>__SYSCALL(0, sys_read)   // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_read
+__SYSCALL(1, sys_write)  // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_write
+__SYSCALL(2, sys_open)   // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_open
+__SYSCALL(3, sys_close)  // &#x5B8F;&#x5C55;&#x5F00;&#x662F;__x64_sys_close
+...
+</code></pre><p>&#x5047;&#x8BBE;&#x73B0;&#x5728;&#x8981;&#x770B;__x64_sys_close&#x7684;&#x4EE3;&#x7801;&#x5B9A;&#x4E49;&#xFF0C;&#x9700;&#x8981;&#x641C;&#x7D22;<code>SYSCALL_DEFINE1(close</code>&#x5F97;&#x5230;</p>
+<pre><code>// &#x8FD9;&#x91CC;&#x5B8F;&#x5C55;&#x5F00;&#x540E;&#x5373;&#x662F;__x64_sys_close&#x7684;&#x51FD;&#x6570;&#x5B9A;&#x4E49;
+SYSCALL_DEFINE1(close, unsigned int, fd)
+{
+    int retval = close_fd(fd);
+
+    /* can&apos;t restart close syscall because file table entry was cleared */
+    if (unlikely(retval == -ERESTARTSYS ||
+             retval == -ERESTARTNOINTR ||
+             retval == -ERESTARTNOHAND ||
+             retval == -ERESTART_RESTARTBLOCK))
+        retval = -EINTR;
+
+    return retval;
+}
+</code></pre>
                                 
                                 </section>
                             
@@ -509,10 +555,14 @@
 
             
                 
-                <a href="protocol-suite.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: socket协议簇">
+                <a href="kernel-debug.html" class="navigation navigation-prev " aria-label="Previous page: 内核调试秘籍">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
+                
+                <a href="getpid.html" class="navigation navigation-next " aria-label="Next page: 系统调用之getpid">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -521,7 +571,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"OSI七层和Netfilter","level":"1.6.8","depth":2,"previous":{"title":"socket协议簇","level":"1.6.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/osi_and_netfilter.md","mtime":"2023-06-16T07:26:29.279Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-06-16T07:26:53.837Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"系统调用入口","level":"1.6.2","depth":2,"next":{"title":"系统调用之getpid","level":"1.6.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},"previous":{"title":"内核调试秘籍","level":"1.6.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/syscall.md","mtime":"2023-06-16T07:26:29.283Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-06-16T07:26:53.837Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
