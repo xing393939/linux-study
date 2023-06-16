@@ -34,7 +34,7 @@ SYM_CODE_END(entry_SYSCALL_64)
 ```
 
 do_syscall_64的代码如下：
-```
+```c
 __visible noinstr void do_syscall_64(struct pt_regs *regs, int nr)
 {
 	add_random_kstack_offset();
@@ -77,7 +77,7 @@ __SYSCALL(3, sys_close)  // 宏展开是__x64_sys_close
 ```
 
 假设现在要看__x64_sys_close的代码定义，需要搜索`SYSCALL_DEFINE1(close`得到
-```
+```c
 // 这里宏展开后即是__x64_sys_close的函数定义
 SYSCALL_DEFINE1(close, unsigned int, fd)
 {
