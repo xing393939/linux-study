@@ -1,6 +1,7 @@
 ### 系统调用入口
 
 #### 参考资料
+* 内核版本：5.19.0
 * [深入理解Linux系统调用与API](https://heapdump.cn/article/4424650)
 
 对于64位进程汇编指令是syscall，对于32位可能是int 80、syscall(32)、sysenter
