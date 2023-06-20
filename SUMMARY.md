@@ -21,5 +21,6 @@
   * [ebpf](docs/ebpf.md)
   * [ftrace](docs/ftrace.md)
   * [linux核心数据结构](docs/core-data-structure.md)
+  * [linux下的hook方式](docs/linux-hook.md)
   * [socket协议簇](docs/protocol-suite.md)
   * [OSI七层和Netfilter](docs/osi_and_netfilter.md)
