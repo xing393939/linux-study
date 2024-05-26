@@ -1,0 +1,717 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>BPF之巅 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="systems-performance.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">目录</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="linux-combat.html">
+            
+                <a href="linux-combat.html">
+            
+                    
+                    Linux 性能优化实战
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" >
+            
+                <span>
+            
+                    
+                    操作系统导论
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="ostep/1.html">
+            
+                <a href="ostep/1.html">
+            
+                    
+                    CPU知识和内核知识
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="ostep/2.html">
+            
+                <a href="ostep/2.html">
+            
+                    
+                    用qemu跑linux0.11和xv6
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="ostep/3.html">
+            
+                <a href="ostep/3.html">
+            
+                    
+                    MIT6.828 JOS实验
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="ostep/4.html">
+            
+                <a href="ostep/4.html">
+            
+                    
+                    xv6源码学习
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="ostep/x86-00.html">
+            
+                <a href="ostep/x86-00.html">
+            
+                    
+                    x86架构操作系统内核的实现
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="ostep/x86-01.html">
+            
+                <a href="ostep/x86-01.html">
+            
+                    
+                    x86系统调用细节
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="ostep/x86-02.html">
+            
+                <a href="ostep/x86-02.html">
+            
+                    
+                    x86如何进入用户态
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8" data-path="ostep/x86-03.html">
+            
+                <a href="ostep/x86-03.html">
+            
+                    
+                    x86多核问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.9" data-path="ostep/x86-04.html">
+            
+                <a href="ostep/x86-04.html">
+            
+                    
+                    x86中断和异常
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" >
+            
+                <span>
+            
+                    
+                    eBPF相关
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="systems-performance.html">
+            
+                <a href="systems-performance.html">
+            
+                    
+                    性能之颠
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.2" data-path="bpf-performance-tools.html">
+            
+                <a href="bpf-performance-tools.html">
+            
+                    
+                    BPF之巅
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" >
+            
+                <span>
+            
+                    
+                    杂项
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="kernel-debug.html">
+            
+                <a href="kernel-debug.html">
+            
+                    
+                    内核调试秘籍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="syscall.html">
+            
+                <a href="syscall.html">
+            
+                    
+                    系统调用入口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="getpid.html">
+            
+                <a href="getpid.html">
+            
+                    
+                    系统调用之getpid
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="ftrace.html">
+            
+                <a href="ftrace.html">
+            
+                    
+                    ftrace
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="core-data-structure.html">
+            
+                <a href="core-data-structure.html">
+            
+                    
+                    linux核心数据结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.6" data-path="linux-hook.html">
+            
+                <a href="linux-hook.html">
+            
+                    
+                    linux下的hook方式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.7" data-path="protocol-suite.html">
+            
+                <a href="protocol-suite.html">
+            
+                    
+                    socket协议簇
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.8" data-path="osi_and_netfilter.html">
+            
+                <a href="osi_and_netfilter.html">
+            
+                    
+                    OSI七层和Netfilter
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >BPF之巅</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="bpf&#x4E4B;&#x5DC5;">BPF&#x4E4B;&#x5DC5;</h3>
+<h4 id="&#x53C2;&#x8003;&#x8D44;&#x6599;">&#x53C2;&#x8003;&#x8D44;&#x6599;</h4>
+<ul>
+<li><a href="https://book.douban.com/subject/35273652/" target="_blank">BPF&#x4E4B;&#x5DC5;</a></li>
+<li><a href="https://docs.cilium.io/en/stable/bpf/" target="_blank">BPF and XDP Reference Guide</a></li>
+<li><a href="https://tonybai.com/2020/12/25/bpf-and-go-modern-forms-of-introspection-in-linux/" target="_blank">bpftrace&#x548C;Go&#x8BED;&#x8A00;</a></li>
+<li><a href="https://www.ebpf.top/post/ebpf_learn_path/" target="_blank">BPF&#x5B66;&#x4E60;&#x8DEF;&#x5F84;&#x603B;&#x7ED3;</a></li>
+<li><a href="https://www.ebpf.top/post/ebpf_and_go/" target="_blank">eBPF &#x4E0E; Go &#x8D85;&#x80FD;&#x529B;&#x7EC4;&#x5408;</a></li>
+<li><a href="https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md" target="_blank">BPF Features by Linux Kernel Version</a></li>
+<li>IO Visor &#x9879;&#x76EE;&#x5F00;&#x6E90;&#x7684; BCC&#x3001; BPFTrace &#x548C; Kubectl-Trace&#xFF1A; <ul>
+<li>BCC &#x63D0;&#x4F9B;&#x4E86;&#x66F4;&#x9AD8;&#x9636;&#x7684;&#x62BD;&#x8C61;&#xFF0C;&#x53EF;&#x4EE5;&#x8BA9;&#x7528;&#x6237;&#x91C7;&#x7528; Python&#x3001;C++ &#x548C; Lua &#x7B49;&#x9AD8;&#x7EA7;&#x8BED;&#x8A00;&#x5FEB;&#x901F;&#x5F00;&#x53D1; BPF &#x7A0B;&#x5E8F;&#xFF1B;</li>
+<li>BPFTrace &#x91C7;&#x7528;&#x7C7B;&#x4F3C;&#x4E8E; awk &#x8BED;&#x8A00;&#x5FEB;&#x901F;&#x7F16;&#x5199; eBPF &#x7A0B;&#x5E8F;&#xFF1B;</li>
+<li>Kubectl-Trace &#x5219;&#x63D0;&#x4F9B;&#x4E86;&#x5728; kubernetes &#x96C6;&#x7FA4;&#x4E2D;&#x4F7F;&#x7528; BPF &#x7A0B;&#x5E8F;&#x8C03;&#x8BD5;&#x7684;&#x65B9;&#x4FBF;&#x64CD;&#x4F5C;&#xFF1B;</li>
+</ul>
+</li>
+<li>CloudFlare &#x516C;&#x53F8;&#x5F00;&#x6E90;&#x7684; eBPF Exporter &#x548C; bpf-tools&#xFF1A;<ul>
+<li>eBPF Exporter &#x5C06; eBPF &#x6280;&#x672F;&#x4E0E;&#x76D1;&#x63A7; Prometheus &#x7D27;&#x5BC6;&#x7ED3;&#x5408;&#x8D77;&#x6765;&#xFF1B;</li>
+<li>bpf-tools &#x53EF;&#x7528;&#x4E8E;&#x7F51;&#x7EDC;&#x95EE;&#x9898;&#x5206;&#x6790;&#x548C;&#x6392;&#x67E5;&#xFF1B;</li>
+</ul>
+</li>
+</ul>
+<h4 id="&#x7EAF;c&#x5199;&#x7684;bpf&#x7A0B;&#x5E8F;">&#x7EAF;C&#x5199;&#x7684;bpf&#x7A0B;&#x5E8F;</h4>
+<ul>
+<li><a href="http://terenceli.github.io/%E6%8A%80%E6%9C%AF/2020/01/18/ebpf-in-c" target="_blank">Write eBPF program in pure C</a></li>
+</ul>
+<pre><code>1&#xFF0C;&#x5728;ubuntu 22.04&#x5B89;&#x88C5;&#x73AF;&#x5883;
+echo -e &apos;HostKeyAlgorithms ssh-rsa,ssh-dss\nPubkeyAcceptedKeyTypes ssh-rsa,ssh-dss&apos; &gt;&gt; /etc/ssh/sshd_config
+systemctl restart sshd
+apt-get install -y make clang llvm libelf-dev libbpf-dev bpfcc-tools libbpfcc-dev linux-tools-$(uname -r) linux-headers-$(uname -r)
+
+2&#xFF0C;&#x628A;&#x4E0B;&#x9762;c&#x7A0B;&#x5E8F;&#x8D2C;&#x4E49;&#x8BCD;bpf&#x6307;&#x4EE4;&#x7A0B;&#x5E8F;&#xFF1A;clang -I/usr/src/linux-aws-headers-5.15.0-1022/include -O2 -c -target bpf -o mybpfobject.o mybpfcode.bpf.c
+#include &lt;uapi/linux/bpf.h&gt;
+#include &quot;bpf/bpf_helpers.h&quot;
+int bpf_prog(void *ctx) {
+    char buf[] = &quot;Hello World!\n&quot;;
+    bpf_trace_printk(buf, sizeof(buf));
+    return 0;
+}
+&#xFF08;&#x5982;&#x679C;&#x62A5;&#x9519;asm/types.h file not found&#x5219;&#x5B89;&#x88C5;apt-get install -y gcc-multilib&#xFF09;
+
+3&#xFF0C;&#x628A;bpf&#x6307;&#x4EE4;&#x7A0B;&#x5E8F;&#x7684;&#x7EAF;&#x6307;&#x4EE4;&#x63D0;&#x53D6;&#x51FA;&#x6765;&#xFF1A;dd if=mybpfobject.o of=test_bpf bs=1 count=104 skip=64
+
+4&#xFF0C;&#x7528;clang&#x7F16;&#x8BD1;c&#x7A0B;&#x5E8F;&#xFF1A;../bpf/test_bpf.c
+
+5&#xFF0C;&#x8FD0;&#x884C;a.out&#xFF0C;&#x5B83;&#x5C06;&#x6355;&#x83B7;bpf&#x7684;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#xFF0C;&#x5982;&#x4F55;&#x67E5;&#x770B;&#xFF1A;cat /sys/kernel/debug/tracing/trace_pipe
+</code></pre><p><img src="../images/bpf/bpf_syscall.png" alt="img"></p>
+<h4 id="bpf&#x547D;&#x4EE4;">BPF&#x547D;&#x4EE4;</h4>
+<p><img src="../images/bpf/bpf_command.jpg" alt="img"></p>
+<h4 id="&#x8F85;&#x52A9;&#x51FD;&#x6570;">&#x8F85;&#x52A9;&#x51FD;&#x6570;</h4>
+<p><img src="../images/bpf/bpf_helpers.jpg" alt="img"></p>
+<h4 id="&#x6620;&#x5C04;&#x7C7B;&#x578B;">&#x6620;&#x5C04;&#x7C7B;&#x578B;</h4>
+<p><img src="../images/bpf/bpf_map_type.jpg" alt="img"></p>
+<h4 id="&#x7A0B;&#x5E8F;&#x7C7B;&#x578B;">&#x7A0B;&#x5E8F;&#x7C7B;&#x578B;</h4>
+<ul>
+<li><a href="https://www.zadmei.com/sjcfglec.html" target="_blank">06 | &#x4E8B;&#x4EF6;&#x89E6;&#x53D1;&#xFF1A;&#x5404;&#x7C7B; eBPF &#x7A0B;&#x5E8F;&#x7684;&#x89E6;&#x53D1;&#x673A;&#x5236;&#x53CA;&#x5176;&#x5E94;&#x7528;&#x573A;&#x666F;</a></li>
+<li>&#x5168;&#x90E8;&#x7C7B;&#x578B;&#xFF1A;bpftool feature probe | grep program_type&#x3002;&#x53EF;&#x5206;&#x4E3A;&#x4E09;&#x7C7B;&#xFF1A;</li>
+<li>&#x4E00;&#xFF0C;&#x8DDF;&#x8E2A;&#x7C7B;&#xFF0C;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x89C1;<a href="../images/bpf/prog_type1.jpg">&#x8868;&#x683C;</a></li>
+<li>&#x4E8C;&#xFF0C;&#x7F51;&#x7EDC;&#x7C7B;<ul>
+<li>XDP&#x7A0B;&#x5E8F;&#xFF0C;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x89C1;<a href="../images/bpf/prog_type2_xdp.jpg">&#x8868;&#x683C;</a></li>
+<li>TC&#x7A0B;&#x5E8F;&#xFF0C;&#x7C7B;&#x578B;&#x6709;BPF_PROG_TYPE_SCHED_CLS&#x3001;BPF_PROG_TYPE_SCHED_ACT</li>
+<li>&#x5957;&#x63A5;&#x5B57;&#x7A0B;&#x5E8F;&#xFF0C;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x89C1;<a href="../images/bpf/prog_type2_socket.jpg">&#x8868;&#x683C;</a></li>
+<li>cgroup&#x7A0B;&#x5E8F;&#xFF0C;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x89C1;<a href="../images/bpf/prog_type2_cgroup.jpg">&#x8868;&#x683C;</a></li>
+</ul>
+</li>
+<li>&#x4E09;&#xFF0C;&#x5176;&#x4ED6;&#x7C7B;&#xFF0C;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x89C1;<a href="../images/bpf/prog_type3.jpg">&#x8868;&#x683C;</a></li>
+</ul>
+<h4 id="&#x5185;&#x6838;&#x8DDF;&#x8E2A;">&#x5185;&#x6838;&#x8DDF;&#x8E2A;</h4>
+<pre><code>// &#x5982;&#x679C;/sys/kernel/debug&#x76EE;&#x5F55;&#x4E0D;&#x5B58;&#x5728;&#xFF0C;&#x6267;&#x884C;
+sudo mount -t debugfs debugfs /sys/kernel/debug
+
+// &#x67E5;&#x770B;&#x53EF;kprobe&#x8DDF;&#x8E2A;&#x7684;&#x5185;&#x6838;&#x51FD;&#x6570;
+cat /sys/kernel/debug/tracing/available_filter_functions | wc -l
+bpftrace -l &apos;kprobe:*&apos; | wc -l
+
+// &#x67E5;&#x770B;tracepoint&#x53EF;&#x8DDF;&#x8E2A;&#x7684;syscall&#x51FD;&#x6570;
+cat /sys/kernel/debug/tracing/available_events |grep syscalls:|wc -l
+bpftrace -l &apos;tracepoint:syscalls:*&apos; | wc -l
+
+// &#x67E5;&#x770B;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;execeve&#x7684;&#x4F20;&#x53C2;
+cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_execve/format // &#x4E0D;&#x63A8;&#x8350;
+bpftrace -lv tracepoint:syscalls:sys_enter_execve
+
+// &#x67E5;&#x770B;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;execeve&#x7684;&#x8FD4;&#x56DE;&#x503C;
+cat /sys/kernel/debug/tracing/events/syscalls/sys_exit_execve/format // &#x4E0D;&#x63A8;&#x8350;
+bpftrace -lv tracepoint:syscalls:sys_exit_execve
+
+&#x5F00;&#x53D1;BPF&#x7A0B;&#x5E8F;&#x7684;&#x4E09;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;
+bpftrace&#xFF1A;&#x4F9D;&#x8D56;BCC
+BCC&#xFF1A;&#x4F9D;&#x8D56;LLVM&#x548C;&#x5185;&#x6838;&#x5934;&#x6587;&#x4EF6;
+libbpf&#xFF1A;&#x8981;&#x6C42;&#x5185;&#x6838;&gt;=5.2&#xFF0C;&#x5E76;&#x5F00;&#x542F;BTF&#x7279;&#x6027;(RHEL 8.2+&#x548C;Ubuntu 20.10+)&#xFF0C;&#x662F;&#x5426;&#x6709;/sys/kernel/btf/vmlinux
+
+// &#x67E5;&#x8BE2;&#x8C03;&#x7528;execve&#x7684;&#x8FDB;&#x7A0B;id&#x548C;&#x540D;&#x79F0;&#xFF0C;&#x4EE5;&#x53CA;&#x4F20;&#x53C2;argv
+bpftrace -e &apos;tracepoint:syscalls:sys_enter_execve,tracepoint: { printf(&quot;%-6d %-8s&quot;, pid, comm); join(args-&gt;argv);}&apos;
+</code></pre><h4 id="&#x5982;&#x4F55;&#x5F00;&#x53D1;&#x4E00;&#x4E2A;&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x5668;">&#x5982;&#x4F55;&#x5F00;&#x53D1;&#x4E00;&#x4E2A;&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x5668;</h4>
+<ul>
+<li><a href="https://www.zadmei.com/egxnwlsz.html" target="_blank">&#x9AD8;&#x6027;&#x80FD;&#x7F51;&#x7EDC;&#x5B9E;&#x6218;&#xFF08;&#x4E0A;&#xFF09;&#xFF1A;&#x5982;&#x4F55;&#x5F00;&#x53D1;&#x4E00;&#x4E2A;&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x5668;&#xFF1F;</a></li>
+</ul>
+<pre><code>// &#x5C06;&#x4E24;&#x4E2A; eBPF &#x7A0B;&#x5E8F;&#x548C;&#x6620;&#x5C04;&#x52A0;&#x8F7D;&#x5230;&#x5185;&#x6838;&#x4E2D;&#xFF0C;&#x5E76;&#x56FA;&#x5B9A;&#x5230; BPF &#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#x4E2D;&#x3002;
+// &#x56FA;&#x5B9A;&#x5230; BPF &#x6587;&#x4EF6;&#x7CFB;&#x7EDF;&#x7684;&#x597D;&#x5904;&#x662F;&#xFF0C;&#x5373;&#x4FBF; bpftool &#x547D;&#x4EE4;&#x5DF2;&#x7ECF;&#x6267;&#x884C;&#x7ED3;&#x675F;&#xFF0C;eBPF &#x7A0B;&#x5E8F;&#x8FD8;&#x4F1A;&#x7EE7;&#x7EED;&#x5728;&#x5185;&#x6838;&#x4E2D;&#x8FD0;&#x884C;&#x3002;
+bpftool prog load sockops.bpf.o /sys/fs/bpf/sockops type sockops pinmaps /sys/fs/bpf
+bpftool prog load sockredir.bpf.o /sys/fs/bpf/sockredir type sk_msg map name sock_ops_map pinned /sys/fs/bpf/sock_ops_map
+
+// &#x628A; sockops &#x7A0B;&#x5E8F;&#x6302;&#x8F7D;&#x5230; cgroups
+bpftool cgroup attach /sys/fs/cgroup/ sock_ops pinned /sys/fs/bpf/sockops
+bpftool prog attach pinned /sys/fs/bpf/sockredir msg_verdict pinned /sys/fs/bpf/sock_ops_map
+
+sockops &#x7A0B;&#x5E8F;&#x7C7B;&#x578B;&#x662F; sock_ops&#xFF1B;sockredir &#x7A0B;&#x5E8F;&#x7C7B;&#x578B;&#x662F; sk_msg
+sockops &#x6302;&#x8F7D;&#x7C7B;&#x578B;&#x662F; cgroup&#xFF1B;  sockredir &#x6302;&#x8F7D;&#x7C7B;&#x578B;&#x662F; msg_verdict
+</code></pre><h4 id="&#x8FFD;&#x8E2A;go&#x7A0B;&#x5E8F;&#x7684;&#x8C03;&#x7528;&#x6808;">&#x8FFD;&#x8E2A;go&#x7A0B;&#x5E8F;&#x7684;&#x8C03;&#x7528;&#x6808;</h4>
+<pre><code>// &#x4F8B;&#x5982;&#x9700;&#x8981;&#x8FFD;&#x8E2A;net.Listen(&quot;tcp&quot;, &quot;:6380&quot;)&#x7684;&#x8C03;&#x7528;&#x6808;&#xFF0C;&#x5047;&#x8BBE;&#x6267;&#x884C;&#x6587;&#x4EF6;&#x662F;test
+// &#x4E0B;&#x9762;&#x7684;&#x547D;&#x4EE4;&#x4F1A;&#x663E;&#x793A;net.socket&#x7684;&#x4E0A;&#x6E38;&#x8C03;&#x7528;&#x94FE;&#xFF0C;&#x5B83;&#x7684;&#x4E0A;&#x6E38;&#x6709;net.Listen
+bpftrace -e &apos;uprobe:./test:net.socket {printf(&quot;%s\n&quot;, ustack); }&apos; -c ./test
+
+// &#x5982;&#x679C;&#x8C03;&#x7528;&#x6808;&#x53EA;&#x663E;&#x793A;&#x4E86;&#x5185;&#x5B58;&#x5730;&#x5740;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x7528;addr2line&#x8F6C;&#x6362;
+bpftrace -e &apos;uprobe:./test:net.socket {printf(&quot;%s\n&quot;, ustack); }&apos; -c ./test | addr2line -e ./test -f -p
+</code></pre><h4 id="bpf&#x4E4B;&#x5DC5;&#x7684;&#x5B66;&#x4E60;">BPF&#x4E4B;&#x5DC5;&#x7684;&#x5B66;&#x4E60;</h4>
+<ul>
+<li><a href="https://woodpenker.github.io/2021/12/05/BPF%E4%B9%8B%E5%B7%85%E7%9A%84%E5%AD%A6%E4%B9%A0--%E8%BF%BD%E8%B8%AA%E7%B3%BB%E7%BB%9F%E5%8E%86%E5%8F%B2%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/" target="_blank">BPF&#x4E4B;&#x5DC5;&#x7684;&#x5B66;&#x4E60;--&#x8FFD;&#x8E2A;&#x7CFB;&#x7EDF;&#x5386;&#x53F2;&#x4E0E;&#x76F8;&#x5173;&#x6280;&#x672F;</a></li>
+</ul>
+<pre><code>1. BPF&#x7684;&#x524D;&#x7AEF;
+Linux4.15&#x540E;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;bpftool&#x6765;&#x67E5;&#x770B;&#x548C;&#x64CD;&#x4F5C;BPF&#x5BF9;&#x8C61;
+Linux4.17&#x4EE5;&#x540E;BCC&#x548C;bpftrace&#x90FD;&#x4F1A;&#x4F7F;&#x7528;perf_event_open()&#x8FDB;&#x884C;BPF&#x7A0B;&#x5E8F;&#x7684;&#x6302;&#x8F7D;
+
+2. BPF&#x7684;&#x8F85;&#x52A9;&#x51FD;&#x6570;
+bpf_probe_read() &#x7528;&#x4E8E;&#x8BBF;&#x95EE;BPF&#x4E4B;&#x5916;&#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;, &#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x4F1A;&#x8FDB;&#x884C;&#x5B89;&#x5168;&#x68C0;&#x67E5;&#x5E76;&#x4E14;&#x7981;&#x6B62;&#x7F3A;&#x9875;&#x4E2D;&#x65AD;&#x7684;&#x53D1;&#x751F;&#x4EE5;&#x4FDD;&#x8BC1;probe&#x4E0A;&#x6587;&#x4E2D;&#x4E0D;&#x4F1A;&#x5F15;&#x53D1;&#x5185;&#x6838;&#x9519;&#x8BEF;
+x86&#x4E0A;&#x5185;&#x6838;&#x7A7A;&#x95F4;&#x548C;&#x7528;&#x6237;&#x7A7A;&#x95F4;&#x6CA1;&#x6709;&#x91CD;&#x53E0;, &#x6545;&#x901A;&#x8FC7;&#x5730;&#x5740;&#x8BFB;&#x53D6;&#x4E0D;&#x4F1A;&#x5B58;&#x5728;&#x95EE;&#x9898;. &#x800C;&#x5728;SPARC&#x4E0A;, &#x5219;&#x5FC5;&#x987B;&#x901A;&#x8FC7;bpf_probe_read_kernel()&#x548C;bpf_probe_read_user()&#x6765;&#x533A;&#x522B;&#x4F7F;&#x7528;
+
+3. BPF&#x5E76;&#x53D1;&#x63A7;&#x5236;
+Linux5.1&#x4E2D;&#x589E;&#x52A0;&#x4E86;spin lock(bpf_spin_lock&#x548C;bpf_spin_unlock)&#x6765;&#x786E;&#x4FDD;&#x5E76;&#x53D1;&#x4E00;&#x81F4;&#x6027;. 
+&#x4E4B;&#x524D;&#x7684;&#x7248;&#x672C;&#x5219;&#x9700;&#x8981;&#x901A;&#x8FC7;per-CPU&#x7684;&#x6620;&#x5C04;&#x8868;&#x6765;&#x7ED5;&#x8FC7;&#x5E76;&#x53D1;&#x95EE;&#x9898;. &#x5176;&#x5E76;&#x53D1;&#x8BFB;&#x5199;&#x6620;&#x5C04;&#x8868;&#x7684;&#x95EE;&#x9898;&#x88AB;&#x6210;&#x4E3A;&#x201C;&#x4E22;&#x5931;&#x7684;&#x66F4;&#x65B0;&#x201D;&#x95EE;&#x9898;.
+BPF_XADD(&#x4E92;&#x65A5;&#x52A0;&#x64CD;&#x4F5C;), &#x6620;&#x5C04;&#x4E2D;&#x7684;&#x6620;&#x5C04;&#x673A;&#x5236;&#x7B49;&#x90FD;&#x53EF;&#x4FDD;&#x8BC1;&#x539F;&#x5B50;&#x64CD;&#x4F5C;.
+bpf_map_update_elem&#x5BF9;&#x5E38;&#x89C4;&#x7684;hash&#x548C;LRU map&#x7684;&#x64CD;&#x4F5C;&#x4E5F;&#x662F;&#x539F;&#x5B50;&#x7684;.
+
+4. BTF&#x548C;BPF CO-RE
+BPF Type Format, &#x5143;&#x6570;&#x636E;&#x683C;&#x5F0F;, &#x53EF;&#x4EE5;&#x5185;&#x5D4C;&#x5230;vmlinux&#x7684;&#x4E8C;&#x8FDB;&#x5236;&#x4E2D;, &#x4F7F;&#x5F97;&#x53EF;&#x4EE5;&#x65B9;&#x4FBF;&#x83B7;&#x5F97;&#x88AB;&#x8DDF;&#x8E2A;&#x7684;&#x6E90;&#x4EE3;&#x7801;&#x4FE1;&#x606F;.
+BPF CO-RE&#x662F;&#x4E00;&#x6B21;&#x7F16;&#x8BD1;&#x5230;&#x5904;&#x8FD0;&#x884C;&#x7684;&#x610F;&#x601D;, &#x65E8;&#x5728;&#x5C06;BPF&#x4E00;&#x6B21;&#x6027;&#x7F16;&#x8BD1;&#x4F4D;&#x5B57;&#x8282;&#x7801;&#x5206;&#x53D1;&#x6267;&#x884C;.
+
+5. BPF&#x7684;&#x9650;&#x5236;
+&#x5185;&#x6838;&#x4E2D;&#x65E0;&#x9650;&#x5FAA;&#x73AF;&#x662F;&#x4E0D;&#x5141;&#x8BB8;&#x7684;. &#x89E3;&#x51B3;&#x529E;&#x6CD5;&#x5305;&#x62EC;&#x5FAA;&#x73AF;&#x5C55;&#x5F00;
+BPF&#x6808;&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;MAX_BPF_STACK&#x9650;&#x5236;, &#x503C;&#x4E3A;512.
+BPF&#x6307;&#x4EE4;&#x7684;&#x603B;&#x6570;&#x636E;&#x91CF;&#x65E9;&#x671F;&#x4E3A;4096, 5.2&#x4EE5;&#x540E;&#x9650;&#x5236;&#x4E3A;100&#x4E07;.
+
+6. &#x8C03;&#x7528;&#x6808;&#x56DE;&#x6EAF;
+a. &#x57FA;&#x4E8E;&#x5E27;&#x6307;&#x9488;&#x7684;&#x56DE;&#x6EAF;&#xFF0C;gcc&#x9ED8;&#x8BA4;&#x4E0D;&#x542F;&#x7528;, &#x9700;&#x8981;&#x901A;&#x8FC7;-fno-omit-frame-pointer&#x5F00;&#x542F;. BPF&#x652F;&#x6301;.
+b. &#x8C03;&#x8BD5;&#x4FE1;&#x606F;debug info. DWARF&#x683C;&#x5F0F;&#x7684;ELF&#x8C03;&#x8BD5;&#x4FE1;&#x606F;, &#x901A;&#x8FC7;.eh_frame&#x548C;.debug_frame&#x7684;ELF&#x6587;&#x4EF6;&#x6BB5;&#x63D0;&#x4F9B;. BPF&#x4E0D;&#x652F;&#x6301;. BCC&#x548C;bpftrace&#x652F;&#x6301;
+c. &#x6700;&#x540E;&#x5206;&#x652F;&#x8BB0;&#x5F55;LBR. Intel&#x5904;&#x7406;&#x5668;&#x7684;&#x7279;&#x6027;, &#x652F;&#x6301;&#x6709;&#x9650;&#x6DF1;&#x5EA6;&#x7684;&#x56DE;&#x6EAF;4-32&#x4E2A;. BPF&#x4E0D;&#x652F;&#x6301;.
+d. ORC&#x8C03;&#x8BD5;&#x683C;&#x5F0F;&#x4FE1;&#x606F;. &#x76F8;&#x6BD4;DWARF&#x5BF9;&#x5904;&#x7406;&#x5668;&#x8981;&#x6C42;&#x4F4E;, &#x4F7F;&#x7528;.orc_unwind&#x548C;.orc_unwind_ip&#x7684;ELF&#x6BB5;. BPF&#x76EE;&#x524D;&#x53EA;&#x652F;&#x6301;&#x5185;&#x6838;&#x6001;
+
+7. kprobe&#x63D2;&#x6869;
+&#x63D2;&#x6869;&#x539F;&#x7406;&#x53C2;&#x8003;&#x6587;&#x7AE0;[&#x81EA;&#x5DF1;&#x52A8;&#x624B;&#x5199;&#x4E00;&#x4E2A;GDB](https://cloud.tencent.com/developer/article/2004708)
+&#x5982;&#x679C;&#x5C0F;&#x4E8E;5&#x5B57;&#x8282;&#xFF0C;&#x7528;int3&#x6307;&#x4EE4;&#xFF1B;&#x5426;&#x5219;&#x7528;jmp&#x6307;&#x4EE4;&#xFF0C;&#x6280;&#x672F;&#x79F0;&#x4E3A;&#x8E66;&#x5E8A;&#x51FD;&#x6570;&#xFF0C;&#x6027;&#x80FD;&#x6BD4;int3&#x597D;
+3&#x79CD;&#x63A5;&#x53E3;&#x53EF;&#x8BBF;&#x95EE;kprobes:
+a. &#x8F85;&#x52A9;&#x51FD;&#x6570;, register_kprobes()&#x7B49;
+b. &#x57FA;&#x4E8E;Ftrace&#x7684;, &#x901A;&#x8FC7;/sys/kernel/debug/tracing/kprobe_events&#x5199;&#x5165;&#x5B57;&#x7B26;&#x4E32;&#x53EF;&#x8D77;&#x505C;kprobes
+c. &#x901A;&#x8FC7;perf_event_open(), &#x4E0E;perf&#x5DE5;&#x5177;&#x4E00;&#x6837;
+
+8. uprobe&#x63D2;&#x6869;
+2&#x79CD;&#x63A5;&#x53E3;:
+a. &#x57FA;&#x4E8E;Ftrace&#x7684;. &#x901A;&#x8FC7;/sys/kernel/debug/tracing/uprobe_events&#x5199;&#x5165;&#x5B57;&#x7B26;&#x4E32;&#x53EF;&#x8D77;&#x505C;uprobes
+b. &#x901A;&#x8FC7;perf_event_open(), &#x4E0E;perf&#x5DE5;&#x5177;&#x4E00;&#x6837;, 4.17&#x4EE5;&#x4E0A;&#x7248;&#x672C;&#x652F;&#x6301;.
+
+9. tracepoints
+&#x8DDF;&#x8E2A;&#x70B9;&#x683C;&#x5F0F;: &#x201C;&#x5B50;&#x7CFB;&#x7EDF;:&#x4E8B;&#x4EF6;&#x540D;&#x201D;, &#x5982;sched:context_switch.
+BCC&#x4E2D;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;BPF.tracepoint_exists&#x6765;&#x6D4B;&#x8BD5;&#x662F;&#x5426;&#x5B58;&#x5728;&#x67D0;&#x4E2A;&#x8FFD;&#x8E2A;&#x70B9;.
+&#x539F;&#x59CB;&#x8DDF;&#x8E2A;&#x70B9;: BPF_RAW_TRACEPOINT, &#x5411;&#x8DDF;&#x8E2A;&#x70B9;&#x66B4;&#x9732;&#x539F;&#x59CB;&#x53C2;&#x6570;, &#x907F;&#x514D;&#x521B;&#x5EFA;&#x8DDF;&#x8E2A;&#x70B9;&#x53C2;&#x6570;&#x7684;&#x5F00;&#x9500;. &#x5176;&#x6027;&#x80FD;&#x8981;&#x597D;&#x4E8E;kprobes
+&#x5DE5;&#x4F5C;&#x539F;&#x7406;&#x53C2;&#x8003;&#x6587;&#x7AE0;[&#x8BA4;&#x8BC6;&#x6570;&#x636E;&#x6E90;&#xFF1A;Tracepoint](https://www.iserica.com/posts/brief-intro-for-tracepoint/)
+
+10. USDT
+&#x53EF;&#x901A;&#x8FC7;readelf -n&#x6765;&#x67E5;&#x770B;&#x76EE;&#x6807;&#x6587;&#x4EF6;&#x7684;USDT&#x63A2;&#x9488;&#x4EE5;&#x53CA;&#x83B7;&#x5F97;&#x4E8C;&#x8FDB;&#x5236;&#x7684;&#x504F;&#x79FB;&#x91CF;. 
+&#x539F;&#x7406;&#xFF1A;&#x7F16;&#x8BD1;&#x65F6;&#x4F7F;&#x7528;nop, &#x6FC0;&#x6D3B;&#x540E;&#x88AB;&#x4FEE;&#x6539;&#x4E3A;int3. &#x89E6;&#x53D1;&#x540E;&#x5185;&#x6838;&#x4F1A;&#x6267;&#x884C;&#x4E2D;&#x65AD;&#x54CD;&#x5E94;&#x89E6;&#x53D1;BPF&#x7A0B;&#x5E8F;.
+</code></pre><h4 id="&#x7B26;&#x53F7;&#x548C;&#x8C03;&#x8BD5;&#x4FE1;&#x606F;">&#x7B26;&#x53F7;&#x548C;&#x8C03;&#x8BD5;&#x4FE1;&#x606F;</h4>
+<ul>
+<li><a href="http://arthurchiao.art/blog/linux-tracing-basis-zh" target="_blank">Linux tracing/profiling &#x57FA;&#x7840;&#xFF1A;&#x7B26;&#x53F7;&#x8868;&#x3001;&#x8C03;&#x7528;&#x6808;&#x3001;perf/bpftrace &#x793A;&#x4F8B;&#x7B49;</a></li>
+<li><a href="https://medium.com/coccoc-engineering-blog/things-you-should-know-to-begin-playing-with-linux-tracing-tools-part-i-x-225aae1aaf13" target="_blank">Practical Linux tracing ( Part 1/5) : symbols, debug symbols and stack unwinding</a></li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="systems-performance.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 性能之颠">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"BPF之巅","level":"1.4.2","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"性能之颠","level":"1.4.1","depth":2,"path":"docs/systems-performance.md","ref":"docs/systems-performance.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-performance-tools.md","mtime":"2024-05-26T09:03:54.251Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-05-26T09:04:17.152Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
