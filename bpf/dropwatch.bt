@@ -1,0 +1,16 @@
+#include <linux/skbuff.h>
+#include <linux/ip.h>
+#include <linux/socket.h>
+#include <linux/netdevice.h>
+
+kprobe:dev_hard_start_xmit /comm=="curl"/
+{
+    $skb = (struct sk_buff *)arg0;
+    $iph = (struct iphdr *)($skb->head + $skb->network_header);
+    $sip = ntop(AF_INET, $iph->saddr);
+    $dip = ntop(AF_INET, $iph->daddr);
+    if ($iph->protocol == IPPROTO_TCP)
+    {
+        printf("SKB dropped: %s->%s, kstack: %s\n", $sip, $dip, kstack);
+    }
+}

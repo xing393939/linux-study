@@ -12,11 +12,13 @@
   * [x86如何进入用户态](docs/ostep/x86-02.md)
   * [x86多核问题](docs/ostep/x86-03.md)
   * [x86中断和异常](docs/ostep/x86-04.md)
+* eBPF相关
+  * [性能之颠](docs/systems-performance.md)
+  * [BPF之巅](docs/bpf-performance-tools.md)  
 * 杂项
   * [内核调试秘籍](docs/kernel-debug.md)
   * [系统调用入口](docs/syscall.md)
   * [系统调用之getpid](docs/getpid.md)
-  * [ebpf](docs/ebpf.md)
   * [ftrace](docs/ftrace.md)
   * [linux核心数据结构](docs/core-data-structure.md)
   * [linux下的hook方式](docs/linux-hook.md)
