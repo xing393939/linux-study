@@ -1,21 +1,23 @@
 ### BPF之巅
 
 #### 参考资料
+
 * [BPF之巅](https://book.douban.com/subject/35273652/)
 * [BPF and XDP Reference Guide](https://docs.cilium.io/en/stable/bpf/)
 * [bpftrace和Go语言](https://tonybai.com/2020/12/25/bpf-and-go-modern-forms-of-introspection-in-linux/)
 * [BPF学习路径总结](https://www.ebpf.top/post/ebpf_learn_path/)
 * [eBPF 与 Go 超能力组合](https://www.ebpf.top/post/ebpf_and_go/)
 * [BPF Features by Linux Kernel Version](https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md)
-* IO Visor 项目开源的 BCC、 BPFTrace 和 Kubectl-Trace： 
-  * BCC 提供了更高阶的抽象，可以让用户采用 Python、C++ 和 Lua 等高级语言快速开发 BPF 程序；
-  * BPFTrace 采用类似于 awk 语言快速编写 eBPF 程序；
-  * Kubectl-Trace 则提供了在 kubernetes 集群中使用 BPF 程序调试的方便操作；
+* IO Visor 项目开源的 BCC、 BPFTrace 和 Kubectl-Trace：
+    * BCC 提供了更高阶的抽象，可以让用户采用 Python、C++ 和 Lua 等高级语言快速开发 BPF 程序；
+    * BPFTrace 采用类似于 awk 语言快速编写 eBPF 程序；
+    * Kubectl-Trace 则提供了在 kubernetes 集群中使用 BPF 程序调试的方便操作；
 * CloudFlare 公司开源的 eBPF Exporter 和 bpf-tools：
-  * eBPF Exporter 将 eBPF 技术与监控 Prometheus 紧密结合起来；
-  * bpf-tools 可用于网络问题分析和排查；
-  
+    * eBPF Exporter 将 eBPF 技术与监控 Prometheus 紧密结合起来；
+    * bpf-tools 可用于网络问题分析和排查；
+
 #### 纯C写的bpf程序
+
 * [Write eBPF program in pure C](http://terenceli.github.io/%E6%8A%80%E6%9C%AF/2020/01/18/ebpf-in-c)
 
 ```
@@ -24,7 +26,7 @@ echo -e 'HostKeyAlgorithms ssh-rsa,ssh-dss\nPubkeyAcceptedKeyTypes ssh-rsa,ssh-d
 systemctl restart sshd
 apt-get install -y make clang llvm libelf-dev libbpf-dev bpfcc-tools libbpfcc-dev linux-tools-$(uname -r) linux-headers-$(uname -r)
 
-2，把下面c程序贬义词bpf指令程序：clang -I/usr/src/linux-aws-headers-5.15.0-1022/include -O2 -c -target bpf -o mybpfobject.o mybpfcode.bpf.c
+2，把下面c程序贬义词bpf指令程序：clang -I/usr/src/linux-aws-headers-5.15.0-1022/include -O2 -c -target bpf -o test_bpf.o test_bpf.c
 #include <uapi/linux/bpf.h>
 #include "bpf/bpf_helpers.h"
 int bpf_prog(void *ctx) {
@@ -33,12 +35,14 @@ int bpf_prog(void *ctx) {
     return 0;
 }
 （如果报错asm/types.h file not found则安装apt-get install -y gcc-multilib）
+（查看ebpf的程序字节码：llvm-objdump-10 -arch-name=bpf -S test_bpf.o）
 
-3，把bpf指令程序的纯指令提取出来：dd if=mybpfobject.o of=test_bpf bs=1 count=104 skip=64
+3，把bpf指令程序的纯指令提取出来：dd if=test_bpf.o of=test_bpf bs=1 count=104 skip=64
 
-4，用clang编译c程序：../bpf/test_bpf.c
+4，用clang编译c程序：../bpf/test_bpf_main.c
 
-5，运行a.out，它将捕获bpf的系统调用，如何查看：cat /sys/kernel/debug/tracing/trace_pipe
+5，运行a.out，它将捕获bpf的系统调用：cat /sys/kernel/debug/tracing/trace_pipe
+（另一个窗口运行：bash -c "echo 1"）
 ```
 
 ![img](../images/bpf/bpf_syscall.png)
@@ -56,17 +60,19 @@ int bpf_prog(void *ctx) {
 ![img](../images/bpf/bpf_map_type.jpg)
 
 #### 程序类型
+
 * [06 | 事件触发：各类 eBPF 程序的触发机制及其应用场景](https://www.zadmei.com/sjcfglec.html)
 * 全部类型：bpftool feature probe | grep program_type。可分为三类：
 * 一，跟踪类，常用类型见[表格](../images/bpf/prog_type1.jpg)
 * 二，网络类
-  * XDP程序，常用类型见[表格](../images/bpf/prog_type2_xdp.jpg)
-  * TC程序，类型有BPF_PROG_TYPE_SCHED_CLS、BPF_PROG_TYPE_SCHED_ACT
-  * 套接字程序，常用类型见[表格](../images/bpf/prog_type2_socket.jpg)
-  * cgroup程序，常用类型见[表格](../images/bpf/prog_type2_cgroup.jpg)
+    * XDP程序，常用类型见[表格](../images/bpf/prog_type2_xdp.jpg)
+    * TC程序，类型有BPF_PROG_TYPE_SCHED_CLS、BPF_PROG_TYPE_SCHED_ACT
+    * 套接字程序，常用类型见[表格](../images/bpf/prog_type2_socket.jpg)
+    * cgroup程序，常用类型见[表格](../images/bpf/prog_type2_cgroup.jpg)
 * 三，其他类，常用类型见[表格](../images/bpf/prog_type3.jpg)
 
 #### 内核跟踪
+
 ```
 // 如果/sys/kernel/debug目录不存在，执行
 sudo mount -t debugfs debugfs /sys/kernel/debug
@@ -97,6 +103,7 @@ bpftrace -e 'tracepoint:syscalls:sys_enter_execve,tracepoint: { printf("%-6d %-8
 ```
 
 #### 如何开发一个负载均衡器
+
 * [高性能网络实战（上）：如何开发一个负载均衡器？](https://www.zadmei.com/egxnwlsz.html)
 
 ```
@@ -125,6 +132,7 @@ bpftrace -e 'uprobe:./test:net.socket {printf("%s\n", ustack); }' -c ./test | ad
 ```
 
 #### BPF之巅的学习
+
 * [BPF之巅的学习--追踪系统历史与相关技术](https://woodpenker.github.io/2021/12/05/BPF%E4%B9%8B%E5%B7%85%E7%9A%84%E5%AD%A6%E4%B9%A0--%E8%BF%BD%E8%B8%AA%E7%B3%BB%E7%BB%9F%E5%8E%86%E5%8F%B2%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/)
 
 ```
@@ -182,6 +190,7 @@ BCC中可以通过BPF.tracepoint_exists来测试是否存在某个追踪点.
 ```
 
 #### 符号和调试信息
+
 * [Linux tracing/profiling 基础：符号表、调用栈、perf/bpftrace 示例等](http://arthurchiao.art/blog/linux-tracing-basis-zh)
 * [Practical Linux tracing ( Part 1/5) : symbols, debug symbols and stack unwinding](https://medium.com/coccoc-engineering-blog/things-you-should-know-to-begin-playing-with-linux-tracing-tools-part-i-x-225aae1aaf13)
 
