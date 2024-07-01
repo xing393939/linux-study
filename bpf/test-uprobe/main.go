@@ -25,10 +25,6 @@ func main() {
 	if err != nil {
 		log.Fatal("LoadCollection", err)
 	}
-	log.Println(coll)
-	for k, v := range coll.Programs {
-		log.Println(k, v)
-	}
 
 	_, err = ex.Uprobe("main.main", coll.Programs["bpf_prog"], &link.UprobeOptions{})
 	if err != nil {
