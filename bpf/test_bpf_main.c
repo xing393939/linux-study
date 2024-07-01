@@ -13,8 +13,18 @@
 #include <linux/hw_breakpoint.h>
 #include <errno.h>
 
+int read_file(char *file, unsigned char *buf) {
+    int bfd = open(file, O_RDONLY);
+    if (bfd < 0) {
+        printf("open eBPF program error: %s\n", strerror(errno));
+        exit(-1);
+    }
+    int n = read(bfd, buf, 1024);
+    close(bfd);
+    return n;
+}
+
 int main() {
-    int bfd;
     unsigned char buf[1024] = {};
     struct bpf_insn *insn;
     union bpf_attr attr = {};
@@ -26,18 +36,17 @@ int main() {
     int i;
     struct perf_event_attr pattr = {};
 
-    bfd = open("./test_bpf", O_RDONLY);
-    if (bfd < 0) {
-        printf("open eBPF program error: %s\n", strerror(errno));
-        exit(-1);
-    }
-    n = read(bfd, buf, 1024);
+    // 获取sys_enter_clone的id
+    n = read_file("/sys/kernel/debug/tracing/events/syscalls/sys_enter_clone/id", buf);
+    char *end = "\n";
+    unsigned long long int config_id = strtoull(buf, &end, 10);
+
+    n = read_file("./test_bpf", buf);
     for (i = 0; i < n; ++i) {
         printf("%02x ", buf[i]);
         if ((i + 1) % 8 == 0)
             printf("\n");
     }
-    close(bfd);
     insn = (struct bpf_insn *) buf;
     strcpy(attr.prog_name, "mymain");
     attr.prog_type = BPF_PROG_TYPE_TRACEPOINT;
@@ -60,8 +69,7 @@ int main() {
     pattr.sample_type = PERF_SAMPLE_RAW;
     pattr.sample_period = 1;
     pattr.wakeup_events = 1;
-    // cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_clone/id
-    pattr.config = 175;
+    pattr.config = config_id;
     pattr.size = sizeof(pattr);
     efd = syscall(SYS_perf_event_open, &pattr, -1, 0, -1, 0);
     if (efd < 0) {
