@@ -37,7 +37,7 @@ int bpf_prog(void *ctx) {
 （如果报错asm/types.h file not found则安装apt-get install -y gcc-multilib）
 （查看ebpf的程序字节码：llvm-objdump-10 -arch-name=bpf -S test_bpf.o）
 
-3，把bpf指令程序的纯指令提取出来：dd if=test_bpf.o of=test_bpf bs=1 count=104 skip=64
+3，把bpf指令程序的纯指令提取出来：dd if=test_bpf.o of=test_bpf bs=1 count=128 skip=64
 
 4，用clang编译c程序：../bpf/test_bpf_main.c
 
