@@ -41,7 +41,7 @@ int main() {
     char *end = "\n";
     unsigned long long int config_id = strtoull(buf, &end, 10);
 
-    n = read_file("./test_bpf", buf);
+    n = read_file("./test_bpf.out", buf);
     for (i = 0; i < n; ++i) {
         printf("%02x ", buf[i]);
         if ((i + 1) % 8 == 0)

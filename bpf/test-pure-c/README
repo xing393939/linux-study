@@ -1,0 +1,3 @@
+clang -O2 -c -target bpf -o test_bpf.o test_bpf.c
+dd if=test_bpf.o of=test_bpf.out bs=1 count=104 skip=64
+clang test_bpf_main.c
