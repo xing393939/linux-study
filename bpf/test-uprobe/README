@@ -1,1 +1,4 @@
+### 编译
 clang -target bpf -O2 -o tracker.o -c bpf.c
+go build
+
