@@ -39,6 +39,9 @@ int bpf_prog(struct pt_regs *ctx) {
     event.uid = uid;
     // task = (struct task_struct*)bpf_get_current_task(); // linux 4.4.0 不支持
 
+    char buf[] = "Hello World!\n";
+    bpf_trace_printk(buf, sizeof(buf));
+
     bpf_get_current_comm(&event.comm, sizeof(event.comm));
     bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, &event, sizeof(event));
 
