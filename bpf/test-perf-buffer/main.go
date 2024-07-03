@@ -17,22 +17,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	path := "/root/logs/test2/a.out"
-	ex, err := link.OpenExecutable(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	objs := ebpfObjects{}
 	if err := loadEbpfObjects(&objs, nil); err != nil {
 		log.Fatalf("loading objects: %v", err)
 	}
 	defer objs.Close()
 
-	_, err = ex.Uprobe("add", objs.BpfProg, &link.UprobeOptions{})
+	kp, err := link.Kprobe("sys_execve", objs.BpfProg, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("opening kprobe: %s", err)
 	}
+	defer kp.Close()
 
 	rd, err := perf.NewReader(objs.Events, 1024)
 	if err != nil {
