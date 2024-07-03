@@ -1,4 +1,4 @@
-module test-uprob.out
+module test-perf-buffer.out
 
 go 1.20
 
