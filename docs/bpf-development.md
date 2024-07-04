@@ -26,6 +26,7 @@
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
+1. [MAP写法](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
 1. bpf/bpf_helpers.h：使用SEC("maps")
 1. 其他CO-RE宏
@@ -67,6 +68,18 @@ bpf_core_read(&exe_file, 8, &mm->exe_file);
 bpf_core_read(&dentry, 8, &exe_file->path.dentry);
 bpf_core_read(&name, 8, &dentry->d_name.name);
 name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行代码完成上述功能
+
+// 4. map的定义，BTF写法在老版本报错：map create: invalid argument (without BTF k/v)
+struct bpf_map_def SEC("maps") MAP_NAME = {
+    .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
+    .key_size = sizeof(int),
+    .value_size = sizeof(u32),
+};                                    // 老的写法，在elf中生成map section
+struct {
+    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+    __uint(key_size, sizeof(int));
+    __uint(value_size, sizeof(u32));
+} egressmap SEC(".maps");             // BTF写法，完全依靠BTF map
 ```
 
 #### BPF CO-RE原理
