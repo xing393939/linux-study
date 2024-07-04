@@ -26,8 +26,14 @@
 1. struct flavors。解决：
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
-1. BPF_CORE_READ
-
+1. BPF_CORE_READ，级联读取结构体字段
+1. 其他CO-RE宏
+  * bpf_core_read_str()：可以直接替换 Non-CO-RE 的 bpf_probe_read_str()
+  * bpf_core_field_exists()：判断字段是否存在
+  * bpf_core_field_size()：判断字段大小，同一字段在不同版本的内核中大小可能会发生变化
+  * BPF_CORE_READ_STR_INTO()：与 BPF_CORE_READ_INTO() 类似，但会对最后一个字段执行 bpf_probe_read_str()
+  * BPF_CORE_READ_BITFIELD()：通过直接内存读取（direct memory read）方式，读取比特位字段
+  * BPF_CORE_READ_BITFIELD_PROBED()：底层会调用 bpf_probe_read()
 
 ```
 // 1. 4.6开始，task_struct.utime的单元由jiffies变为纳秒
