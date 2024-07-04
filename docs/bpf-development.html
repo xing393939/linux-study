@@ -500,6 +500,7 @@
 <li>libbpf&#x5728;&#x52A0;&#x8F7D;&#x671F;&#x95F4;&#x5229;&#x7528;BTF&#x7684;&#x4FE1;&#x606F;&#x4FEE;&#x6539;&#x6307;&#x4EE4;</li>
 </ul>
 </li>
+<li><a href="https://arthurchiao.art/blog/bpf-advanced-notes-1-zh/#%E4%BC%A0%E5%85%A5%E5%8F%82%E6%95%B0struct-__sk_buff-" target="_blank">BPF &#x7A0B;&#x5E8F;&#xFF08;BPF Prog&#xFF09;&#x7C7B;&#x578B;&#x8BE6;&#x89E3;</a>&#xFF0C;struct __sk_buff&#x662F;BPF&#x6821;&#x9A8C;&#x5668;&#x63D0;&#x4F9B;&#x7684;&#x4E00;&#x4E2A;&#x5C4F;&#x853D;sk_buff&#x53D8;&#x5316;&#x7684;&#x7A33;&#x5B9A;&#x63A5;&#x53E3;(&#x652F;&#x6301;&#x7248;&#x672C;&#x672A;&#x77E5;)</li>
 </ol>
 <h4 id="libbpfco-re">libbpf+CO-RE</h4>
 <ol>
@@ -528,6 +529,24 @@ if (bpf_core_field_exists(t-&gt;__state)) {
 } else {
     state = BPF_CORE_READ((struct task_struct___old *)t, state);
 }
+</code></pre><h4 id="btftool&#x6280;&#x5DE7;">btftool&#x6280;&#x5DE7;</h4>
+<pre><code>// &#x67E5;&#x770B;&#x6240;&#x6709;&#x7A0B;&#x5E8F;
+bpftool prog --json --pretty
+
+// &#x67E5;&#x770B;&#x6307;&#x5B9A;id&#x7A0B;&#x5E8F;
+bpftool prog show id 147 --json --pretty
+
+// &#x67E5;&#x770B;&#x6307;&#x5B9A;id&#x7A0B;&#x5E8F;&#x5B57;&#x8282;&#x7801;
+bpftool prog dump xlated id 147
+
+// &#x67E5;&#x770B;&#x6240;&#x6709;map
+bpftool map --json --pretty
+
+// &#x67E5;&#x770B;&#x6307;&#x5B9A;id&#x7684;map
+bpftool map show id 206 --json --pretty
+
+// &#x67E5;&#x770B;&#x6307;&#x5B9A;id&#x7684;map&#x5177;&#x4F53;&#x5185;&#x5BB9;
+bpftool map dump id 206
 </code></pre>
                                 
                                 </section>
@@ -567,7 +586,7 @@ if (bpf_core_field_exists(t-&gt;__state)) {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"eBPF开发总结","level":"1.4.3","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"BPF之巅","level":"1.4.2","depth":2,"path":"docs/bpf-performance-tools.md","ref":"docs/bpf-performance-tools.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-development.md","mtime":"2024-07-04T08:21:04.091Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-04T08:21:27.682Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"eBPF开发总结","level":"1.4.3","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"BPF之巅","level":"1.4.2","depth":2,"path":"docs/bpf-performance-tools.md","ref":"docs/bpf-performance-tools.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-development.md","mtime":"2024-07-04T09:36:32.036Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-04T09:36:55.718Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
