@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>内核调试秘籍 · GitBook</title>
+        <title>eBPF开发总结 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="syscall.html" />
     
+    <link rel="prev" href="bpf-performance-tools.html" />
     
 
     </head>
@@ -291,7 +291,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="bpf-development.html">
+        <li class="chapter active" data-level="1.4.3" data-path="bpf-development.html">
             
                 <a href="bpf-development.html">
             
@@ -323,7 +323,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.5.1" data-path="kernel-debug.html">
+        <li class="chapter " data-level="1.5.1" data-path="kernel-debug.html">
             
                 <a href="kernel-debug.html">
             
@@ -462,7 +462,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >内核调试秘籍</a>
+        <a href=".." >eBPF开发总结</a>
     </h1>
 </div>
 
@@ -477,71 +477,15 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h3 id="&#x5185;&#x6838;&#x8C03;&#x8BD5;&#x79D8;&#x7C4D;">&#x5185;&#x6838;&#x8C03;&#x8BD5;&#x79D8;&#x7C4D;</h3>
-<h4 id="&#x53C2;&#x8003;&#x8D44;&#x6599;">&#x53C2;&#x8003;&#x8D44;&#x6599;</h4>
-<ul>
-<li><a href="https://adtxl.com/index.php/archives/487.html" target="_blank">&#x5185;&#x6838;&#x8C03;&#x8BD5;&#x79D8;&#x7C4D;</a></li>
-</ul>
-<h4 id="printk">printk</h4>
-<ul>
-<li>&#x6253;&#x5370;&#x65E5;&#x5FD7;printk()</li>
-<li>&#x6253;&#x5370;&#x5185;&#x5B58;buffer&#x7684;&#x6570;&#x636E;&#x51FD;&#x6570;print_hex_dump()</li>
-<li>&#x6253;&#x5370;&#x5806;&#x6808;&#x51FD;&#x6570;dump_stack()</li>
-</ul>
-<pre><code>// &#x8C03;&#x8BD5;&#x7EA7;&#x522B;&#xFF0C;&#x82E5;CONFIG_MESSAGE_LOGLEVEL_DEFAULT=8&#xFF0C;&#x5219;&#x662F;&#x6253;&#x5370;&#x6240;&#x6709;
-#define KERN_EMERG   KERN_SOH &quot;0&quot;    /* system is unusable */
-#define KERN_ALERT   KERN_SOH &quot;1&quot;    /* action must be taken immediately */
-#define KERN_CRIT    KERN_SOH &quot;2&quot;    /* critical conditions */
-#define KERN_ERR     KERN_SOH &quot;3&quot;    /* error conditions */
-#define KERN_WARNING KERN_SOH &quot;4&quot;    /* warning conditions */
-#define KERN_NOTICE  KERN_SOH &quot;5&quot;    /* normal but significant condition */
-#define KERN_INFO    KERN_SOH &quot;6&quot;    /* informational */
-#define KERN_DEBUG   KERN_SOH &quot;7&quot;    /* debug-level messages */
-
-// &#x4F7F;&#x7528;&#x65B9;&#x5F0F;
-printk(KERN_EMERG &quot;figo: %s, %d&quot;, __func__, __LINE__);
-</code></pre><table>
-<thead>
-<tr>
-<th>&#x5E38;&#x89C1;&#x7C7B;&#x578B;</th>
-<th>printk&#x683C;&#x5F0F;&#x7B26;</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>int</td>
-<td>%d or %x</td>
-</tr>
-<tr>
-<td>unsigned</td>
-<td>%u or %x</td>
-</tr>
-<tr>
-<td>long</td>
-<td>%ld or %lx</td>
-</tr>
-<tr>
-<td>long long</td>
-<td>%lld or %llx</td>
-</tr>
-<tr>
-<td>unsigned long long</td>
-<td>%llu or %llx</td>
-</tr>
-<tr>
-<td>size_t</td>
-<td>%zu or %zx</td>
-</tr>
-<tr>
-<td>ssize_t</td>
-<td>%zd or %zx</td>
-</tr>
-<tr>
-<td>&#x51FD;&#x6570;&#x6307;&#x9488;</td>
-<td>%pf</td>
-</tr>
-</tbody>
-</table>
+                                <h3 id="ebpf&#x5F00;&#x53D1;&#x603B;&#x7ED3;">eBPF&#x5F00;&#x53D1;&#x603B;&#x7ED3;</h3>
+<h4 id="&#x4F4E;&#x7248;&#x672C;&#x751F;&#x6210;&#x5185;&#x6838;btf">&#x4F4E;&#x7248;&#x672C;&#x751F;&#x6210;&#x5185;&#x6838;BTF</h4>
+<ol>
+<li>&#x7F16;&#x8BD1;&#x5185;&#x6838;&#xFF0C;&#x751F;&#x6210;&#x5E26;&#x8C03;&#x8BD5;&#x4FE1;&#x606F;&#x7684;vmlinux&#xFF0C;&#x7F16;&#x8BD1;&#x524D;&#x5148;<code>make clean &amp;&amp; make mrproper</code></li>
+<li><code>file vmlinux</code>&#x53EF;&#x770B;&#x5230;<code>with debug_info, not stripped</code>&#x5B57;&#x6837;</li>
+<li>&#x7ED9;vmlinux&#x6DFB;&#x52A0;BTF&#x6BB5;&#xFF1A;<code>pahole -J vmlinux</code></li>
+<li>&#x751F;&#x6210;btf&#xFF1A;<code>pahole --btf_encode_detached external.btf vmlinux</code></li>
+</ol>
+<h4 id="ebpf&#x5B57;&#x8282;&#x7801;&#x5B66;&#x4E60;">eBPF&#x5B57;&#x8282;&#x7801;&#x5B66;&#x4E60;</h4>
 
                                 
                                 </section>
@@ -569,10 +513,10 @@ printk(KERN_EMERG &quot;figo: %s, %d&quot;, __func__, __LINE__);
 
             
                 
-                
-                <a href="syscall.html" class="navigation navigation-next navigation-unique" aria-label="Next page: 系统调用入口">
-                    <i class="fa fa-angle-right"></i>
+                <a href="bpf-performance-tools.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: BPF之巅">
+                    <i class="fa fa-angle-left"></i>
                 </a>
+                
                 
             
         
@@ -581,7 +525,7 @@ printk(KERN_EMERG &quot;figo: %s, %d&quot;, __func__, __LINE__);
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"内核调试秘籍","level":"1.5.1","depth":2,"next":{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},"previous":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/kernel-debug.md","mtime":"2024-07-04T03:29:47.194Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-04T03:30:10.802Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"eBPF开发总结","level":"1.4.3","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"BPF之巅","level":"1.4.2","depth":2,"path":"docs/bpf-performance-tools.md","ref":"docs/bpf-performance-tools.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-development.md","mtime":"2024-07-04T03:29:47.194Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-04T03:30:10.802Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
