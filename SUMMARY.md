@@ -15,6 +15,7 @@
 * eBPF相关
   * [性能之颠](docs/systems-performance.md)
   * [BPF之巅](docs/bpf-performance-tools.md)  
+  * [eBPF开发总结](docs/bpf-development.md)  
 * 杂项
   * [内核调试秘籍](docs/kernel-debug.md)
   * [系统调用入口](docs/syscall.md)
