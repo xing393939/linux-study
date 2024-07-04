@@ -25,8 +25,9 @@
 1. struct flavors。解决：
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
+1. [map定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
+1. [read/write only map](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#readwrite-only-map)
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
-1. [MAP写法](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
 1. bpf/bpf_helpers.h：使用SEC("maps")
 1. 其他CO-RE宏
@@ -57,19 +58,7 @@ if (bpf_core_field_exists(t->__state)) {
     state = BPF_CORE_READ((struct task_struct___old *)t, state);
 }
 
-// 3. BPF_CORE_READ用法
-struct task_struct *task;
-struct mm_struct *mm;
-struct file *exe_file;
-struct dentry *dentry;
-const char *name;
-bpf_core_read(&mm, 8, &task->mm);
-bpf_core_read(&exe_file, 8, &mm->exe_file);
-bpf_core_read(&dentry, 8, &exe_file->path.dentry);
-bpf_core_read(&name, 8, &dentry->d_name.name);
-name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行代码完成上述功能
-
-// 4. map的定义，BTF写法在老版本报错：map create: invalid argument (without BTF k/v)
+// 3. map的定义，BTF写法在老版本报错：map create: invalid argument (without BTF k/v)
 struct bpf_map_def SEC("maps") MAP_NAME = {
     .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
     .key_size = sizeof(int),
@@ -80,6 +69,23 @@ struct {
     __uint(key_size, sizeof(int));
     __uint(value_size, sizeof(u32));
 } egressmap SEC(".maps");             // BTF写法，完全依靠BTF map
+
+// 4. read/write only map
+使用了 extern int LINUX_KERNEL_VERSION __kconfig; cilium/ebpf在加载程序的时候，会将.kconfig设置成unix.BPF_F_RDONLY_PROG | unix.BPF_F_MMAPABLE
+unix.BPF_F_RDONLY_PROG 需要5.2版本
+unix.BPF_F_MMAPABLE    需要5.5版本
+
+// 5. BPF_CORE_READ用法
+struct task_struct *task;
+struct mm_struct *mm;
+struct file *exe_file;
+struct dentry *dentry;
+const char *name;
+bpf_core_read(&mm, 8, &task->mm);
+bpf_core_read(&exe_file, 8, &mm->exe_file);
+bpf_core_read(&dentry, 8, &exe_file->path.dentry);
+bpf_core_read(&name, 8, &dentry->d_name.name);
+name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行代码完成上述功能
 ```
 
 #### BPF CO-RE原理
