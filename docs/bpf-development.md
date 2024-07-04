@@ -4,12 +4,14 @@
 1. [eBPF Docs](https://ebpf-docs.dylanreimerink.nl/)，介绍常用概念，函数的可用版本
 1. [BPF 可移植性和 CO-RE](https://arthurchiao.art/blog/bpf-portability-and-co-re-zh/#%E6%96%B9%E5%BC%8F%E4%BA%8Clibbpf--bpf_prog_type_tracing%E4%B8%8D%E5%8F%AF%E7%A7%BB%E6%A4%8D)，5.5开始，若ebpf程序是BTF_PROG_TYPE_TRACING类型，内核可以直接利用BTF读取task->real_parent->pid
 1. [Hello eBPF: Tail calls and your first eBPF application](https://mostlynerdless.de/blog/2024/02/12/hello-ebpf-tail-calls-and-your-first-ebpf-application-4/)，ebpf栈空间只有512B，利用尾调用缓解
+1. libbpf开发，vmlinux.h没有宏定义，需要的话就引用bpf/bpf_helpers.h
 
 #### 低版本生成内核BTF
 1. 编译内核，生成带调试信息的vmlinux，编译前先`make clean && make mrproper`
 1. `file vmlinux`可看到`with debug_info, not stripped`字样
 1. 给vmlinux添加BTF段：`pahole -J vmlinux`
 1. 生成btf：`pahole --btf_encode_detached external.btf vmlinux`
+1. 查看btf：`pahole external.btf |grep 'struct task_struct {' -A 10`
 
 #### eBPF字节码学习
 1. [【Learning eBPF-3】一个 eBPF 程序的深入剖析](https://www.cnblogs.com/lianyihong/p/18120323)，详细分析hello程序字节码
@@ -24,6 +26,8 @@
 1. struct flavors。解决：
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
+1. BPF_CORE_READ
+
 
 ```
 // 1. 4.6开始，task_struct.utime的单元由jiffies变为纳秒
@@ -44,7 +48,27 @@ if (bpf_core_field_exists(t->__state)) {
 } else {
     state = BPF_CORE_READ((struct task_struct___old *)t, state);
 }
+
+// 3. BPF_CORE_READ用法
+struct task_struct *task;
+struct mm_struct *mm;
+struct file *exe_file;
+struct dentry *dentry;
+const char *name;
+bpf_core_read(&mm, 8, &task->mm);
+bpf_core_read(&exe_file, 8, &mm->exe_file);
+bpf_core_read(&dentry, 8, &exe_file->path.dentry);
+bpf_core_read(&name, 8, &dentry->d_name.name);
+name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行代码完成上述功能
 ```
+
+#### BPF CO-RE原理
+1. 四个组件：
+  * BTF类型信息：用于获取内核、BPF 程序类型及 BPF 代码的关键信息
+  * 编译器（clang/llvm）：给 BPF C 代码提供了表达能力和记录重定位（relocation）信息的能力
+  * 用户态程序(libbpf)：将内核的 BTF 与 BPF 程序联系起来， 将编译之后的 BPF 代码适配到目标机器的特定内核
+  * 内核：虽然对 BPF CO-RE 完全不感知，但提供了一些 BPF 高级特性，使某些高级场景成为可能。
+
 
 #### btftool技巧
 ```
