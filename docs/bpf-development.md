@@ -4,7 +4,6 @@
 1. [eBPF Docs](https://ebpf-docs.dylanreimerink.nl/)，介绍常用概念，函数的可用版本
 1. [BPF 可移植性和 CO-RE](https://arthurchiao.art/blog/bpf-portability-and-co-re-zh/#%E6%96%B9%E5%BC%8F%E4%BA%8Clibbpf--bpf_prog_type_tracing%E4%B8%8D%E5%8F%AF%E7%A7%BB%E6%A4%8D)，5.5开始，若ebpf程序是BTF_PROG_TYPE_TRACING类型，内核可以直接利用BTF读取task->real_parent->pid
 1. [Hello eBPF: Tail calls and your first eBPF application](https://mostlynerdless.de/blog/2024/02/12/hello-ebpf-tail-calls-and-your-first-ebpf-application-4/)，ebpf栈空间只有512B，利用尾调用缓解
-1. libbpf开发，vmlinux.h没有宏定义，需要的话就引用bpf/bpf_helpers.h
 
 #### 低版本生成内核BTF
 1. 编译内核，生成带调试信息的vmlinux，编译前先`make clean && make mrproper`
@@ -26,7 +25,9 @@
 1. struct flavors。解决：
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
-1. BPF_CORE_READ，级联读取结构体字段
+1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
+1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
+1. bpf/bpf_helpers.h：使用SEC("maps")
 1. 其他CO-RE宏
   * bpf_core_read_str()：可以直接替换 Non-CO-RE 的 bpf_probe_read_str()
   * bpf_core_field_exists()：判断字段是否存在
