@@ -17,6 +17,7 @@
 1. [Towards truly portable eBPF](https://fuweid.com/post/2022-ebpf-portable-with-btfhub/)
   * 利用`__builtin_preserve_access_index`在编译阶段把task->real_parent->pid链接符号保存在.BTF.ext段
   * libbpf在加载期间利用BTF的信息修改指令
+1. [BPF 程序（BPF Prog）类型详解](https://arthurchiao.art/blog/bpf-advanced-notes-1-zh/#%E4%BC%A0%E5%85%A5%E5%8F%82%E6%95%B0struct-__sk_buff-)，struct __sk_buff是BPF校验器提供的一个屏蔽sk_buff变化的稳定接口(支持版本未知)
 
 #### libbpf+CO-RE
 1. extern Kconfig variables。解决（4.6开始，task_struct.utime的单元由jiffies变为纳秒）
@@ -45,3 +46,23 @@ if (bpf_core_field_exists(t->__state)) {
 }
 ```
 
+#### btftool技巧
+```
+// 查看所有程序
+bpftool prog --json --pretty
+
+// 查看指定id程序
+bpftool prog show id 147 --json --pretty
+
+// 查看指定id程序字节码
+bpftool prog dump xlated id 147
+
+// 查看所有map
+bpftool map --json --pretty
+
+// 查看指定id的map
+bpftool map show id 206 --json --pretty
+
+// 查看指定id的map具体内容
+bpftool map dump id 206
+```
