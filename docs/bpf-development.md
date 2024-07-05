@@ -25,7 +25,7 @@
 1. struct flavors。解决：
   * 5.14开始，task_struct.state更名为__state
   * 4.7开始，thread_struct.fs更名为fsbase
-1. [map定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
+1. [map的定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
 1. [read/write only map](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#readwrite-only-map)
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
@@ -71,9 +71,10 @@ struct {
 } egressmap SEC(".maps");             // BTF写法，完全依靠BTF map
 
 // 4. read/write only map
-使用了 extern int LINUX_KERNEL_VERSION __kconfig; cilium/ebpf在加载程序的时候，会将.kconfig设置成unix.BPF_F_RDONLY_PROG | unix.BPF_F_MMAPABLE
-unix.BPF_F_RDONLY_PROG 需要5.2版本
+情况一：使用了 extern int LINUX_KERNEL_VERSION __kconfig; cilium/ebpf在加载程序的时候，会将.kconfig设置成unix.BPF_F_RDONLY_PROG | unix.BPF_F_MMAPABLE
+unix.BPF_F_RDONLY_PROG 需要5.2版本，否则报错：map create: read- and write-only maps not supported (requires >= v5.2)
 unix.BPF_F_MMAPABLE    需要5.5版本
+情况二：char *block = "hello"; 像这样硬编码的字符串会产生rodata段，加载程序时会设置成unix.BPF_F_RDONLY_PROG
 
 // 5. BPF_CORE_READ用法
 struct task_struct *task;
