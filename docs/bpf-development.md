@@ -50,7 +50,7 @@
   * `BPF_CORE_READ_BITFIELD()`：通过直接内存读取（direct memory read）方式，读取比特位字段
   * `BPF_CORE_READ_BITFIELD_PROBED()`：底层会调用 bpf_probe_read()
 
-```shell
+```go
 // 1. 4.6开始，task_struct.utime的单元由jiffies变为纳秒
 extern u32 LINUX_KERNEL_VERSION __kconfig;
 extern u32 CONFIG_HZ __kconfig;
