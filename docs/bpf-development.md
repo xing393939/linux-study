@@ -122,6 +122,13 @@ bpf_core_read(&exe_file, 8, &mm->exe_file);
 bpf_core_read(&dentry, 8, &exe_file->path.dentry);
 bpf_core_read(&name, 8, &dentry->d_name.name);
 name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行代码完成上述功能
+
+// 9. 使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
+int bpf_prog(struct pt_regs *ctx) {
+    char buf[] = "Hello %d %d \n";
+    bpf_trace_printk(buf, sizeof(buf), PT_REGS_PARM1(ctx), PT_REGS_PARM2(ctx));
+    return 0;
+}
 ```
 
 #### BPF CO-RE原理
