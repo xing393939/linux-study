@@ -540,77 +540,77 @@
 </ul>
 </li>
 </ol>
-<pre><code class="lang-shell">// 1. 4.6&#x5F00;&#x59CB;&#xFF0C;task_struct.utime&#x7684;&#x5355;&#x5143;&#x7531;jiffies&#x53D8;&#x4E3A;&#x7EB3;&#x79D2;
+<pre><code class="lang-go"><span class="hljs-comment">// 1. 4.6&#x5F00;&#x59CB;&#xFF0C;task_struct.utime&#x7684;&#x5355;&#x5143;&#x7531;jiffies&#x53D8;&#x4E3A;&#x7EB3;&#x79D2;</span>
 extern u32 LINUX_KERNEL_VERSION __kconfig;
 extern u32 CONFIG_HZ __kconfig;
 u64 utime_ns;
-if (LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(4, 11, 0))
+<span class="hljs-keyword">if</span> (LINUX_KERNEL_VERSION &gt;= KERNEL_VERSION(<span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">0</span>))
     utime_ns = BPF_CORE_READ(task, utime);
-else
-    utime_ns = BPF_CORE_READ(task, utime) * (1000000000UL / CONFIG_HZ);
+<span class="hljs-keyword">else</span>
+    utime_ns = BPF_CORE_READ(task, utime) * (<span class="hljs-number">1000000000</span>UL / CONFIG_HZ);
 
-// 2. 5.14&#x5F00;&#x59CB;&#xFF0C;task_struct.state&#x66F4;&#x540D;&#x4E3A;__state
-struct task_struct___old {
+<span class="hljs-comment">// 2. 5.14&#x5F00;&#x59CB;&#xFF0C;task_struct.state&#x66F4;&#x540D;&#x4E3A;__state</span>
+<span class="hljs-keyword">struct</span> task_struct___old {
     ...
 }
-if (bpf_core_field_exists(t-&gt;__state)) {
+<span class="hljs-keyword">if</span> (bpf_core_field_exists(t-&gt;__state)) {
     state = BPF_CORE_READ(t, __state);
-} else {
-    state = BPF_CORE_READ((struct task_struct___old *)t, state);
+} <span class="hljs-keyword">else</span> {
+    state = BPF_CORE_READ((<span class="hljs-keyword">struct</span> task_struct___old *)t, state);
 }
 
-// 3. map&#x7684;&#x5B9A;&#x4E49;&#xFF0C;BTF&#x5199;&#x6CD5;&#x5728;&#x8001;&#x7248;&#x672C;&#x62A5;&#x9519;&#xFF1A;map create: invalid argument (without BTF k/v)
-struct bpf_map_def SEC(&quot;maps&quot;) MAP_NAME = {
-    .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-    .key_size = sizeof(int),
+<span class="hljs-comment">// 3. map&#x7684;&#x5B9A;&#x4E49;&#xFF0C;BTF&#x5199;&#x6CD5;&#x5728;&#x8001;&#x7248;&#x672C;&#x62A5;&#x9519;&#xFF1A;map create: invalid argument (without BTF k/v)</span>
+<span class="hljs-keyword">struct</span> bpf_map_def SEC(<span class="hljs-string">&quot;maps&quot;</span>) MAP_NAME = {
+    .<span class="hljs-keyword">type</span> = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
+    .key_size = sizeof(<span class="hljs-keyword">int</span>),
     .value_size = sizeof(u32),
-};                                    // &#x8001;&#x7684;&#x5199;&#x6CD5;&#xFF0C;&#x5728;elf&#x4E2D;&#x751F;&#x6210;map section
-struct {
-    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-    __uint(key_size, sizeof(int));
+};                                    <span class="hljs-comment">// &#x8001;&#x7684;&#x5199;&#x6CD5;&#xFF0C;&#x5728;elf&#x4E2D;&#x751F;&#x6210;map section</span>
+<span class="hljs-keyword">struct</span> {
+    __uint(<span class="hljs-keyword">type</span>, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+    __uint(key_size, sizeof(<span class="hljs-keyword">int</span>));
     __uint(value_size, sizeof(u32));
-} egressmap SEC(&quot;.maps&quot;);             // BTF&#x5199;&#x6CD5;&#xFF0C;&#x5B8C;&#x5168;&#x4F9D;&#x9760;BTF map
+} egressmap SEC(<span class="hljs-string">&quot;.maps&quot;</span>);             <span class="hljs-comment">// BTF&#x5199;&#x6CD5;&#xFF0C;&#x5B8C;&#x5168;&#x4F9D;&#x9760;BTF map</span>
 
-// 4. read/write only map
-&#x60C5;&#x51B5;&#x4E00;&#xFF1A;&#x4F7F;&#x7528;&#x4E86; extern int LINUX_KERNEL_VERSION __kconfig; cilium/ebpf&#x5728;&#x52A0;&#x8F7D;&#x7A0B;&#x5E8F;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x5C06;.kconfig&#x8BBE;&#x7F6E;&#x6210;unix.BPF_F_RDONLY_PROG | unix.BPF_F_MMAPABLE
-unix.BPF_F_RDONLY_PROG &#x9700;&#x8981;5.2&#x7248;&#x672C;&#xFF0C;&#x5426;&#x5219;&#x62A5;&#x9519;&#xFF1A;map create: read- and write-only maps not supported (requires &gt;= v5.2)
-unix.BPF_F_MMAPABLE    &#x9700;&#x8981;5.5&#x7248;&#x672C;
-&#x60C5;&#x51B5;&#x4E8C;&#xFF1A;char *block = &quot;hello&quot;; &#x50CF;&#x8FD9;&#x6837;&#x786C;&#x7F16;&#x7801;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x4F1A;&#x4EA7;&#x751F;rodata&#x6BB5;&#xFF0C;&#x52A0;&#x8F7D;&#x7A0B;&#x5E8F;&#x65F6;&#x4F1A;&#x8BBE;&#x7F6E;&#x6210;unix.BPF_F_RDONLY_PROG
+<span class="hljs-comment">// 4. read/write only map</span>
+&#x60C5;&#x51B5;&#x4E00;&#xFF1A;&#x4F7F;&#x7528;&#x4E86; extern <span class="hljs-keyword">int</span> LINUX_KERNEL_VERSION __kconfig; cilium/ebpf&#x5728;&#x52A0;&#x8F7D;&#x7A0B;&#x5E8F;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x5C06;.kconfig&#x8BBE;&#x7F6E;&#x6210;unix.BPF_F_RDONLY_PROG | unix.BPF_F_MMAPABLE
+unix.BPF_F_RDONLY_PROG &#x9700;&#x8981;<span class="hljs-number">5.2</span>&#x7248;&#x672C;&#xFF0C;&#x5426;&#x5219;&#x62A5;&#x9519;&#xFF1A;<span class="hljs-keyword">map</span> create: read- and write-only maps not supported (requires &gt;= v5<span class="hljs-number">.2</span>)
+unix.BPF_F_MMAPABLE    &#x9700;&#x8981;<span class="hljs-number">5.5</span>&#x7248;&#x672C;
+&#x60C5;&#x51B5;&#x4E8C;&#xFF1A;char *block = <span class="hljs-string">&quot;hello&quot;</span>; &#x50CF;&#x8FD9;&#x6837;&#x786C;&#x7F16;&#x7801;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x4F1A;&#x4EA7;&#x751F;rodata&#x6BB5;&#xFF0C;&#x52A0;&#x8F7D;&#x7A0B;&#x5E8F;&#x65F6;&#x4F1A;&#x8BBE;&#x7F6E;&#x6210;unix.BPF_F_RDONLY_PROG
 
-// 5. &#x91CD;&#x5199;&#x5168;&#x5C40;&#x53D8;&#x91CF;&#xFF0C;&#x53D8;&#x91CF;&#x4F1A;&#x653E;&#x5728;rodata&#x6BB5;&#xFF0C;&#x56E0;&#x800C;&#x9700;&#x8981;5.2&#x7248;&#x672C;
-const volatile u64 latency_thresh;                                    // C&#x6587;&#x4EF6;&#x5B9A;&#x4E49;&#x5168;&#x5C40;&#x53D8;&#x91CF;
-spec.RewriteConstants(map[string]interface{}{&quot;latency_thresh&quot;: &quot;50&quot;}) // GO&#x8BED;&#x8A00;&#x91CD;&#x5199;&#x5B83;
+<span class="hljs-comment">// 5. &#x91CD;&#x5199;&#x5168;&#x5C40;&#x53D8;&#x91CF;&#xFF0C;&#x53D8;&#x91CF;&#x4F1A;&#x653E;&#x5728;rodata&#x6BB5;&#xFF0C;&#x56E0;&#x800C;&#x9700;&#x8981;5.2&#x7248;&#x672C;</span>
+<span class="hljs-keyword">const</span> volatile u64 latency_thresh;                                    <span class="hljs-comment">// C&#x6587;&#x4EF6;&#x5B9A;&#x4E49;&#x5168;&#x5C40;&#x53D8;&#x91CF;</span>
+spec.RewriteConstants(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">interface</span>{}{<span class="hljs-string">&quot;latency_thresh&quot;</span>: <span class="hljs-string">&quot;50&quot;</span>}) <span class="hljs-comment">// GO&#x8BED;&#x8A00;&#x91CD;&#x5199;&#x5B83;</span>
 
-// 6. Spin locks
-struct concurrent_element {
-    struct bpf_spin_lock semaphore;
-    int count;
+<span class="hljs-comment">// 6. Spin locks</span>
+<span class="hljs-keyword">struct</span> concurrent_element {
+    <span class="hljs-keyword">struct</span> bpf_spin_lock semaphore;
+    <span class="hljs-keyword">int</span> count;
 }
-struct concurrent_element *read_value;
+<span class="hljs-keyword">struct</span> concurrent_element *read_value;
 read_value = bpf_map_lookup_elem(&amp;concurrent_map, &amp;key);
 bpf_spin_lock(&amp;read_value-&gt;semaphore);
-read_value-&gt;count += 1;
+read_value-&gt;count += <span class="hljs-number">1</span>;
 bpf_spin_unlock(&amp;read_value-&gt;semaphore);
 
-// 7. 4.6&#x5F00;&#x59CB;&#xFF0C;BPF hash maps&#x4F1A;&#x9ED8;&#x8BA4;&#x6267;&#x884C;&#x5185;&#x5B58;&#x9884;&#x5206;&#x914D;&#xFF0C;&#x4F7F;&#x7528;BPF_F_NO_PREALLOC&#x53EF;&#x5173;&#x95ED;&#xFF08;&#x4E0D;&#x5EFA;&#x8BAE;&#xFF09;
-struct {
-        __uint(type, BPF_MAP_TYPE_HASH);
+<span class="hljs-comment">// 7. 4.6&#x5F00;&#x59CB;&#xFF0C;BPF hash maps&#x4F1A;&#x9ED8;&#x8BA4;&#x6267;&#x884C;&#x5185;&#x5B58;&#x9884;&#x5206;&#x914D;&#xFF0C;&#x4F7F;&#x7528;BPF_F_NO_PREALLOC&#x53EF;&#x5173;&#x95ED;&#xFF08;&#x4E0D;&#x5EFA;&#x8BAE;&#xFF09;</span>
+<span class="hljs-keyword">struct</span> {
+        __uint(<span class="hljs-keyword">type</span>, BPF_MAP_TYPE_HASH);
         __type(key, u32);
         __type(value, u64);
-        __uint(map_flags, BPF_F_NO_PREALLOC); // &#x5173;&#x95ED;&#x5185;&#x5B58;&#x9884;&#x5206;&#x914D;&#xFF08;&#x4E0D;&#x5EFA;&#x8BAE;&#xFF09;
-} start SEC(&quot;.maps&quot;);
+        __uint(map_flags, BPF_F_NO_PREALLOC); <span class="hljs-comment">// &#x5173;&#x95ED;&#x5185;&#x5B58;&#x9884;&#x5206;&#x914D;&#xFF08;&#x4E0D;&#x5EFA;&#x8BAE;&#xFF09;</span>
+} start SEC(<span class="hljs-string">&quot;.maps&quot;</span>);
 
-// 8. BPF_CORE_READ&#x7528;&#x6CD5;
-struct task_struct *task;
-struct mm_struct *mm;
-struct file *exe_file;
-struct dentry *dentry;
-const char *name;
-bpf_core_read(&amp;mm, 8, &amp;task-&gt;mm);
-bpf_core_read(&amp;exe_file, 8, &amp;mm-&gt;exe_file);
-bpf_core_read(&amp;dentry, 8, &amp;exe_file-&gt;path.dentry);
-bpf_core_read(&amp;name, 8, &amp;dentry-&gt;d_name.name);
-name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // &#x4E00;&#x884C;&#x4EE3;&#x7801;&#x5B8C;&#x6210;&#x4E0A;&#x8FF0;&#x529F;&#x80FD;
+<span class="hljs-comment">// 8. BPF_CORE_READ&#x7528;&#x6CD5;</span>
+<span class="hljs-keyword">struct</span> task_struct *task;
+<span class="hljs-keyword">struct</span> mm_struct *mm;
+<span class="hljs-keyword">struct</span> file *exe_file;
+<span class="hljs-keyword">struct</span> dentry *dentry;
+<span class="hljs-keyword">const</span> char *name;
+bpf_core_read(&amp;mm, <span class="hljs-number">8</span>, &amp;task-&gt;mm);
+bpf_core_read(&amp;exe_file, <span class="hljs-number">8</span>, &amp;mm-&gt;exe_file);
+bpf_core_read(&amp;dentry, <span class="hljs-number">8</span>, &amp;exe_file-&gt;path.dentry);
+bpf_core_read(&amp;name, <span class="hljs-number">8</span>, &amp;dentry-&gt;d_name.name);
+name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); <span class="hljs-comment">// &#x4E00;&#x884C;&#x4EE3;&#x7801;&#x5B8C;&#x6210;&#x4E0A;&#x8FF0;&#x529F;&#x80FD;</span>
 </code></pre>
 <h4 id="bpf-co-re&#x539F;&#x7406;">BPF CO-RE&#x539F;&#x7406;</h4>
 <ol>
@@ -682,7 +682,7 @@ bpftool btf dump file external.btf | grep &quot;STRUCT &apos;task_struct&apos;&q
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"eBPF开发总结","level":"1.4.3","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"BPF之巅","level":"1.4.2","depth":2,"path":"docs/bpf-performance-tools.md","ref":"docs/bpf-performance-tools.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-development.md","mtime":"2024-07-05T06:29:19.645Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-05T06:29:42.508Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"eBPF开发总结","level":"1.4.3","depth":2,"next":{"title":"杂项","level":"1.5","depth":1,"ref":"","articles":[{"title":"内核调试秘籍","level":"1.5.1","depth":2,"path":"docs/kernel-debug.md","ref":"docs/kernel-debug.md","articles":[]},{"title":"系统调用入口","level":"1.5.2","depth":2,"path":"docs/syscall.md","ref":"docs/syscall.md","articles":[]},{"title":"系统调用之getpid","level":"1.5.3","depth":2,"path":"docs/getpid.md","ref":"docs/getpid.md","articles":[]},{"title":"ftrace","level":"1.5.4","depth":2,"path":"docs/ftrace.md","ref":"docs/ftrace.md","articles":[]},{"title":"linux核心数据结构","level":"1.5.5","depth":2,"path":"docs/core-data-structure.md","ref":"docs/core-data-structure.md","articles":[]},{"title":"linux下的hook方式","level":"1.5.6","depth":2,"path":"docs/linux-hook.md","ref":"docs/linux-hook.md","articles":[]},{"title":"socket协议簇","level":"1.5.7","depth":2,"path":"docs/protocol-suite.md","ref":"docs/protocol-suite.md","articles":[]},{"title":"OSI七层和Netfilter","level":"1.5.8","depth":2,"path":"docs/osi_and_netfilter.md","ref":"docs/osi_and_netfilter.md","articles":[]}]},"previous":{"title":"BPF之巅","level":"1.4.2","depth":2,"path":"docs/bpf-performance-tools.md","ref":"docs/bpf-performance-tools.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"docs/bpf-development.md","mtime":"2024-07-05T06:31:55.465Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2024-07-05T06:32:18.489Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
