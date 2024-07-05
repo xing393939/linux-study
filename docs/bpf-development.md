@@ -36,21 +36,21 @@
 1. bpf/bpf_helpers.h：使用SEC("maps")
 1. 4.4开始，[Pinning](https://ebpf-docs.dylanreimerink.nl/linux/concepts/pinning/)，保证Prog和Map在程序A退出后程序B继续[使用](../images/bpf/bpf-pinning.png)
 1. 编译器原语，clang支持的内置函数，会转换成对应的ebpf指令
-  * __sync_fetch_and_add(*a, b) - Read value at a, add b and write it back, return the new value
-  * __sync_fetch_and_sub(*a, b) - Read value at a, subtract a number and write it back, return the new value
-  * __sync_fetch_and_or(*a, b) - Read value at a, binary OR a number and write it back, return the new value
-  * __sync_fetch_and_xor(*a, b) - Read value at a, binary XOR a number and write it back, return the new value
-  * __sync_lock_test_and_set(*a, b) - Read value at a, write b to a, return original value of a
-  * __sync_val_compare_and_swap(*a, b, c) - Read value at a, check if it is equal to b, if true write c to a and return the original value of a. On fail leave a be and return c.
+  * `__sync_fetch_and_add(*a, b)` - Read value at a, add b and write it back, return the new value
+  * `__sync_fetch_and_sub(*a, b)` - Read value at a, subtract a number and write it back, return the new value
+  * `__sync_fetch_and_or(*a, b)` - Read value at a, binary OR a number and write it back, return the new value
+  * `__sync_fetch_and_xor(*a, b)` - Read value at a, binary XOR a number and write it back, return the new value
+  * `__sync_lock_test_and_set(*a, b)` - Read value at a, write b to a, return original value of a
+  * `__sync_val_compare_and_swap(*a, b, c)` - Read value at a, check if it is equal to b, if true write c to a and return the original value of a. On fail leave a be and return c.
 1. 其他CO-RE宏
-  * bpf_core_read_str()：可以直接替换 Non-CO-RE 的 bpf_probe_read_str()
-  * bpf_core_field_exists()：判断字段是否存在
-  * bpf_core_field_size()：判断字段大小，同一字段在不同版本的内核中大小可能会发生变化
-  * BPF_CORE_READ_STR_INTO()：与 BPF_CORE_READ_INTO() 类似，但会对最后一个字段执行 bpf_probe_read_str()
-  * BPF_CORE_READ_BITFIELD()：通过直接内存读取（direct memory read）方式，读取比特位字段
-  * BPF_CORE_READ_BITFIELD_PROBED()：底层会调用 bpf_probe_read()
+  * `bpf_core_read_str()`：可以直接替换 Non-CO-RE 的 bpf_probe_read_str()
+  * `bpf_core_field_exists()`：判断字段是否存在
+  * `bpf_core_field_size()`：判断字段大小，同一字段在不同版本的内核中大小可能会发生变化
+  * `BPF_CORE_READ_STR_INTO()`：与 BPF_CORE_READ_INTO() 类似，但会对最后一个字段执行 bpf_probe_read_str()
+  * `BPF_CORE_READ_BITFIELD()`：通过直接内存读取（direct memory read）方式，读取比特位字段
+  * `BPF_CORE_READ_BITFIELD_PROBED()`：底层会调用 bpf_probe_read()
 
-```
+```c
 // 1. 4.6开始，task_struct.utime的单元由jiffies变为纳秒
 extern u32 LINUX_KERNEL_VERSION __kconfig;
 extern u32 CONFIG_HZ __kconfig;
@@ -127,10 +127,9 @@ name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行�
 #### BPF CO-RE原理
 1. 四个组件：
   * BTF类型信息：用于获取内核、BPF 程序类型及 BPF 代码的关键信息
-  * 编译器（clang/llvm）：给 BPF C 代码提供了表达能力和记录重定位（relocation）信息的能力
+  * 编译器(clang/llvm)：给 BPF C 代码提供了表达能力和记录重定位（relocation）信息的能力
   * 用户态程序(libbpf)：将内核的 BTF 与 BPF 程序联系起来， 将编译之后的 BPF 代码适配到目标机器的特定内核
   * 内核：虽然对 BPF CO-RE 完全不感知，但提供了一些 BPF 高级特性，使某些高级场景成为可能。
-
 
 #### btftool技巧
 ```
