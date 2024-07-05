@@ -27,6 +27,7 @@
   * 4.7开始，thread_struct.fs更名为fsbase
 1. [map的定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
 1. [read/write only map](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#readwrite-only-map)
+1. 重写全局变量
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
 1. bpf/bpf_helpers.h：使用SEC("maps")
@@ -76,7 +77,11 @@ unix.BPF_F_RDONLY_PROG 需要5.2版本，否则报错：map create: read- and wr
 unix.BPF_F_MMAPABLE    需要5.5版本
 情况二：char *block = "hello"; 像这样硬编码的字符串会产生rodata段，加载程序时会设置成unix.BPF_F_RDONLY_PROG
 
-// 5. BPF_CORE_READ用法
+// 5. 重写全局变量，变量会放在rodata段，因而需要5.2版本
+const volatile u64 latency_thresh;                                    // C文件定义全局变量
+spec.RewriteConstants(map[string]interface{}{"latency_thresh": "50"}) // GO语言重写它
+
+// 6. BPF_CORE_READ用法
 struct task_struct *task;
 struct mm_struct *mm;
 struct file *exe_file;
@@ -116,4 +121,7 @@ bpftool map show id 206 --json --pretty
 
 // 查看指定id的map具体内容
 bpftool map dump id 206
+
+// 查看BTF的具体内容
+bpftool btf dump file external.btf | grep "STRUCT 'task_struct'" -A 5
 ```
