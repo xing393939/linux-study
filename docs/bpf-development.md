@@ -29,9 +29,18 @@
 1. [map的定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#map%E5%86%99%E6%B3%95)
 1. [read/write only map](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8(%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0).md#readwrite-only-map)
 1. 重写全局变量
+1. [Spin locks](https://ebpf-docs.dylanreimerink.nl/linux/concepts/concurrency/#spin-locks)，需要引用`struct bpf_spin_lock`
+1. 4.6开始，BPF hash maps会默认执行内存预分配，使用BPF_F_NO_PREALLOC可关闭（不建议）
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
 1. bpf/bpf_helpers.h：使用SEC("maps")
+1. 编译器原语，clang支持的内置函数，会转换成对应的ebpf指令
+  * __sync_fetch_and_add(*a, b) - Read value at a, add b and write it back, return the new value
+  * __sync_fetch_and_sub(*a, b) - Read value at a, subtract a number and write it back, return the new value
+  * __sync_fetch_and_or(*a, b) - Read value at a, binary OR a number and write it back, return the new value
+  * __sync_fetch_and_xor(*a, b) - Read value at a, binary XOR a number and write it back, return the new value
+  * __sync_lock_test_and_set(*a, b) - Read value at a, write b to a, return original value of a
+  * __sync_val_compare_and_swap(*a, b, c) - Read value at a, check if it is equal to b, if true write c to a and return the original value of a. On fail leave a be and return c.
 1. 其他CO-RE宏
   * bpf_core_read_str()：可以直接替换 Non-CO-RE 的 bpf_probe_read_str()
   * bpf_core_field_exists()：判断字段是否存在
@@ -82,7 +91,26 @@ unix.BPF_F_MMAPABLE    需要5.5版本
 const volatile u64 latency_thresh;                                    // C文件定义全局变量
 spec.RewriteConstants(map[string]interface{}{"latency_thresh": "50"}) // GO语言重写它
 
-// 6. BPF_CORE_READ用法
+// 6. Spin locks
+struct concurrent_element {
+    struct bpf_spin_lock semaphore;
+    int count;
+}
+struct concurrent_element *read_value;
+read_value = bpf_map_lookup_elem(&concurrent_map, &key);
+bpf_spin_lock(&read_value->semaphore);
+read_value->count += 1;
+bpf_spin_unlock(&read_value->semaphore);
+
+// 7. 4.6开始，BPF hash maps会默认执行内存预分配，使用BPF_F_NO_PREALLOC可关闭（不建议）
+struct {
+        __uint(type, BPF_MAP_TYPE_HASH);
+        __type(key, u32);
+        __type(value, u64);
+        __uint(map_flags, BPF_F_NO_PREALLOC); // 关闭内存预分配（不建议）
+} start SEC(".maps");
+
+// 8. BPF_CORE_READ用法
 struct task_struct *task;
 struct mm_struct *mm;
 struct file *exe_file;
