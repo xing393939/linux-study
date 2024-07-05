@@ -14,7 +14,7 @@
 1. 查看btf：`pahole external.btf |grep 'struct task_struct {' -A 10`
 
 #### eBPF字节码学习
-1. [【Learning eBPF-3】一个 eBPF 程序的深入剖析](https://www.cnblogs.com/lianyihong/p/18120323)，详细分析hello程序字节码
+1. [一个 eBPF 程序的深入剖析](https://www.cnblogs.com/lianyihong/p/18120323)，详细分析hello程序字节码
 1. [eBPF Loader](https://fuweid.com/post/2022-ebpf-loader/)，利用BTF重定向Map和Struct_Field
 1. [Towards truly portable eBPF](https://fuweid.com/post/2022-ebpf-portable-with-btfhub/)
   * 利用`__builtin_preserve_access_index`在编译阶段把task->real_parent->pid链接符号保存在.BTF.ext段
