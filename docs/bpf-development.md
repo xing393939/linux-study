@@ -29,7 +29,7 @@
 1. [map的定义](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8%28%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%29.md#map%E5%86%99%E6%B3%95)
 1. [read/write only map](https://github.com/g0dA/linuxStack/blob/master/ebpf%E8%B7%A8%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8%28%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%29.md#readwrite-only-map)
 1. 重写全局变量
-1. [Spin locks](https://ebpf-docs.dylanreimerink.nl/linux/concepts/concurrency/#spin-locks)，需要引用`struct bpf_spin_lock`
+1. 5.1开始，[Spin locks](https://ebpf-docs.dylanreimerink.nl/linux/concepts/concurrency/#spin-locks)，需要引用`struct bpf_spin_lock`
 1. 4.6开始，BPF hash maps会默认执行[内存预分配](https://www.ebpf.top/post/top_and_tricks_for_bpf_libbpf/)，使用BPF_F_NO_PREALLOC可关闭（不建议）
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
