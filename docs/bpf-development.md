@@ -131,7 +131,7 @@ name = BPF_CORE_READ(task, mm, exe_file, fpath.dentry, d_name.name); // 一行�
   * 用户态程序(libbpf)：将内核的 BTF 与 BPF 程序联系起来， 将编译之后的 BPF 代码适配到目标机器的特定内核
   * 内核：虽然对 BPF CO-RE 完全不感知，但提供了一些 BPF 高级特性，使某些高级场景成为可能。
 
-#### btftool技巧
+#### bpftool的使用
 ```
 // 查看所有程序
 bpftool prog --json --pretty
