@@ -34,6 +34,7 @@
 1. bpf/bpf_core_read.h：使用BPF_CORE_READ，级联读取结构体字段
 1. bpf/bpf_tracing.h：使用PT_REGS_PARM1、PT_REGS_PARM2获取参数1、参数2
 1. bpf/bpf_helpers.h：使用SEC("maps")
+1. [Pinning](https://ebpf-docs.dylanreimerink.nl/linux/concepts/pinning/)，保证Prog和Map在程序A退出后程序B继续[使用](../images/bpf/bpf-pinning.png)
 1. 编译器原语，clang支持的内置函数，会转换成对应的ebpf指令
   * __sync_fetch_and_add(*a, b) - Read value at a, add b and write it back, return the new value
   * __sync_fetch_and_sub(*a, b) - Read value at a, subtract a number and write it back, return the new value
