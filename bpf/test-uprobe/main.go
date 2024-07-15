@@ -15,7 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	path := "/root/logs/test2/a.out"
+	path := "../go-demo/go-demo.out"
 	ex, err := link.OpenExecutable(path)
 	if err != nil {
 		log.Fatal(err)
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal("LoadCollection", err)
 	}
 
-	_, err = ex.Uprobe("add", coll.Programs["bpf_prog"], &link.UprobeOptions{})
+	_, err = ex.Uprobe("main.Add", coll.Programs["bpf_prog"], &link.UprobeOptions{})
 	if err != nil {
 		log.Fatal(err)
 	}

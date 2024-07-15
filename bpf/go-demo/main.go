@@ -22,10 +22,17 @@ func GetGoId() int64 {
 	return *p
 }
 
+//go:noinline
+func Add(a, b int32) int32 {
+	c := a + b
+	return c
+}
+
 func main() {
+	Add(1, 2)
 	for i := 0; i < 10; i++ {
 		go GetGoId()
 	}
-	time.Sleep(time.Millisecond)
 	GetGoId()
+	time.Sleep(time.Minute)
 }
