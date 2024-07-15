@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"syscall"
 	"time"
 	"unsafe"
@@ -15,8 +16,9 @@ func getg() uintptr
 func GetGoId() int64 {
 	g := getg()
 	p := (*int64)(unsafe.Pointer(g + gGoIdOffset))
-	pid := syscall.Gettid()
-	fmt.Printf("thread-%d %x %d \n", pid, g, *p)
+	tid := syscall.Gettid()
+	pid := os.Getpid()
+	fmt.Printf("pid-%d thread-%d %x %d \n", pid, tid, g, *p)
 	return *p
 }
 
