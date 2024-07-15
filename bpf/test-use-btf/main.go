@@ -14,8 +14,6 @@ import (
 
 //go:generate go run github.com/cilium/ebpf/cmd/bpf2go bpf kprobe.c
 
-const mapKey uint32 = 0
-
 func main() {
 
 	// Name of the kernel function to trace.
