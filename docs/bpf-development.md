@@ -12,6 +12,9 @@
 1. 给vmlinux添加BTF段：`pahole -J vmlinux`
 1. 生成btf：`pahole --btf_encode_detached external.btf vmlinux`
 1. 查看btf：`pahole external.btf |grep 'struct task_struct {' -A 10`
+1. 生成头文件的两种方法：
+  * bpftool btf dump file external.btf format c > vmlinux.h
+  * pahole --compile external.btf > vmlinux.h
 
 #### eBPF字节码学习
 1. [一个 eBPF 程序的深入剖析](https://www.cnblogs.com/lianyihong/p/18120323)，详细分析hello程序字节码
@@ -160,4 +163,7 @@ bpftool map dump id 206
 
 // 查看BTF的具体内容
 bpftool btf dump file external.btf | grep "STRUCT 'task_struct'" -A 5
+
+// 加载bpf程序
+bpftool prog load tracker.o kprobe
 ```

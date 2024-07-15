@@ -99,7 +99,7 @@ BCC：依赖LLVM和内核头文件
 libbpf：要求内核>=5.2，并开启BTF特性(RHEL 8.2+和Ubuntu 20.10+)，是否有/sys/kernel/btf/vmlinux
 
 // 查询调用execve的进程id和名称，以及传参argv
-bpftrace -e 'tracepoint:syscalls:sys_enter_execve,tracepoint: { printf("%-6d %-8s", pid, comm); join(args->argv);}'
+bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%-6d %-8s", pid, comm); join(args->argv);}'
 ```
 
 #### 如何开发一个负载均衡器
