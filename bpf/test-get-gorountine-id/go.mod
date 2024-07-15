@@ -1,4 +1,4 @@
-module test-uprob.out
+module test-get-gorountine-id.out
 
 go 1.20
 
