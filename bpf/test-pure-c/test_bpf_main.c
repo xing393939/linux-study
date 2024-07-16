@@ -3,15 +3,30 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/syscall.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <linux/bpf.h>
 #include <linux/version.h>
 #include <linux/perf_event.h>
 #include <linux/hw_breakpoint.h>
 #include <errno.h>
+
+struct ELFHeader {
+    char padding1[40];
+    unsigned long long int sh_off;
+    char padding2[10];
+    unsigned short int sh_size;
+    unsigned short int sh_num;
+};
+
+struct ELFSectionHeader {
+    char padding1[24];
+    unsigned long long int sh_offset;
+    unsigned long long int sh_size;
+};
 
 int read_file(char *file, unsigned char *buf) {
     int bfd = open(file, O_RDONLY);
@@ -22,6 +37,20 @@ int read_file(char *file, unsigned char *buf) {
     int n = read(bfd, buf, 1024);
     close(bfd);
     return n;
+}
+
+int read_bpf(unsigned char *buf) {
+    int i;
+    int text_size;
+    struct ELFHeader *elf = (struct ELFHeader *) buf;
+    struct ELFSectionHeader *sec;
+    for (i = 0; i < elf->sh_num; i++) {
+        sec = (struct ELFSectionHeader *) (buf + elf->sh_off + i * elf->sh_size);
+        if (sec->sh_offset == 64) {
+            text_size = sec->sh_size;
+        }
+    }
+    return text_size;
 }
 
 int main() {
@@ -39,15 +68,18 @@ int main() {
     // 获取sys_enter_clone的id
     n = read_file("/sys/kernel/debug/tracing/events/syscalls/sys_enter_clone/id", buf);
     char *end = "\n";
-    unsigned long long int config_id = strtoull(buf, &end, 10);
+    unsigned long long int config_id = strtoull((const char *) buf, &end, 10);
 
-    n = read_file("./test_bpf.out", buf);
-    for (i = 0; i < n; ++i) {
+    // 获取bpf程序的text段内容
+    n = read_file("./test_bpf.o", buf);
+    n = read_bpf(buf);
+    for (i = 64; i < 64 + n; ++i) {
         printf("%02x ", buf[i]);
         if ((i + 1) % 8 == 0)
             printf("\n");
     }
-    insn = (struct bpf_insn *) buf;
+
+    insn = (struct bpf_insn *) (buf + 64);
     strcpy(attr.prog_name, "mymain");
     attr.prog_type = BPF_PROG_TYPE_TRACEPOINT;
     attr.insns = (unsigned long) insn;
