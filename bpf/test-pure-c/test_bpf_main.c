@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#define MAX_CHAR_SIZE 4096
 
 #include <unistd.h>
 #include <string.h>
@@ -34,14 +35,13 @@ int read_file(char *file, unsigned char *buf) {
         printf("open eBPF program error: %s\n", strerror(errno));
         exit(-1);
     }
-    int n = read(bfd, buf, 1024);
+    int n = read(bfd, buf, MAX_CHAR_SIZE);
     close(bfd);
     return n;
 }
 
 int read_bpf(unsigned char *buf) {
-    int i;
-    int text_size;
+    int i, text_size;
     struct ELFHeader *elf = (struct ELFHeader *) buf;
     struct ELFSectionHeader *sec;
     for (i = 0; i < elf->sh_num; i++) {
@@ -54,10 +54,10 @@ int read_bpf(unsigned char *buf) {
 }
 
 int main() {
-    unsigned char buf[1024] = {};
+    unsigned char buf[MAX_CHAR_SIZE] = {};
     struct bpf_insn *insn;
     union bpf_attr attr = {};
-    unsigned char log_buf[4096] = {};
+    unsigned char log_buf[MAX_CHAR_SIZE] = {};
     int ret;
     int efd;
     int pfd;
